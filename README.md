@@ -1,1 +1,1 @@
-# BurningEmberArchivalTool
+# BEATs (Burning Ember Archival Tool suite)
