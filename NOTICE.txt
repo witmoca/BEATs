@@ -1,0 +1,17 @@
+Burning Ember (Archival Tool)
+Copyright 2018 Jente Heremans
+
+This product is based upon and includes the following software developed by Jente Heremans
+and is licensed under the MIT License (See WWDB_LICENSE.MIT):
+
+	WWDB (Copyright 2015 Jente Heremans)
+
+This product includes the following software developed by xerial.org (Taro L. Saito)
+and is licensed under the Apache version 2.0 License:
+
+	SQLite-jdbc (copyright 2009 Taro L. Saito)
+
+This product includes the following software developed at The Apache Software Foundation (http://www.apache.org/)
+and is licensed under the Apache version 2.0 License:
+
+	Apache Log4j (Copyright 1999-2012 Apache Software Foundation)
