@@ -1,0 +1,43 @@
+/*
+*
++===============================================================================+
+|    BEATs (Burning Ember Archival Tool suite)                                  |
+|    Copyright 2018 Jente Heremans                                              |
+|                                                                               |
+|    Licensed under the Apache License, Version 2.0 (the "License");            |
+|    you may not use this file except in compliance with the License.           |
+|    You may obtain a copy of the License at                                    |
+|                                                                               |
+|    http://www.apache.org/licenses/LICENSE-2.0                                 |
+|                                                                               |
+|    Unless required by applicable law or agreed to in writing, software        |
+|    distributed under the License is distributed on an "AS IS" BASIS,          |
+|    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   |
+|    See the License for the specific language governing permissions and        |
+|    limitations under the License.                                             |
++===============================================================================+
+*
+* File: ArchivePanel.java
+* Created: 2018
+*/
+package be.witmoca.BEATs.ui;
+
+import java.awt.BorderLayout;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+public class ArchivePanel extends JPanel {
+	private static final long serialVersionUID = 1L;
+	public static final String TITLE = "Archive"; 
+	
+	private final JComponent archiveTable = new ArchiveTable();
+	private final JScrollPane archiveScrollPane = new JScrollPane(archiveTable, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	
+	public ArchivePanel() {
+		super(new BorderLayout());
+		
+		this.add(archiveScrollPane, BorderLayout.CENTER);
+	}
+}

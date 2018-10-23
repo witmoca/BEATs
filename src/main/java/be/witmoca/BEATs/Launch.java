@@ -23,10 +23,63 @@
 
 package be.witmoca.BEATs;
 
-public class Launch 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
-    }
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+
+import javax.swing.SwingUtilities;
+
+import be.witmoca.BEATs.model.SQLConnection;
+import be.witmoca.BEATs.ui.ApplicationWindow;
+
+public class Launch {
+	public static final String APP_FOLDER = System.getProperty("user.home") + File.pathSeparator + "BEATs";
+	// Format : MMMmmmrrr with M = Major, m = minor & r = revision
+	public static final int APP_VERSION = 000001000;
+
+	public static ApplicationWindow APP_WINDOW = null;
+	public static SQLConnection DB_CONN = null;
+
+	public static void main(String[] args) {
+		if (DB_CONN != null) {
+			fatalError(new Exception("DB_CONN already loaded! Duplicate instance?"));
+			return;
+		}
+
+		// Setup Internal memory
+		try {
+			DB_CONN = new SQLConnection();
+		} catch (SQLException e) {
+			fatalError(e);
+			return;
+		}
+
+		// Create the GUI on the EDT
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				APP_WINDOW = new ApplicationWindow();
+			}
+		});
+	}
+
+	public static void fatalError(Exception e) {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					final StringWriter stacktraceW = new StringWriter();
+					e.printStackTrace(new PrintWriter(stacktraceW, true));
+
+					javax.swing.JOptionPane.showMessageDialog(null,
+							e.getClass() + "\n" + e.getLocalizedMessage() + "\n\nStacktrace:\n" + stacktraceW.getBuffer().toString(), "Fatal Error",
+							javax.swing.JOptionPane.ERROR_MESSAGE);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
+	}
 }
