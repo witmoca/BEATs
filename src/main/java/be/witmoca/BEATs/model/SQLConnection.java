@@ -45,6 +45,24 @@ public class SQLConnection implements AutoCloseable {
 		Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite::memory:", configSettings().toProperties());
 		createTables();
 		//contentCheck();
+		
+		// TODO: TEST CONTENT
+		try (Statement testSet = Db.createStatement()) {
+			testSet.executeUpdate("INSERT INTO Episode VALUES (1,0)");
+			testSet.executeUpdate("INSERT INTO Episode VALUES (2,100)");
+			testSet.executeUpdate("INSERT INTO Section VALUES ('SPC')");
+			testSet.executeUpdate("INSERT INTO Section VALUES ('CL')");
+			for(int i = 1; i <= 3000; i++)
+				testSet.executeUpdate("INSERT INTO Artist VALUES ('a" +  i + "',0)");
+			for(int i = 1; i < 12000; i++) {
+				testSet.executeUpdate("INSERT INTO Song VALUES ("+i+",'s" + i + "','a" + ((i % 3000)+1) + "')");			
+				testSet.executeUpdate("INSERT INTO SongsInArchive VALUES (" + i + ",1,'SPC','')");
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private SQLiteConfig configSettings() {
@@ -62,7 +80,7 @@ public class SQLConnection implements AutoCloseable {
 		try (Statement createEmptyTables = Db.createStatement()) {
 			// Artist-Song
 			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS Artist(ArtistName TEXT PRIMARY KEY, ArtistPrefix TEXT NOT NULL, Local INTEGER NOT NULL)");
+					"CREATE TABLE IF NOT EXISTS Artist(ArtistName TEXT PRIMARY KEY, Local INTEGER NOT NULL)");
 			createEmptyTables.executeUpdate(
 					"CREATE TABLE IF NOT EXISTS Song(SongId INTEGER PRIMARY KEY, Title TEXT NOT NULL, ArtistName REFERENCES Artist NOT NULL)");
 			// Other Base tables
@@ -153,5 +171,9 @@ public class SQLConnection implements AutoCloseable {
 		} catch (Exception e) {
 			// Silently ignore
 		}
+	}
+
+	public SQLiteConnection getDb() {
+		return Db;
 	}
 }

@@ -17,19 +17,31 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: ArchiveTable.java
+* File: ArchiveEntry.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.model;
 
-import javax.swing.JTable;
-import be.witmoca.BEATs.model.ArchiveTableModel;
+public class ArchiveEntry {
+	private final String ARTIST;
+	private final String SONG;
+	private final String EPISODESECTION;
+	private final String COMMENT;	
 
-public class ArchiveTable extends JTable {
-	private static final long serialVersionUID = 1L;
-
-	public ArchiveTable() {
-		super(new ArchiveTableModel());
-		this.getTableHeader().setReorderingAllowed(false);
+	public ArchiveEntry(String artist, String song, String episodeSection, String comment) {
+		this.ARTIST =  artist;
+		this.SONG = song;
+		this.EPISODESECTION = episodeSection;
+		this.COMMENT = comment;
+	}
+	
+	public String getColumn(int i) {
+		switch(i) {
+		case 0: return this.ARTIST;
+		case 1: return this.SONG;
+		case 2: return this.EPISODESECTION;
+		case 3: return this.COMMENT;
+		default: return null;
+		}
 	}
 }

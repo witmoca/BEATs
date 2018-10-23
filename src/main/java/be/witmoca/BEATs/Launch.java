@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.swing.SwingUtilities;
@@ -39,8 +40,8 @@ public class Launch {
 	// Format : MMMmmmrrr with M = Major, m = minor & r = revision
 	public static final int APP_VERSION = 000001000;
 
-	public static ApplicationWindow APP_WINDOW = null;
-	public static SQLConnection DB_CONN = null;
+	private static ApplicationWindow APP_WINDOW = null;
+	private static SQLConnection DB_CONN = null;
 
 	public static void main(String[] args) {
 		if (DB_CONN != null) {
@@ -81,5 +82,21 @@ public class Launch {
 		} catch (InvocationTargetException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
+	}
+
+	public static ApplicationWindow getAPP_WINDOW() {
+		return APP_WINDOW;
+	}
+
+	public static SQLConnection getDB_CONN() {
+		return DB_CONN;
+	}
+	
+	/**
+	 *  Shortcut to get the Db contained in DB_CONN
+	* @return
+	 */
+	public static Connection getDb() {
+		return getDB_CONN().getDb();
 	}
 }

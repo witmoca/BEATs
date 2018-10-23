@@ -22,20 +22,42 @@
 */
 package be.witmoca.BEATs.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
+
+import be.witmoca.BEATs.Launch;
 
 public class ArchiveTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
-
+	private static final String COLUMN_NAME[] = {"Artist","Song","Episode - Section","Comment"};
+	private List<ArchiveEntry> archive = new ArrayList<ArchiveEntry>();
+	
+	
 	// Layout: "Artist, pre", "Song", "Episode + Section", "Comment" 
 	
 	public ArchiveTableModel() {
 		super();
+		this.reloadModel();
+	}
+	
+	private void reloadModel() {
+		try (Statement getValue = Launch.getDb().createStatement()) {
+			ResultSet value = getValue.executeQuery("SELECT ArtistName, Title, (EpisodeId || ' (' || SectionName || ')'), Comment FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId");
+			while(value.next()) {
+				archive.add(new ArchiveEntry(value.getString(1), value.getString(2) ,value.getString(3) ,value.getString(4)));
+			}
+		} catch (SQLException e) {
+		}
 	}
 
 	@Override
-	public int getRowCount() {
-		return 0;
+	public int getRowCount() {		
+		return archive.size();
 	}
 
 	@Override
@@ -45,7 +67,11 @@ public class ArchiveTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		return null;
+		return archive.get(rowIndex).getColumn(columnIndex);
 	}
 
+	@Override
+	public String getColumnName(int column) {
+		return COLUMN_NAME[column];
+	}
 }

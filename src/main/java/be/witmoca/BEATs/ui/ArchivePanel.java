@@ -33,7 +33,7 @@ public class ArchivePanel extends JPanel {
 	public static final String TITLE = "Archive"; 
 	
 	private final JComponent archiveTable = new ArchiveTable();
-	private final JScrollPane archiveScrollPane = new JScrollPane(archiveTable, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	private final JScrollPane archiveScrollPane = new JScrollPane(archiveTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 	
 	public ArchivePanel() {
 		super(new BorderLayout());
