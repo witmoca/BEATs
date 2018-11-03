@@ -34,7 +34,7 @@ import be.witmoca.BEATs.Launch;
 
 public class SQLConnection implements AutoCloseable {
 	private final SQLiteConnection Db; // Internal Connection
-	private static final String DB_LOC = Launch.APP_FOLDER + File.pathSeparator + "InternalStorage.db";
+	private static final String DB_LOC = Launch.APP_FOLDER + File.separator + "InternalStorage.db";
 	private static final int APPLICATION_ID = 0;
 
 	/**
@@ -42,7 +42,9 @@ public class SQLConnection implements AutoCloseable {
 	 * @throws SQLException when creating a Db has failed (critically)
 	 */
 	public SQLConnection() throws SQLException {
-		Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite::memory:", configSettings().toProperties());
+		// internal memory: "jdbc:sqlite::memory:" OR on disk: "jdbc:sqlite:"+DB_LOC
+		Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:"+DB_LOC, configSettings().toProperties());
+		Db.setAutoCommit(false);
 		createTables();
 		//contentCheck();
 		
@@ -70,6 +72,7 @@ public class SQLConnection implements AutoCloseable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Db.commit();
 	}
 
 	private SQLiteConfig configSettings() {
@@ -172,7 +175,7 @@ public class SQLConnection implements AutoCloseable {
 			try (Statement optimize = Db.createStatement()) {
 				optimize.execute("PRAGMA optimize");
 			}
-
+			Db.commit();
 			Db.close();
 
 		} catch (Exception e) {

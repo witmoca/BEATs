@@ -51,6 +51,7 @@ public class PlaylistTableModel extends AbstractTableModel {
 				playlistList.add(new PlaylistEntry(value.getString(1), value.getString(2) ,value.getString(3)));
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 

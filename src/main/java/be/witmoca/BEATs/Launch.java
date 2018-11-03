@@ -36,7 +36,7 @@ import be.witmoca.BEATs.model.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 
 public class Launch {
-	public static final String APP_FOLDER = System.getProperty("user.home") + File.pathSeparator + "BEATs";
+	public static final String APP_FOLDER = System.getProperty("user.home") + File.separator + "BEATs";
 	// Format : MMMmmmrrr with M = Major, m = minor & r = revision
 	public static final int APP_VERSION = 000001000;
 
@@ -48,6 +48,9 @@ public class Launch {
 			fatalError(new Exception("DB_CONN already loaded! Duplicate instance?"));
 			return;
 		}
+		
+		// Preset internal folders
+		(new File(APP_FOLDER)).mkdirs();
 
 		// Setup Internal memory
 		try {
