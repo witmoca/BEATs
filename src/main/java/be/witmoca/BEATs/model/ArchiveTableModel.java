@@ -35,7 +35,7 @@ import be.witmoca.BEATs.Launch;
 public class ArchiveTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private static final String COLUMN_NAME[] = {"Artist","Song","Episode - Section","Comment"};
-	private List<ArchiveEntry> archive = new ArrayList<ArchiveEntry>();
+	private List<ArchiveEntry> archive = null;
 	
 	
 	// Layout: "Artist, pre", "Song", "Episode + Section", "Comment" 
@@ -46,6 +46,7 @@ public class ArchiveTableModel extends AbstractTableModel {
 	}
 	
 	private void reloadModel() {
+		archive = new ArrayList<ArchiveEntry>();
 		try (Statement getValue = Launch.getDb().createStatement()) {
 			ResultSet value = getValue.executeQuery("SELECT ArtistName, Title, (EpisodeId || ' (' || SectionName || ')'), Comment FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId");
 			while(value.next()) {
@@ -62,7 +63,7 @@ public class ArchiveTableModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 4;
+		return COLUMN_NAME.length;
 	}
 
 	@Override

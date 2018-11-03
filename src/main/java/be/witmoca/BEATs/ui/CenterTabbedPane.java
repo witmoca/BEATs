@@ -17,46 +17,25 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistPanel.java
+* File: CenterTabbedPane.java
 * Created: 2018
 */
 package be.witmoca.BEATs.ui;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-public class PlaylistPanel extends JPanel implements ChangeListener {
+public class CenterTabbedPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
-	private final PlaylistTable playlistTable;
-	private final JScrollPane playlistScrollPane;
-
 	
-	public PlaylistPanel(JTabbedPane parent, String title) {
-		super(new BorderLayout());
-		
-		parent.addChangeListener(this);
-		playlistTable = new PlaylistTable(title);
-		playlistScrollPane = new JScrollPane(playlistTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
-		this.add(playlistScrollPane, BorderLayout.CENTER);
-	}
-
-
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		// If the parent JTabbedPane selects this tab, reload the model
-		 if (e.getSource() instanceof JTabbedPane) {
-             JTabbedPane parent = (JTabbedPane) e.getSource();
-             if(parent.getSelectedComponent().equals(this)) {
-            	 playlistTable.setTabTitle(parent.getTitleAt(parent.getSelectedIndex()));
-             }
-         }
-	}
+	private JComponent archivePanel = new ArchivePanel();
+	private JComponent playlistPanel = new PlaylistsTabbedPane();
 	
 
+	public CenterTabbedPane() {
+		super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
+		
+		this.addTab(ArchivePanel.TITLE, archivePanel);
+		this.addTab(PlaylistsTabbedPane.TITLE, playlistPanel);
+	}
 }

@@ -33,7 +33,7 @@ public class ApplicationWindow extends JFrame{
 	private static final String mainTitleBase = "Burning Ember";
 	
 	private final JComponent eastPanel = new EastPanel();
-	private final JComponent centerPanel = new CenterPanel();
+	private final JComponent centerPanel = new CenterTabbedPane();
 
 	public ApplicationWindow() {
 		// Initialise frame

@@ -17,46 +17,43 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistPanel.java
+* File: PlaylistsTabbedPane.java
 * Created: 2018
 */
 package be.witmoca.BEATs.ui;
 
-import java.awt.BorderLayout;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-public class PlaylistPanel extends JPanel implements ChangeListener {
+import be.witmoca.BEATs.Launch;
+
+public class PlaylistsTabbedPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
-	private final PlaylistTable playlistTable;
-	private final JScrollPane playlistScrollPane;
+	public static final String TITLE = "Playlists"; 
 
-	
-	public PlaylistPanel(JTabbedPane parent, String title) {
-		super(new BorderLayout());
+	public PlaylistsTabbedPane() {
+		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
 		
-		parent.addChangeListener(this);
-		playlistTable = new PlaylistTable(title);
-		playlistScrollPane = new JScrollPane(playlistTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
-		this.add(playlistScrollPane, BorderLayout.CENTER);
-	}
-
-
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		// If the parent JTabbedPane selects this tab, reload the model
-		 if (e.getSource() instanceof JTabbedPane) {
-             JTabbedPane parent = (JTabbedPane) e.getSource();
-             if(parent.getSelectedComponent().equals(this)) {
-            	 playlistTable.setTabTitle(parent.getTitleAt(parent.getSelectedIndex()));
-             }
-         }
+		this.reloadModel();
 	}
 	
-
+	private void reloadModel() {
+		try (Statement getValue = Launch.getDb().createStatement()) {
+			ResultSet value = getValue.executeQuery("SELECT PlaylistName FROM Playlist ORDER BY TabOrder");
+			while(value.next()) {
+				if(value.getRow() <= this.getTabCount()) {
+					this.setTitleAt(value.getRow()-1, value.getString(1));
+				} else {
+					this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 }

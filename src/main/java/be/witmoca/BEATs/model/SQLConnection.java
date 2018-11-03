@@ -58,6 +58,13 @@ public class SQLConnection implements AutoCloseable {
 				testSet.executeUpdate("INSERT INTO Song VALUES ("+i+",'s" + i + "','a" + ((i % 3000)+1) + "')");			
 				testSet.executeUpdate("INSERT INTO SongsInArchive VALUES (" + i + ",1,'SPC','')");
 			}
+			testSet.executeUpdate("INSERT INTO Playlist VALUES ('Classic vandaag', 0)");
+			testSet.executeUpdate("INSERT INTO Playlist VALUES ('Poll', 1)");
+			testSet.executeUpdate("INSERT INTO SongsInPlaylist VALUES ('Classic vandaag', 'NA1', 'NS1', 'no comment')");
+			testSet.executeUpdate("INSERT INTO SongsInPlaylist VALUES ('Classic vandaag', 'NA2', 'NS2', 'local comment')");
+			testSet.executeUpdate("INSERT INTO SongsInPlaylist VALUES ('Poll', 'PollArt1', 'PollSong1', 'local')");
+			testSet.executeUpdate("INSERT INTO SongsInPlaylist VALUES ('Poll', 'PollArt2', 'PollSong2', 'comment')");
+			
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -91,7 +98,7 @@ public class SQLConnection implements AutoCloseable {
 			createEmptyTables.executeUpdate("CREATE TABLE IF NOT EXISTS Section(SectionName TEXT PRIMARY KEY)");
 			// Relation Tables
 			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS SongsInPlaylist(PlaylistName REFERENCES Playlist NOT NULL,Artist TEXT NOT NULL, Song TEXT NOT NULL, Local INTEGER NOT NULL, Comment TEXT)");
+					"CREATE TABLE IF NOT EXISTS SongsInPlaylist(PlaylistName REFERENCES Playlist NOT NULL,Artist TEXT NOT NULL, Song TEXT NOT NULL, Comment TEXT)");
 			createEmptyTables.executeUpdate(
 					"CREATE TABLE IF NOT EXISTS CurrentQueue(SongOrder INTEGER PRIMARY KEY, SongId REFERENCES Song NOT NULL)");
 			createEmptyTables.executeUpdate(

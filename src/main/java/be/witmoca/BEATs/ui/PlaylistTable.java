@@ -28,7 +28,11 @@ import be.witmoca.BEATs.model.PlaylistTableModel;
 public class PlaylistTable extends JTable {
 	private static final long serialVersionUID = 1L;
 
-	public PlaylistTable() {
-		super(new PlaylistTableModel());
+	public PlaylistTable(String PlaylistName) {
+		super(new PlaylistTableModel(PlaylistName));
+	}
+	
+	public void setTabTitle(String tabTitle) {
+		((PlaylistTableModel) this.getModel()).setPlaylistName(tabTitle);
 	}
 }

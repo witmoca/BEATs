@@ -17,25 +17,29 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: CenterPanel.java
+* File: PlaylistEntry.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.model;
 
-import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
-
-public class CenterPanel extends JTabbedPane {
-	private static final long serialVersionUID = 1L;
+public class PlaylistEntry {
+	private final String ARTIST;
+	private final String SONG;
+	private final String COMMENT;	
 	
-	private JComponent archivePanel = new ArchivePanel();
-	private JComponent playlistPanel = new PlaylistPanel();
+	public PlaylistEntry(String aRTIST, String sONG, String cOMMENT) {
+		super();
+		ARTIST = aRTIST;
+		SONG = sONG;
+		COMMENT = cOMMENT;
+	}
 	
-
-	public CenterPanel() {
-		super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
-		
-		this.addTab(ArchivePanel.TITLE, archivePanel);
-		this.addTab(PlaylistPanel.TITLE, playlistPanel);
+	public String getColumn(int i) {
+		switch(i) {
+		case 0: return this.ARTIST;
+		case 1: return this.SONG;
+		case 2: return this.COMMENT;
+		default: return null;
+		}
 	}
 }
