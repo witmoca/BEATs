@@ -30,6 +30,7 @@ public class PlaylistTable extends JTable {
 
 	public PlaylistTable(String PlaylistName) {
 		super(new PlaylistTableModel(PlaylistName));
+		this.getTableHeader().setReorderingAllowed(false);
 	}
 	
 	public void setTabTitle(String tabTitle) {

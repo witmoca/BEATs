@@ -48,7 +48,7 @@ public class Launch {
 			fatalError(new Exception("DB_CONN already loaded! Duplicate instance?"));
 			return;
 		}
-		
+
 		// Preset internal folders
 		(new File(APP_FOLDER)).mkdirs();
 
@@ -69,6 +69,12 @@ public class Launch {
 		});
 	}
 
+	/**
+	 * Fails the application and prints a stack trace in a dialog (only a valid
+	 * function before any gui is present)
+	 * 
+	 * @param e
+	 */
 	public static void fatalError(Exception e) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
@@ -78,13 +84,33 @@ public class Launch {
 					e.printStackTrace(new PrintWriter(stacktraceW, true));
 
 					javax.swing.JOptionPane.showMessageDialog(null,
-							e.getClass() + "\n" + e.getLocalizedMessage() + "\n\nStacktrace:\n" + stacktraceW.getBuffer().toString(), "Fatal Error",
-							javax.swing.JOptionPane.ERROR_MESSAGE);
+							e.getClass() + "\n" + e.getLocalizedMessage() + "\n\nStacktrace:\n"
+									+ stacktraceW.getBuffer().toString(),
+							"Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
+	}
+
+	/**
+	 * Closes the current model and loads a new one.
+	 * 
+	 * @param fileToLoad
+	 *            The Database to load. If this is null, the application will load
+	 *            an empty file.
+	 * @throws SQLException 
+	 */
+	public static void changeModel(String fileToLoad) throws SQLException {
+		// TODO: Check saved state
+		DB_CONN.close();
+		if (fileToLoad == null) {
+			DB_CONN = new SQLConnection();
+		} else {
+			DB_CONN = new SQLConnection(fileToLoad);
+		}
+		// TODO: Refresh the GUI
 	}
 
 	public static ApplicationWindow getAPP_WINDOW() {
@@ -94,10 +120,11 @@ public class Launch {
 	public static SQLConnection getDB_CONN() {
 		return DB_CONN;
 	}
-	
+
 	/**
-	 *  Shortcut to get the Db contained in DB_CONN
-	* @return
+	 * Shortcut to get the Db contained in DB_CONN
+	 * 
+	 * @return
 	 */
 	public static Connection getDb() {
 		return getDB_CONN().getDb();

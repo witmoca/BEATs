@@ -23,12 +23,14 @@
 package be.witmoca.BEATs.ui;
 
 import java.awt.BorderLayout;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-public class ApplicationWindow extends JFrame{
+public class ApplicationWindow extends JFrame implements WindowListener{
 	private static final long serialVersionUID = 1L;
 	private static final String mainTitleBase = "Burning Ember";
 	
@@ -38,7 +40,8 @@ public class ApplicationWindow extends JFrame{
 	public ApplicationWindow() {
 		// Initialise frame
 		super(mainTitleBase);
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(this);
 		this.setLayout(new BorderLayout());
 		
 		// Components
@@ -49,5 +52,35 @@ public class ApplicationWindow extends JFrame{
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
 		this.setVisible(true);
+	}
+
+	
+	@Override
+	public void windowOpened(WindowEvent e) {	
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		this.dispose();
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
 	}
 }
