@@ -23,12 +23,15 @@
 package be.witmoca.BEATs.ui;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
+
+import be.witmoca.BEATs.actions.ExitApplicationAction;
 
 public class ApplicationWindow extends JFrame implements WindowListener{
 	private static final long serialVersionUID = 1L;
@@ -64,7 +67,7 @@ public class ApplicationWindow extends JFrame implements WindowListener{
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		this.dispose();
+		(new ExitApplicationAction()).actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, e.paramString()));
 	}
 
 	@Override

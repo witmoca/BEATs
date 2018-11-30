@@ -37,6 +37,7 @@ public class SQLConnection implements AutoCloseable {
 	private final SQLiteConnection Db; // Internal Connection
 	private static final String DB_LOC = Launch.APP_FOLDER + File.separator + "InternalStorage.db";
 	private static final int APPLICATION_ID = 0x77776462;
+	private boolean changedState = true;
 
 	/**
 	 * 
@@ -60,6 +61,17 @@ public class SQLConnection implements AutoCloseable {
 			load.executeUpdate("restore from " + loadPath);
 		}
 		this.contentCheck();
+	}
+
+	public void saveDatabase(String savePath) throws SQLException {
+		// Call optimize first
+		try (Statement optimize = Db.createStatement()) {
+			optimize.execute("PRAGMA optimize");
+		}
+		Db.commit();
+		try (Statement save = Db.createStatement()) {
+			save.executeUpdate("backup to " + savePath);
+		}
 	}
 
 	private SQLiteConfig configSettings() {
@@ -159,16 +171,25 @@ public class SQLConnection implements AutoCloseable {
 	public void close() throws SQLException {
 		if (Db.isClosed())
 			return;
-
-		// Call optimize before closing
-		try (Statement optimize = Db.createStatement()) {
-			optimize.execute("PRAGMA optimize");
-		}
 		Db.commit();
 		Db.close();
+		if (!(new File(DB_LOC)).delete())
+			throw new SQLException("Could not cleanup BEATS internal storage");
 	}
 
 	public SQLiteConnection getDb() {
 		return Db;
+	}
+
+	public boolean isChanged() {
+		return changedState;
+	}
+
+	public void setSaved() {
+		this.changedState = false;
+	}
+
+	public void setChanged() {
+		this.changedState = true;
 	}
 }

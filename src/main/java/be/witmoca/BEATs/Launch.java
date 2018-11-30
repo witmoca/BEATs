@@ -23,6 +23,7 @@
 
 package be.witmoca.BEATs;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -32,6 +33,7 @@ import java.sql.SQLException;
 
 import javax.swing.SwingUtilities;
 
+import be.witmoca.BEATs.actions.ExitApplicationAction;
 import be.witmoca.BEATs.model.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 
@@ -76,21 +78,26 @@ public class Launch {
 	 * @param e
 	 */
 	public static void fatalError(Exception e) {
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				@Override
-				public void run() {
-					final StringWriter stacktraceW = new StringWriter();
-					e.printStackTrace(new PrintWriter(stacktraceW, true));
+		if (SwingUtilities.isEventDispatchThread()) {
+			final StringWriter stacktraceW = new StringWriter();
+			e.printStackTrace(new PrintWriter(stacktraceW, true));
 
-					javax.swing.JOptionPane.showMessageDialog(null,
-							e.getClass() + "\n" + e.getLocalizedMessage() + "\n\nStacktrace:\n"
-									+ stacktraceW.getBuffer().toString(),
-							"Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-				}
-			});
-		} catch (InvocationTargetException | InterruptedException e1) {
-			e1.printStackTrace();
+			javax.swing.JOptionPane.showMessageDialog(null,
+					e.getClass() + "\n" + e.getLocalizedMessage() + "\n\nStacktrace:\n"
+							+ stacktraceW.getBuffer().toString(),
+					"Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+		} else {
+			// If not on EDT, then schedule for execution on EDT
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						fatalError(e);
+					}
+				});
+			} catch (InvocationTargetException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -100,17 +107,30 @@ public class Launch {
 	 * @param fileToLoad
 	 *            The Database to load. If this is null, the application will load
 	 *            an empty file.
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
-	public static void changeModel(String fileToLoad) throws SQLException {
-		// TODO: Check saved state
-		DB_CONN.close();
-		if (fileToLoad == null) {
-			DB_CONN = new SQLConnection();
-		} else {
-			DB_CONN = new SQLConnection(fileToLoad);
+	public static void changeModel(String fileToLoad) {
+		// Do an 'exit'
+		ExitApplicationAction eaa = new ExitApplicationAction();
+		eaa.actionPerformed(new ActionEvent(Launch.class, ActionEvent.ACTION_PERFORMED, "changeModel"));
+		if(!eaa.hasSucceeded()) {
+			// Cancelled or Error
+			return;
 		}
-		// TODO: Refresh the GUI
+
+		// Load new Database Connection
+		try {
+			if (fileToLoad == null) {
+				DB_CONN = new SQLConnection();
+			} else {
+				DB_CONN = new SQLConnection(fileToLoad);
+			}
+		} catch (SQLException e) {
+			fatalError(e);
+		}
+
+		// Start GUI
+		APP_WINDOW = new ApplicationWindow();
 	}
 
 	public static ApplicationWindow getAPP_WINDOW() {
