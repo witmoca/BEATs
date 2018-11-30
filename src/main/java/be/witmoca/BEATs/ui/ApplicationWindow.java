@@ -48,6 +48,9 @@ public class ApplicationWindow extends JFrame implements WindowListener{
 		this.add(eastPanel, BorderLayout.EAST);
 		this.add(centerPanel, BorderLayout.CENTER);
 		
+		// Menu
+		this.setJMenuBar(new ApplicationMenubar());
+		
 		// Draw frame
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
