@@ -47,6 +47,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.model.SQLObjectTransformer;
 
 public class ImportFileAction implements ActionListener {
@@ -207,6 +208,6 @@ public class ImportFileAction implements ActionListener {
 			}
 		}
 		
-		Launch.getDB_CONN().commit();
+		Launch.getDB_CONN().commit(DataChangedListener.DataType.ALL_OPTS);
 	}
 }

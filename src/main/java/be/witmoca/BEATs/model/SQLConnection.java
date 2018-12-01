@@ -28,7 +28,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConnection;
 
@@ -39,6 +41,7 @@ public class SQLConnection implements AutoCloseable {
 	private static final String DB_LOC = Launch.APP_FOLDER + File.separator + "InternalStorage.db";
 	private static final int APPLICATION_ID = 0x77776462;
 	private boolean changedState = false;
+	private Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> dataListeners = new HashMap<>();
 
 	/**
 	 * 
@@ -172,9 +175,18 @@ public class SQLConnection implements AutoCloseable {
 		return Db.prepareStatement(sql);
 	}
 	
-	public void commit() throws SQLException {
+	public void commit(EnumSet<DataChangedListener.DataType> eSet) throws SQLException {
 		Db.commit();
 		this.setChanged();
+		
+		for(DataChangedListener dL : dataListeners.keySet()) {
+			for(DataChangedListener.DataType dT : dataListeners.get(dL)) {
+				if(eSet.contains(dT)) {
+					dL.tableChanged();
+					break;
+				}
+			}
+		}
 	}
 
 	@Override
@@ -201,5 +213,9 @@ public class SQLConnection implements AutoCloseable {
 
 	private void setChanged() {
 		this.changedState = true;
+	}
+	
+	public void addDataChangedListener(DataChangedListener d, EnumSet<DataChangedListener.DataType> e) {
+		dataListeners.put(d, e);
 	}
 }

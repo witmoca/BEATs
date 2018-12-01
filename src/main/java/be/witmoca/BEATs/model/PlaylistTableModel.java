@@ -32,7 +32,7 @@ import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.Launch;
 
-public class PlaylistTableModel extends AbstractTableModel {
+public class PlaylistTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
 	private String PlaylistName;
 	private static final String COLUMN_NAME[] = {"Artist","Song","Comment"};
@@ -41,9 +41,13 @@ public class PlaylistTableModel extends AbstractTableModel {
 	public PlaylistTableModel(String playlistName) {
 		super();
 		this.setPlaylistName(playlistName);
+		
+		Launch.getDB_CONN().addDataChangedListener(this, DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
+		tableChanged();
 	}
 
-	private void reloadModel() {
+	@Override
+	public void tableChanged() {
 		playlistList = new ArrayList<PlaylistEntry>();
 		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = ?")) {
 			getValue.setString(1, PlaylistName);
@@ -54,6 +58,7 @@ public class PlaylistTableModel extends AbstractTableModel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		this.fireTableDataChanged();
 	}
 
 	@Override
@@ -76,9 +81,9 @@ public class PlaylistTableModel extends AbstractTableModel {
 		return COLUMN_NAME[column];
 	}
 
+	
 	public void setPlaylistName(String playlistName) {
 		PlaylistName = playlistName;
-		this.reloadModel();
+		tableChanged();
 	}
-
 }

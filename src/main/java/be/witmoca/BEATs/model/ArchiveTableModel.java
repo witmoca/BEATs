@@ -32,7 +32,7 @@ import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.Launch;
 
-public class ArchiveTableModel extends AbstractTableModel {
+public class ArchiveTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
 	private static final String COLUMN_NAME[] = {"Artist","Song","Episode - Section","Comment"};
 	private List<ArchiveEntry> archive = null;
@@ -42,10 +42,13 @@ public class ArchiveTableModel extends AbstractTableModel {
 	
 	public ArchiveTableModel() {
 		super();
-		this.reloadModel();
+		
+		Launch.getDB_CONN().addDataChangedListener(this, DataChangedListener.DataType.ARCHIVE_DATA_OPTS);
+		this.tableChanged();
 	}
 	
-	private void reloadModel() {
+	@Override
+	public void tableChanged() {
 		archive = new ArrayList<ArchiveEntry>();
 		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT ArtistName, Title, (EpisodeId || ' (' || SectionName || ')'), Comment FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId")) {
 			ResultSet value = getValue.executeQuery();
@@ -54,6 +57,7 @@ public class ArchiveTableModel extends AbstractTableModel {
 			}
 		} catch (SQLException e) {
 		}
+		this.fireTableDataChanged();
 	}
 
 	@Override

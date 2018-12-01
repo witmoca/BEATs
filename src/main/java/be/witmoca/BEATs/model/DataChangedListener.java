@@ -17,47 +17,20 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: DataChangedListener.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.model;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.EnumSet;
 
-import javax.swing.JTabbedPane;
-
-import be.witmoca.BEATs.Launch;
-import be.witmoca.BEATs.model.DataChangedListener;
-
-public class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
-	private static final long serialVersionUID = 1L;
-	public static final String TITLE = "Playlists"; 
-
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		Launch.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+public interface DataChangedListener {
+	public static enum DataType {
+	    ARTIST, SONG, PLAYLIST, EPISODE, SECTION, SONGS_IN_PLAYLIST, CURRENT_QUEUE, SONGS_IN_ARCHIVE;
+	    public static final EnumSet<DataType> ALL_OPTS = EnumSet.allOf(DataType.class);
+	    public static final EnumSet<DataType> ARCHIVE_DATA_OPTS = EnumSet.of(ARTIST, SONG, EPISODE, SECTION, SONGS_IN_ARCHIVE);
+	    public static final EnumSet<DataType> PLAYLIST_DATA_OPTS = EnumSet.of(PLAYLIST, SONGS_IN_PLAYLIST);
 	}
 	
-	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			while(value.next()) {
-				if(value.getRow() <= this.getTabCount()) {
-					this.setTitleAt(value.getRow()-1, value.getString(1));
-				} else {
-					this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
+	public void tableChanged();
 }
