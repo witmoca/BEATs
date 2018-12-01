@@ -22,10 +22,9 @@
 */
 package be.witmoca.BEATs.ui;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-
 import javax.swing.JTabbedPane;
 
 import be.witmoca.BEATs.Launch;
@@ -41,8 +40,8 @@ public class PlaylistsTabbedPane extends JTabbedPane {
 	}
 	
 	private void reloadModel() {
-		try (Statement getValue = Launch.getDb().createStatement()) {
-			ResultSet value = getValue.executeQuery("SELECT PlaylistName FROM Playlist ORDER BY TabOrder");
+		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
+			ResultSet value = getValue.executeQuery();
 			while(value.next()) {
 				if(value.getRow() <= this.getTabCount()) {
 					this.setTitleAt(value.getRow()-1, value.getString(1));

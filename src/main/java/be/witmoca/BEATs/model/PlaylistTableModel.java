@@ -22,9 +22,9 @@
 */
 package be.witmoca.BEATs.model;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +45,9 @@ public class PlaylistTableModel extends AbstractTableModel {
 
 	private void reloadModel() {
 		playlistList = new ArrayList<PlaylistEntry>();
-		try (Statement getValue = Launch.getDb().createStatement()) {
-			ResultSet value = getValue.executeQuery("SELECT Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = '" + PlaylistName + "'");
+		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = ?")) {
+			getValue.setString(1, PlaylistName);
+			ResultSet value = getValue.executeQuery();
 			while(value.next()) {
 				playlistList.add(new PlaylistEntry(value.getString(1), value.getString(2) ,value.getString(3)));
 			}

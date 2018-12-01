@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.swing.SwingUtilities;
@@ -139,14 +138,5 @@ public class Launch {
 
 	public static SQLConnection getDB_CONN() {
 		return DB_CONN;
-	}
-
-	/**
-	 * Shortcut to get the Db contained in DB_CONN
-	 * 
-	 * @return
-	 */
-	public static Connection getDb() {
-		return getDB_CONN().getDb();
 	}
 }

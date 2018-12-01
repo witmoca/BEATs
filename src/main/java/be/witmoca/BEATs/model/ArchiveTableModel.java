@@ -22,9 +22,9 @@
 */
 package be.witmoca.BEATs.model;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +47,8 @@ public class ArchiveTableModel extends AbstractTableModel {
 	
 	private void reloadModel() {
 		archive = new ArrayList<ArchiveEntry>();
-		try (Statement getValue = Launch.getDb().createStatement()) {
-			ResultSet value = getValue.executeQuery("SELECT ArtistName, Title, (EpisodeId || ' (' || SectionName || ')'), Comment FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId");
+		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT ArtistName, Title, (EpisodeId || ' (' || SectionName || ')'), Comment FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId")) {
+			ResultSet value = getValue.executeQuery();
 			while(value.next()) {
 				archive.add(new ArchiveEntry(value.getString(1), value.getString(2) ,value.getString(3) ,value.getString(4)));
 			}

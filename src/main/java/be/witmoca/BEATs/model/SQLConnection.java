@@ -24,6 +24,7 @@ package be.witmoca.BEATs.model;
 
 import java.io.File;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -165,6 +166,10 @@ public class SQLConnection implements AutoCloseable {
 				throw new SQLException("Integrity check failed. Violations: \n" + errorString);
 			}
 		}
+	}
+	
+	public PreparedStatement prepareStatement(String sql) throws SQLException {
+		return Db.prepareStatement(sql);
 	}
 	
 	public void commit() throws SQLException {
