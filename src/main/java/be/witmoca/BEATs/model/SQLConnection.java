@@ -37,7 +37,7 @@ public class SQLConnection implements AutoCloseable {
 	private final SQLiteConnection Db; // Internal Connection
 	private static final String DB_LOC = Launch.APP_FOLDER + File.separator + "InternalStorage.db";
 	private static final int APPLICATION_ID = 0x77776462;
-	private boolean changedState = true;
+	private boolean changedState = false;
 
 	/**
 	 * 

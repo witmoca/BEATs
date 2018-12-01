@@ -66,7 +66,8 @@ public class ApplicationMenubar extends JMenuBar {
 
 		fileMenu.addSeparator();
 
-		JMenuItem importFile = new JMenuItem("Import");
+		JMenuItem importFile = new JMenuItem("Import",
+				new ImageIcon(getClass().getClassLoader().getResource("fileIcons/import.png")));
 		importFile.setMnemonic(KeyEvent.VK_I);
 		importFile.addActionListener(new ActionListener() {
 			@Override
@@ -76,7 +77,8 @@ public class ApplicationMenubar extends JMenuBar {
 		});
 		fileMenu.add(importFile);
 
-		JMenuItem exportFile = new JMenuItem("Export");
+		JMenuItem exportFile = new JMenuItem("Export",
+				new ImageIcon(getClass().getClassLoader().getResource("fileIcons/export.png")));
 		exportFile.setMnemonic(KeyEvent.VK_E);
 		exportFile.addActionListener(new ActionListener() {
 			@Override
@@ -91,8 +93,7 @@ public class ApplicationMenubar extends JMenuBar {
 		saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
 		exitApplication.addActionListener(new ExitApplicationAction());
 		fileMenu.add(exitApplication);
-		
-		
+
 		this.add(fileMenu);
 	}
 

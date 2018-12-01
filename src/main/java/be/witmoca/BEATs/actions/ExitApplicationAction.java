@@ -60,14 +60,17 @@ public class ExitApplicationAction implements ActionListener {
 		}
 		
 		// Exit Application
+		// Kill GUI
+		Launch.getAPP_WINDOW().dispose();
+		
+		// KILL DB Connection
 		try {
 			Launch.getDB_CONN().close();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
 
-		// Kill GUI
-		Launch.getAPP_WINDOW().dispose();
+
 		hasSucceeded = true;
 	}
 
