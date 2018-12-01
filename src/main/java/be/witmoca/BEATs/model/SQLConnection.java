@@ -91,7 +91,7 @@ public class SQLConnection implements AutoCloseable {
 			createEmptyTables.executeUpdate(
 					"CREATE TABLE IF NOT EXISTS Artist(ArtistName TEXT PRIMARY KEY, Local INTEGER NOT NULL)");
 			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS Song(SongId INTEGER PRIMARY KEY, Title TEXT NOT NULL, ArtistName REFERENCES Artist NOT NULL)");
+					"CREATE TABLE IF NOT EXISTS Song(SongId INTEGER PRIMARY KEY, Title TEXT, ArtistName REFERENCES Artist, UNIQUE (Title, ArtistName))");
 			// Other Base tables
 			createEmptyTables.executeUpdate(
 					"CREATE TABLE IF NOT EXISTS Playlist(PlaylistName TEXT PRIMARY KEY, TabOrder INTEGER NOT NULL UNIQUE)");
@@ -166,6 +166,11 @@ public class SQLConnection implements AutoCloseable {
 			}
 		}
 	}
+	
+	public void commit() throws SQLException {
+		Db.commit();
+		this.setChanged();
+	}
 
 	@Override
 	public void close() throws SQLException {
@@ -189,7 +194,7 @@ public class SQLConnection implements AutoCloseable {
 		this.changedState = false;
 	}
 
-	public void setChanged() {
+	private void setChanged() {
 		this.changedState = true;
 	}
 }

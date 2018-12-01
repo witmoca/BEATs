@@ -32,6 +32,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import be.witmoca.BEATs.actions.ExitApplicationAction;
+import be.witmoca.BEATs.actions.ImportFileAction;
 import be.witmoca.BEATs.actions.NewFileAction;
 import be.witmoca.BEATs.actions.OpenFileAction;
 import be.witmoca.BEATs.actions.SaveFileAction;
@@ -69,12 +70,7 @@ public class ApplicationMenubar extends JMenuBar {
 		JMenuItem importFile = new JMenuItem("Import",
 				new ImageIcon(getClass().getClassLoader().getResource("fileIcons/import.png")));
 		importFile.setMnemonic(KeyEvent.VK_I);
-		importFile.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Import!");
-			}
-		});
+		importFile.addActionListener(new ImportFileAction());
 		fileMenu.add(importFile);
 
 		JMenuItem exportFile = new JMenuItem("Export",
