@@ -30,6 +30,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
 import be.witmoca.BEATs.actions.ExitApplicationAction;
 import be.witmoca.BEATs.actions.ImportFileAction;
@@ -45,21 +46,19 @@ public class ApplicationMenubar extends JMenuBar {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 
-		JMenuItem newFile = new JMenuItem("New",
-				new ImageIcon(getClass().getClassLoader().getResource("fileIcons/file.png")));
+		JMenuItem newFile = new JMenuItem("New",UIManager.getIcon("FileView.fileIcon"));
 		newFile.setMnemonic(KeyEvent.VK_N);
 		newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 		newFile.addActionListener(new NewFileAction());
 		fileMenu.add(newFile);
 
-		JMenuItem openFile = new JMenuItem("Open",
-				new ImageIcon(getClass().getClassLoader().getResource("fileIcons/folder.png")));
+		JMenuItem openFile = new JMenuItem("Open",UIManager.getIcon("FileView.directoryIcon"));
 		openFile.setMnemonic(KeyEvent.VK_O);
 		openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 		openFile.addActionListener(new OpenFileAction());
 		fileMenu.add(openFile);
 
-		JMenuItem saveFile = new JMenuItem("Save");
+		JMenuItem saveFile = new JMenuItem("Save", UIManager.getIcon("FileView.floppyDriveIcon"));
 		saveFile.setMnemonic(KeyEvent.VK_S);
 		saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 		saveFile.addActionListener(new SaveFileAction());
@@ -67,14 +66,12 @@ public class ApplicationMenubar extends JMenuBar {
 
 		fileMenu.addSeparator();
 
-		JMenuItem importFile = new JMenuItem("Import",
-				new ImageIcon(getClass().getClassLoader().getResource("fileIcons/import.png")));
+		JMenuItem importFile = new JMenuItem("Import",UIManager.getIcon("Table.ascendingSortIcon"));
 		importFile.setMnemonic(KeyEvent.VK_I);
 		importFile.addActionListener(new ImportFileAction());
 		fileMenu.add(importFile);
 
-		JMenuItem exportFile = new JMenuItem("Export",
-				new ImageIcon(getClass().getClassLoader().getResource("fileIcons/export.png")));
+		JMenuItem exportFile = new JMenuItem("Export",UIManager.getIcon("Table.descendingSortIcon"));
 		exportFile.setMnemonic(KeyEvent.VK_E);
 		exportFile.addActionListener(new ActionListener() {
 			@Override
@@ -85,7 +82,7 @@ public class ApplicationMenubar extends JMenuBar {
 		fileMenu.add(exportFile);
 
 		fileMenu.addSeparator();
-		JMenuItem exitApplication = new JMenuItem("Exit");
+		JMenuItem exitApplication = new JMenuItem("Exit",UIManager.getIcon("InternalFrame.closeIcon"));
 		saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
 		exitApplication.addActionListener(new ExitApplicationAction());
 		fileMenu.add(exitApplication);
