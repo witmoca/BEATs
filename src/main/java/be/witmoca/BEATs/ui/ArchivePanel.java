@@ -27,7 +27,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-
+import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
 import be.witmoca.BEATs.ui.t4j.RowNumberTable;
 import be.witmoca.BEATs.ui.t4j.TableColumnManager;
 
@@ -50,5 +50,9 @@ public class ArchivePanel extends JPanel {
 		
 		// Table Column Manager (choose the available columns)
 		new TableColumnManager(archiveTable);
+		
+		// Add a rowsorter and render icons at the top to indicate sorting order
+		archiveTable.setRowSorter(new ArchiveTableRowSorter<>(archiveTable.getModel()));
+		archiveTable.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
 	}
 }

@@ -38,7 +38,7 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	private List<ArchiveEntry> archive = null;
 	
 	
-	// Layout: "Artist, pre", "Song", "Episode + Section", "Comment" 
+	// Layout: "Artist", "Song", "Episode + Section", "Comment" 
 	
 	public ArchiveTableModel() {
 		super();
