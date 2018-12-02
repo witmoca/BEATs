@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import be.witmoca.BEATs.ui.t4j.RowNumberTable;
+import be.witmoca.BEATs.ui.t4j.TableColumnManager;
 
 public class ArchivePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -46,5 +47,8 @@ public class ArchivePanel extends JPanel {
 		JTable rowTable = new RowNumberTable(archiveTable);
 		archiveScrollPane.setRowHeaderView(rowTable);
 		archiveScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
+		
+		// Table Column Manager (choose the available columns)
+		new TableColumnManager(archiveTable);
 	}
 }

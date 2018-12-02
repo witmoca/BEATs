@@ -32,6 +32,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import be.witmoca.BEATs.ui.t4j.RowNumberTable;
+import be.witmoca.BEATs.ui.t4j.TableColumnManager;
 
 public class PlaylistPanel extends JPanel implements ChangeListener {
 	private static final long serialVersionUID = 1L;
@@ -52,6 +53,9 @@ public class PlaylistPanel extends JPanel implements ChangeListener {
 		JTable rowTable = new RowNumberTable(playlistTable);
 		playlistScrollPane.setRowHeaderView(rowTable);
 		playlistScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
+		
+		// Table Column Manager (choose the available columns)
+		new TableColumnManager(playlistTable);
 	}
 
 	@Override
