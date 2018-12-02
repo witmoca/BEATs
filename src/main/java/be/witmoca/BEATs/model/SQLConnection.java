@@ -28,9 +28,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConnection;
 
@@ -170,22 +173,30 @@ public class SQLConnection implements AutoCloseable {
 			}
 		}
 	}
-	
+
 	public PreparedStatement prepareStatement(String sql) throws SQLException {
 		return Db.prepareStatement(sql);
 	}
-	
-	public void commit(EnumSet<DataChangedListener.DataType> eSet) throws SQLException {
+
+	public synchronized void commit(EnumSet<DataChangedListener.DataType> eSet) throws SQLException {
 		Db.commit();
 		this.setChanged();
-		
-		for(DataChangedListener dL : dataListeners.keySet()) {
-			for(DataChangedListener.DataType dT : dataListeners.get(dL)) {
-				if(eSet.contains(dT)) {
-					dL.tableChanged();
+
+		ArrayList<DataChangedListener> clientsToNotify = new ArrayList<>();
+		// First compile a list of clients to notify
+		for (DataChangedListener dL : dataListeners.keySet()) {
+			for (DataChangedListener.DataType dT : dataListeners.get(dL)) {
+				if (eSet.contains(dT)) {
+					clientsToNotify.add(dL);
 					break;
 				}
 			}
+		}
+
+		// only now notify them (this might cause clients to add/modify/delete
+		// DataChangedListeners, so this list has to be static)
+		for(DataChangedListener client : clientsToNotify) {
+			client.tableChanged();
 		}
 	}
 
@@ -214,8 +225,8 @@ public class SQLConnection implements AutoCloseable {
 	private void setChanged() {
 		this.changedState = true;
 	}
-	
-	public void addDataChangedListener(DataChangedListener d, EnumSet<DataChangedListener.DataType> e) {
+
+	public synchronized void addDataChangedListener(DataChangedListener d, EnumSet<DataChangedListener.DataType> e) {
 		dataListeners.put(d, e);
 	}
 }

@@ -72,7 +72,7 @@ public class Launch {
 
 	/**
 	 * Fails the application and prints a stack trace in a dialog (only a valid
-	 * function before any gui is present)
+	 * function before any GUI is present)
 	 * 
 	 * @param e
 	 */
@@ -85,6 +85,7 @@ public class Launch {
 					e.getClass() + "\n" + e.getLocalizedMessage() + "\n\nStacktrace:\n"
 							+ stacktraceW.getBuffer().toString(),
 					"Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		} else {
 			// If not on EDT, then schedule for execution on EDT
 			try {
@@ -109,6 +110,9 @@ public class Launch {
 	 * @throws SQLException
 	 */
 	public static void changeModel(String fileToLoad) {
+		if(!SwingUtilities.isEventDispatchThread())
+			throw new RuntimeException("Launch.changeModel called from outside the EDT!");
+		
 		// Do an 'exit'
 		ExitApplicationAction eaa = new ExitApplicationAction();
 		eaa.actionPerformed(new ActionEvent(Launch.class, ActionEvent.ACTION_PERFORMED, "changeModel"));

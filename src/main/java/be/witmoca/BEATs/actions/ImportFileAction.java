@@ -86,6 +86,7 @@ public class ImportFileAction implements ActionListener {
 				JOptionPane.showMessageDialog(Launch.getAPP_WINDOW(),
 						"Could not open file:\n" + e1.getClass() + "\n" + e1.getLocalizedMessage(), "Import Error",
 						JOptionPane.ERROR_MESSAGE);
+				e1.printStackTrace();
 			}
 		}
 	}
