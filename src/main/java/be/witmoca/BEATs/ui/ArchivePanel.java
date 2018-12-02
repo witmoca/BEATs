@@ -24,20 +24,27 @@ package be.witmoca.BEATs.ui;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+
+import be.witmoca.BEATs.ui.t4j.RowNumberTable;
 
 public class ArchivePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public static final String TITLE = "Archive"; 
 	
-	private final JComponent archiveTable = new ArchiveTable();
+	private final JTable archiveTable = new ArchiveTable();
 	private final JScrollPane archiveScrollPane = new JScrollPane(archiveTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 	
 	public ArchivePanel() {
 		super(new BorderLayout());
 		
 		this.add(archiveScrollPane, BorderLayout.CENTER);
+		
+		// Row numbers
+		JTable rowTable = new RowNumberTable(archiveTable);
+		archiveScrollPane.setRowHeaderView(rowTable);
+		archiveScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
 	}
 }

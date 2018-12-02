@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConnection;
 
