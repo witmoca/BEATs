@@ -22,47 +22,17 @@
 */
 package be.witmoca.BEATs.ui;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-public class ArchiveTableRowSorter<M extends TableModel> extends TableRowSorter<M> implements RowSorterListener{
+public class ArchiveTableRowSorter<M extends TableModel> extends TableRowSorter<M>{
 	public ArchiveTableRowSorter(M model) {
 		super(model);	
 		this.setSortsOnUpdates(true);
-		this.addRowSorterListener(this);
 		this.setMaxSortKeys(2);
 		this.setComparator(2, new EpisodeComparator());
-	}
-
-	@Override
-	public void sorterChanged(RowSorterEvent e) {
-		if(e.getType() == RowSorterEvent.Type.SORTED || e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
-			ArrayList<SortKey> keys = new ArrayList<SortKey>();
-			if(keys.size() == 0)
-				return;
-			keys.add(this.getSortKeys().get(0));
-			
-			switch (keys.get(0).getColumn()) {
-			case 0: 
-				keys.add(new SortKey(1, keys.get(0).getSortOrder()) );
-				break;
-			case 1:
-				keys.add(new SortKey(2, keys.get(0).getSortOrder()) );
-				break;
-			case 2:
-				keys.add(new SortKey(0, keys.get(0).getSortOrder()) );
-				break;
-			case 3:
-				keys.add(new SortKey(2, keys.get(0).getSortOrder()) );
-				break;
-			} 
-			this.setSortKeys(keys);
-		}
 	}
 	
     private static class EpisodeComparator implements Comparator<String> {
