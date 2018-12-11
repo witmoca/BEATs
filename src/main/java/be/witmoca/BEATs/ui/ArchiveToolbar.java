@@ -17,51 +17,52 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistPanel.java
+* File: ArchiveToolbar.java
 * Created: 2018
 */
 package be.witmoca.BEATs.ui;
 
-import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
+import javax.swing.JButton;
 import javax.swing.JTable;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import be.witmoca.BEATs.ui.t4j.RowNumberTable;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
 
-public class PlaylistPanel extends JPanel implements ChangeListener {
+public class ArchiveToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
-	private final PlaylistTable playlistTable;
-	private final JScrollPane playlistScrollPane;
 
-	public PlaylistPanel(JTabbedPane parent, String title) {
-		super(new BorderLayout());
+	private final JTextField searchTerm = new JTextField(20);
+	private final JButton searchSubmit = new JButton("Search");
+	private final JTable archiveTable;
 
-		parent.addChangeListener(this);
-		playlistTable = new PlaylistTable(title);
-		playlistScrollPane = new JScrollPane(playlistTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-		this.add(playlistScrollPane, BorderLayout.CENTER);
-
-		// Row numbers
-		JTable rowTable = new RowNumberTable(playlistTable);
-		playlistScrollPane.setRowHeaderView(rowTable);
-		playlistScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
+	public ArchiveToolbar(JTable table) {
+		super("Archive Toolbar",JToolBar.HORIZONTAL);
+		archiveTable = table;
+		
+		// Adhere to the given column count in the text fields constructor
+		searchTerm.setMaximumSize(searchTerm.getPreferredSize());
+		this.add(searchTerm);
+		this.add(searchSubmit);
+		this.setFloatable(false);
+		
+		SortAction sa = new SortAction();
+		// Search on ENTER while in textfield
+		searchTerm.addActionListener(sa);
+		// search on buttonpress
+		searchSubmit.addActionListener(sa);
+		
 	}
-
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		// If the parent JTabbedPane selects this tab, reload the model
-		if (e.getSource() instanceof JTabbedPane) {
-			JTabbedPane parent = (JTabbedPane) e.getSource();
-			if (parent.getSelectedComponent().equals(this)) {
-				playlistTable.setTabTitle(parent.getTitleAt(parent.getSelectedIndex()));
-			}
-		}
+	
+	class SortAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String sTerm = searchTerm.getText().trim();
+			if(!sTerm.isEmpty())
+				((ArchiveTableRowSorter<?>) archiveTable.getRowSorter()).setRowFilter(new SearchRowFilter(sTerm));
+			else
+				((ArchiveTableRowSorter<?>) archiveTable.getRowSorter()).setRowFilter(null);
+		}					
 	}
-
 }
