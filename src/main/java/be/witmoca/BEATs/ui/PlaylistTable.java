@@ -23,6 +23,8 @@
 package be.witmoca.BEATs.ui;
 
 import javax.swing.JTable;
+import javax.swing.table.TableRowSorter;
+
 import be.witmoca.BEATs.model.PlaylistTableModel;
 
 public class PlaylistTable extends JTable {
@@ -31,6 +33,12 @@ public class PlaylistTable extends JTable {
 	public PlaylistTable(String PlaylistName) {
 		super(new PlaylistTableModel(PlaylistName));
 		this.getTableHeader().setReorderingAllowed(false);
+		
+		// Add standard single column rowsorter
+		TableRowSorter<PlaylistTableModel> srt = new TableRowSorter<PlaylistTableModel>((PlaylistTableModel) this.getModel());
+		srt.setMaxSortKeys(1);
+		this.setRowSorter(srt);
+		
 	}
 	
 	public void setTabTitle(String tabTitle) {
