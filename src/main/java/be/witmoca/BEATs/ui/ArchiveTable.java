@@ -24,6 +24,8 @@ package be.witmoca.BEATs.ui;
 
 import javax.swing.JTable;
 import be.witmoca.BEATs.model.ArchiveTableModel;
+import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
+import be.witmoca.BEATs.ui.t4j.TableColumnManager;
 
 public class ArchiveTable extends JTable {
 	private static final long serialVersionUID = 1L;
@@ -31,5 +33,12 @@ public class ArchiveTable extends JTable {
 	public ArchiveTable() {
 		super(new ArchiveTableModel());
 		this.getTableHeader().setReorderingAllowed(false);
+
+		// Table Column Manager (choose the available columns)
+		new TableColumnManager(this);
+
+		// Add a rowsorter and render icons at the top to indicate sorting order
+		this.setRowSorter(new ArchiveTableRowSorter<>(this.getModel()));
+		this.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
 	}
 }
