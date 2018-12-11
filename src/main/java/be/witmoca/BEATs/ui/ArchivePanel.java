@@ -41,12 +41,8 @@ public class ArchivePanel extends JPanel {
 	public ArchivePanel() {
 		super(new BorderLayout());
 		
+		this.add(new ArchiveToolbar(archiveTable), BorderLayout.NORTH);
 		this.add(archiveScrollPane, BorderLayout.CENTER);
-		
-		// Row numbers
-		JTable rowTable = new RowNumberTable(archiveTable);
-		archiveScrollPane.setRowHeaderView(rowTable);
-		archiveScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
 		
 		// Table Column Manager (choose the available columns)
 		new TableColumnManager(archiveTable);
@@ -54,5 +50,10 @@ public class ArchivePanel extends JPanel {
 		// Add a rowsorter and render icons at the top to indicate sorting order
 		archiveTable.setRowSorter(new ArchiveTableRowSorter<>(archiveTable.getModel()));
 		archiveTable.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
+		
+		// Add a rownumbers (has to go AFTER the rowsorter)
+		JTable rowTable = new RowNumberTable(archiveTable);
+		archiveScrollPane.setRowHeaderView(rowTable);
+		archiveScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
 	}
 }

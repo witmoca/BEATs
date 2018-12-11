@@ -11,6 +11,10 @@ import javax.swing.table.*;
  *	Use a JTable as a renderer for row numbers of a given main table.
  *  This table must be added to the row header of the scrollpane that
  *  contains the main table.
+ *  
+ *  Contains custom additions by Witmoca
+ *  
+ *  Note: is capable of tracking a rowsorter (selection change), but only if the rowsorter exists beforehand
  */
 public class RowNumberTable extends JTable
 	implements ChangeListener, PropertyChangeListener, TableModelListener
@@ -36,6 +40,12 @@ public class RowNumberTable extends JTable
 
 		getColumnModel().getColumn(0).setPreferredWidth(50);
 		setPreferredScrollableViewportSize(getPreferredSize());
+		tableHeader.setReorderingAllowed(false);
+		
+		// If the table has a rowsorter => track it for changes
+		if(table.getRowSorter() != null) {
+			table.getRowSorter().addRowSorterListener(new RowSorterPainter(table));
+		}
 	}
 
 	@Override
@@ -134,6 +144,8 @@ public class RowNumberTable extends JTable
 			revalidate();
 		}
 	}
+	
+	
 
 //
 //  Implement the TableModelListener
@@ -183,6 +195,21 @@ public class RowNumberTable extends JTable
 			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
 
 			return this;
+		}
+	}	
+	
+	/*
+	 *  This class is a workaround fix => repaints the RowNumberTable when the rowsorter gets changed
+	 */
+	private static class RowSorterPainter implements RowSorterListener {
+		private final JTable rowTable;
+		
+		public RowSorterPainter(JTable rowTable) {
+			this.rowTable = rowTable;
+		}
+		@Override
+		public void sorterChanged(RowSorterEvent e) {
+			rowTable.repaint();
 		}
 	}
 }

@@ -43,6 +43,8 @@ public class ArchiveTableRowSorter<M extends TableModel> extends TableRowSorter<
 	public void sorterChanged(RowSorterEvent e) {
 		if(e.getType() == RowSorterEvent.Type.SORTED || e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
 			ArrayList<SortKey> keys = new ArrayList<SortKey>();
+			if(keys.size() == 0)
+				return;
 			keys.add(this.getSortKeys().get(0));
 			
 			switch (keys.get(0).getColumn()) {
