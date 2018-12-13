@@ -17,30 +17,42 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: CurrentQueuePanel.java
+* File: StringUtils.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.utils;
 
-import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+public class StringUtils {
 
-import be.witmoca.BEATs.model.CurrentQueueListModel;
-
-public class CurrentQueuePanel extends JPanel {
-	private static final long serialVersionUID = 1L;
-	private final JList<String> Queue = new JList<String>(new CurrentQueueListModel());
-	private final JButton title = new JButton("Played this session:");
-	
-	public CurrentQueuePanel() {
-		super(new BorderLayout());
-		title.setFont(title.getFont().deriveFont(22F));
-		title.setEnabled(false);
-		this.add(title, BorderLayout.NORTH);
-		this.add(new JScrollPane(Queue, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+	/**
+	 * Transforms a string into a sanitized Upper CamelCase string
+	* @param s String to transform
+	* @return Sanitized and transformed string
+	 */
+	public static String ToUpperCamelCase(String s) {
+		List<String> words = Arrays.asList(s.trim().split(" ")); //immutable list
+		List<String> returnWords = new ArrayList<String>();
+		
+		for (String word : words) {
+			word = word.trim().toLowerCase();
+			
+			if(word.isEmpty())
+				continue;
+			else if(word.length() == 1) {
+				returnWords.add(word.toUpperCase());
+			} else {
+				returnWords.add(word.substring(0, 1).toUpperCase() + word.substring(1));
+			}
+		}
+		try {
+			return String.join(" ", returnWords);
+		} catch (NullPointerException e) {
+			return "";
+		}
 	}
+
 }

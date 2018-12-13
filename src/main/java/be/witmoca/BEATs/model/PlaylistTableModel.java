@@ -32,11 +32,12 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.utils.StringUtils;
 
 public class PlaylistTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
 	private String PlaylistName;
-	private static final String COLUMN_NAME[] = { "Artist", "Song", "Comment" };
+	private static final String COLUMN_NAME[] = { "Artist", "Song", "Comment", "Move to Queue"};
 	private List<PlaylistEntry> playlistList = null;
 
 	public PlaylistTableModel(String playlistName) {
@@ -75,10 +76,12 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
+		if(columnIndex == 3)
+			return "Played";
 		try {
 			return playlistList.get(rowIndex).getColumn(columnIndex);
 		} catch (IndexOutOfBoundsException e) {
-			return null;
+			return "";
 		}
 	}
 
@@ -98,6 +101,8 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 	}
 	
 	public void deleteRow(int rowIndex) {
+		if(rowIndex >= this.getRowCount()-1)
+			return;
 		try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement(
 				"DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
 			for (int i = 0; i < 3; i++) {
@@ -105,6 +110,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 			}
 			updateVal.setString(1, PlaylistName);
 			updateVal.executeUpdate();
+			Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -112,14 +118,17 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		String sValue = StringUtils.ToUpperCamelCase( (String) aValue);
+		if(columnIndex == 3)
+			return;
 		try {
 			if (rowIndex >= playlistList.size()) {
 				// INSERT NEW
-				if (((String) aValue).trim().isEmpty())
+				if (sValue.isEmpty())
 					return;
 
 				String ins[] = { "", "", "" };
-				ins[columnIndex] = (String) aValue;
+				ins[columnIndex] = sValue;
 				SQLObjectTransformer.addSongInPlaylist(PlaylistName, ins[0], ins[1], ins[2]);
 			} else {
 				// Load with current values and update with new one (in array)
@@ -127,7 +136,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 				for (int i = 0; i < values.length; i++) {
 					values[i] = playlistList.get(rowIndex).getColumn(i);
 				}
-				values[columnIndex] = (String) aValue;
+				values[columnIndex] = sValue;
 
 				// check if a delete isn't more appropriate (all empty cells)
 				if (String.join("", values).trim().isEmpty()) {

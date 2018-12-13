@@ -17,38 +17,50 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistTable.java
+* File: CurrentQueuePanel.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.playlistpanel;
+package be.witmoca.BEATs.ui.currentqueue;
 
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableRowSorter;
+import java.awt.BorderLayout;
 
-import be.witmoca.BEATs.model.PlaylistTableModel;
-import be.witmoca.BEATs.ui.currentqueue.MoveToQueueAction;
-import be.witmoca.BEATs.ui.t4j.ButtonColumn;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
-public class PlaylistTable extends JTable {
+import be.witmoca.BEATs.model.CurrentQueueListModel;
+
+public class CurrentQueuePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-
-	protected PlaylistTable(String PlaylistName) {
-		super(new PlaylistTableModel(PlaylistName));
-		this.getTableHeader().setReorderingAllowed(false);
-		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
-		// Add standard single column rowsorter
-		TableRowSorter<PlaylistTableModel> srt = new TableRowSorter<PlaylistTableModel>((PlaylistTableModel) this.getModel());
-		srt.setSortable(3, true);
-		srt.setMaxSortKeys(1);
-		this.setRowSorter(srt);
-		
-		this.setComponentPopupMenu(new PlaylistPopupMenu(this));
-		new ButtonColumn(this, new MoveToQueueAction(), 3);
-	}
+	private final JList<String> Queue = new JList<String>(new CurrentQueueListModel());
+	private final JButton title = new JButton("Played this session:");
 	
-	protected void setTabTitle(String tabTitle) {
-		((PlaylistTableModel) this.getModel()).setPlaylistName(tabTitle);
+	public CurrentQueuePanel() {
+		super(new BorderLayout());
+		title.setFont(title.getFont().deriveFont(22F));
+		title.setEnabled(false);
+		this.add(title, BorderLayout.NORTH);
+		this.add(new JScrollPane(Queue, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+		
+		// Update the view if the contents should become to big to display
+		Queue.getModel().addListDataListener(new ListDataListener() {
+			@Override
+			public void intervalAdded(ListDataEvent e) {
+				revalidate();
+			}
+
+			@Override
+			public void intervalRemoved(ListDataEvent e) {
+				revalidate();
+			}
+
+			@Override
+			public void contentsChanged(ListDataEvent e) {
+				revalidate();
+			}
+		});
 	}
 }

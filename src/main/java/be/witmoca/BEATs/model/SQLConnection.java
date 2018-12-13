@@ -77,6 +77,7 @@ public class SQLConnection implements AutoCloseable {
 		try (Statement save = Db.createStatement()) {
 			save.executeUpdate("backup to " + savePath);
 		}
+		this.setSaved();
 	}
 
 	private SQLiteConfig configSettings() {
@@ -94,9 +95,9 @@ public class SQLConnection implements AutoCloseable {
 		try (Statement createEmptyTables = Db.createStatement()) {
 			// Artist-Song
 			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS Artist(ArtistName TEXT PRIMARY KEY, Local INTEGER NOT NULL)");
+					"CREATE TABLE IF NOT EXISTS Artist(ArtistName TEXT PRIMARY KEY COLLATE NOCASE, Local INTEGER NOT NULL)");
 			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS Song(SongId INTEGER PRIMARY KEY, Title TEXT, ArtistName REFERENCES Artist, UNIQUE (Title, ArtistName))");
+					"CREATE TABLE IF NOT EXISTS Song(SongId INTEGER PRIMARY KEY, Title TEXT COLLATE NOCASE, ArtistName REFERENCES Artist, UNIQUE (Title, ArtistName))");
 			// Other Base tables
 			createEmptyTables.executeUpdate(
 					"CREATE TABLE IF NOT EXISTS Playlist(PlaylistName TEXT PRIMARY KEY, TabOrder INTEGER NOT NULL UNIQUE)");
