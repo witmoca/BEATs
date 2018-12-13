@@ -17,19 +17,30 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: EastPanel.java
+* File: CurrentQueuePanel.java
 * Created: 2018
 */
 package be.witmoca.BEATs.ui;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JButton;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
-public class EastPanel extends JPanel {
+import be.witmoca.BEATs.model.CurrentQueueListModel;
+
+public class CurrentQueuePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
+	private final JList<String> Queue = new JList<String>(new CurrentQueueListModel());
+	private final JButton title = new JButton("Played this session:");
 	
-	public EastPanel() {
+	public CurrentQueuePanel() {
 		super(new BorderLayout());
+		title.setFont(title.getFont().deriveFont(22F));
+		title.setEnabled(false);
+		this.add(title, BorderLayout.NORTH);
+		this.add(new JScrollPane(Queue, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
 	}
 }

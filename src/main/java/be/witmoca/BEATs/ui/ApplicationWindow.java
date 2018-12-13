@@ -37,7 +37,7 @@ public class ApplicationWindow extends JFrame implements WindowListener{
 	private static final long serialVersionUID = 1L;
 	private static final String mainTitleBase = "Burning Ember";
 	
-	private final JComponent eastPanel = new EastPanel();
+	private final JComponent eastPanel = new CurrentQueuePanel();
 	private final JComponent centerPanel = new CenterTabbedPane();
 
 	public ApplicationWindow() {
