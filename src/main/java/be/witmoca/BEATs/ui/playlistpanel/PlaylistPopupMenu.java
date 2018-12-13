@@ -17,34 +17,23 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistTable.java
+* File: PlaylistPopupMenu.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.playlist;
+package be.witmoca.BEATs.ui.playlistpanel;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableRowSorter;
 
-import be.witmoca.BEATs.model.PlaylistTableModel;
 
-public class PlaylistTable extends JTable {
+public class PlaylistPopupMenu extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
-
-	public PlaylistTable(String PlaylistName) {
-		super(new PlaylistTableModel(PlaylistName));
-		this.getTableHeader().setReorderingAllowed(false);
-		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
-		// Add standard single column rowsorter
-		TableRowSorter<PlaylistTableModel> srt = new TableRowSorter<PlaylistTableModel>((PlaylistTableModel) this.getModel());
-		srt.setMaxSortKeys(1);
-		this.setRowSorter(srt);
-		
-		this.setComponentPopupMenu(new PlaylistPopupMenu(this));
-	}
+	private final JTable connectedTable;
 	
-	public void setTabTitle(String tabTitle) {
-		((PlaylistTableModel) this.getModel()).setPlaylistName(tabTitle);
+	protected PlaylistPopupMenu(JTable assocTable) {
+		super();
+		connectedTable = assocTable;
+		this.add(new JMenuItem(new DeleteAction(connectedTable)));
 	}
 }

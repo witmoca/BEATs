@@ -20,7 +20,7 @@
 * File: PlaylistToolbar.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.playlist;
+package be.witmoca.BEATs.ui.playlistpanel;
 
 import javax.swing.JButton;
 import javax.swing.JTable;
@@ -33,7 +33,7 @@ public class PlaylistToolbar extends JToolBar {
 
 	private final JTable playlistTable;
 
-	public PlaylistToolbar(JTable table) {
+	protected PlaylistToolbar(JTable table) {
 		super("Playlist Toolbar", JToolBar.HORIZONTAL);
 		playlistTable = table;
 

@@ -20,7 +20,7 @@
 * File: DeleteAction.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.playlist;
+package be.witmoca.BEATs.ui.playlistpanel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -39,7 +39,7 @@ public class DeleteAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JTable connectedTable;
 
-	public DeleteAction(JTable table) {
+	protected DeleteAction(JTable table) {
 		super("Delete");
 		this.putValue(Action.ACTION_COMMAND_KEY, "Playlist: Delete Song Selection");
 		this.putValue(Action.SMALL_ICON, new ImageIcon(getClass().getClassLoader().getResource("Icons/recyclebin.png")));

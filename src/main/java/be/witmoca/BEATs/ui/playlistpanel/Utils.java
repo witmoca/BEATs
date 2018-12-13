@@ -20,7 +20,7 @@
 * File: Utils.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.playlist;
+package be.witmoca.BEATs.ui.playlistpanel;
 
 import javax.swing.JTable;
 import javax.swing.RowSorter;
@@ -36,7 +36,7 @@ public class Utils {
 	 * @return {@code int[]} holding corresponding indices from the model (returns
 	 *         viewSelection if no rowsorter present)
 	 */
-	public static int[] convertSelectionToModel(int[] viewSelection, JTable table) {
+	protected static int[] convertSelectionToModel(int[] viewSelection, JTable table) {
 		if (table.getRowSorter() == null)
 			return viewSelection;
 		else {

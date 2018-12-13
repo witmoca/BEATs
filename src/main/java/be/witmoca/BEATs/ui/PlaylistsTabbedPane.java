@@ -31,7 +31,7 @@ import javax.swing.JTabbedPane;
 
 import be.witmoca.BEATs.Launch;
 import be.witmoca.BEATs.model.DataChangedListener;
-import be.witmoca.BEATs.ui.playlist.PlaylistPanel;
+import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
 public class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
 	private static final long serialVersionUID = 1L;
