@@ -34,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.model.PlaylistTableModel;
 
 public class DeleteAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
@@ -66,9 +67,8 @@ public class DeleteAction extends AbstractAction {
 
 		// Clearing all cells removes the row
 		for (int i = rowIndices.length - 1; i >= 0; i--) {
-			for (int column = 0; column < connectedTable.getColumnCount(); column++) {
-				connectedTable.getModel().setValueAt("", rowIndices[i], column);
-			}
+				((PlaylistTableModel) connectedTable.getModel()).deleteRow(rowIndices[i]);
+			
 		}
 	}
 }

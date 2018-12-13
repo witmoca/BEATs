@@ -96,6 +96,19 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return true;
 	}
+	
+	public void deleteRow(int rowIndex) {
+		try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement(
+				"DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
+			for (int i = 0; i < 3; i++) {
+				updateVal.setString(2 + i, playlistList.get(rowIndex).getColumn(i)); // old values
+			}
+			updateVal.setString(1, PlaylistName);
+			updateVal.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
@@ -118,14 +131,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 
 				// check if a delete isn't more appropriate (all empty cells)
 				if (String.join("", values).trim().isEmpty()) {
-					try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement(
-							"DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
-						for (int i = 0; i < values.length; i++) {
-							updateVal.setString(2 + i, playlistList.get(rowIndex).getColumn(i)); // old values
-						}
-						updateVal.setString(1, PlaylistName);
-						updateVal.executeUpdate();
-					}
+					this.deleteRow(rowIndex);
 				} else {
 					try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement(
 							"UPDATE SongsInPlaylist SET Artist = ?, Song = ?, Comment = ? WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
