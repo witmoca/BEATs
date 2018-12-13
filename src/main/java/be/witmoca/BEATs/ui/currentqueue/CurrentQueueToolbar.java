@@ -17,52 +17,24 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: CurrentQueuePanel.java
+* File: CurrentQueueToolbar.java
 * Created: 2018
 */
 package be.witmoca.BEATs.ui.currentqueue;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import javax.swing.JToolBar;
 
-import be.witmoca.BEATs.model.CurrentQueueListModel;
-
-public class CurrentQueuePanel extends JPanel {
+public class CurrentQueueToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
-	private final JList<String> Queue = new JList<String>(new CurrentQueueListModel());
-	private final JButton title = new JButton("Played this session:");
-	
-	public CurrentQueuePanel() {
-		super(new BorderLayout());
-		title.setFont(title.getFont().deriveFont(22F));
-		title.setEnabled(false);
-		this.add(title, BorderLayout.NORTH);
-		this.add(new JScrollPane(Queue, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-		
-		// Update the view if the contents should become to big to display
-		Queue.getModel().addListDataListener(new ListDataListener() {
-			@Override
-			public void intervalAdded(ListDataEvent e) {
-				revalidate();
-			}
+	private final JList<String> queue;
 
-			@Override
-			public void intervalRemoved(ListDataEvent e) {
-				revalidate();
-			}
-
-			@Override
-			public void contentsChanged(ListDataEvent e) {
-				revalidate();
-			}
-		});
+	public CurrentQueueToolbar(JList<String> Queue) {
+		super("CurrentQueue Toolbar",JToolBar.HORIZONTAL);
+		this.setFloatable(false);
+		queue = Queue;
 		
-		this.add(new CurrentQueueToolbar(Queue), BorderLayout.SOUTH);
+		this.add(new JButton(new RevertToPlaylistFromQueueAction(queue)));
 	}
 }

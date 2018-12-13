@@ -95,7 +95,7 @@ public class MoveToQueueAction extends AbstractAction {
 			}
 			
 			// Add the new set to the currentQueue
-			try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO CurrentQueue (SongId, Comment) VALUES (?, ?)")){
+			try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT INTO CurrentQueue (SongId, Comment) VALUES (?, ?)")){
 				add.setInt(1, songId);
 				add.setString(2, rawComment);
 				add.executeUpdate();

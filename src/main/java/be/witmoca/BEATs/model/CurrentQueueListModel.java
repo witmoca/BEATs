@@ -49,7 +49,11 @@ public class CurrentQueueListModel extends AbstractListModel<String> implements 
 
 	@Override
 	public String getElementAt(int index) {
-		return internalMap.get(internalMap.keySet().toArray()[index]);
+		return internalMap.get(this.getSongOrderAt(index));
+	}
+	
+	public int getSongOrderAt(int index) {
+		return (int) internalMap.keySet().toArray()[index];
 	}
 
 	@Override
