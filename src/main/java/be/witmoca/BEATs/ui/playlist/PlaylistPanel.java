@@ -20,7 +20,7 @@
 * File: PlaylistPanel.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.playlist;
 
 import java.awt.BorderLayout;
 import javax.swing.JPanel;

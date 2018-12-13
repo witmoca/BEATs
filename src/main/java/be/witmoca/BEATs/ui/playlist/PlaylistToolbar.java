@@ -17,48 +17,31 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: PlaylistToolbar.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.playlist;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EnumSet;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.JToolBar;
 
-import javax.swing.JTabbedPane;
-
-import be.witmoca.BEATs.Launch;
-import be.witmoca.BEATs.model.DataChangedListener;
-import be.witmoca.BEATs.ui.playlist.PlaylistPanel;
-
-public class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
+public class PlaylistToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
-	public static final String TITLE = "Playlists"; 
 
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		Launch.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+	private final JButton deleteButton;
+
+	private final JTable playlistTable;
+
+	public PlaylistToolbar(JTable table) {
+		super("Playlist Toolbar", JToolBar.HORIZONTAL);
+		playlistTable = table;
+
+		this.setFloatable(false);
+
+		// Add delete button
+		deleteButton = new JButton(new DeleteAction(playlistTable));
+
+		this.add(deleteButton);
 	}
-	
-	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			while(value.next()) {
-				if(value.getRow() <= this.getTabCount()) {
-					this.setTitleAt(value.getRow()-1, value.getString(1));
-				} else {
-					this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
 }

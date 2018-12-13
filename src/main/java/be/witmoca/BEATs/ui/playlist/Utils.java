@@ -17,48 +17,35 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: Utils.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.playlist;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EnumSet;
+import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.table.TableModel;
 
-import javax.swing.JTabbedPane;
+public class Utils {
 
-import be.witmoca.BEATs.Launch;
-import be.witmoca.BEATs.model.DataChangedListener;
-import be.witmoca.BEATs.ui.playlist.PlaylistPanel;
-
-public class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
-	private static final long serialVersionUID = 1L;
-	public static final String TITLE = "Playlists"; 
-
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		Launch.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
-	}
-	
-	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			while(value.next()) {
-				if(value.getRow() <= this.getTabCount()) {
-					this.setTitleAt(value.getRow()-1, value.getString(1));
-				} else {
-					this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-				}
+	/**
+	 * General purpose selectionmodel converter
+	 * 
+	 * @param viewSelection
+	 *            the {@code int[]} holding indices from the view
+	 * @return {@code int[]} holding corresponding indices from the model (returns
+	 *         viewSelection if no rowsorter present)
+	 */
+	public static int[] convertSelectionToModel(int[] viewSelection, JTable table) {
+		if (table.getRowSorter() == null)
+			return viewSelection;
+		else {
+			RowSorter<? extends TableModel> rs = table.getRowSorter();
+			int modelSel[] = new int[viewSelection.length];
+			for (int i = 0; i < viewSelection.length; i++) {
+				modelSel[i] = rs.convertRowIndexToModel(viewSelection[i]);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			return modelSel;
 		}
 	}
-	
-	
 }

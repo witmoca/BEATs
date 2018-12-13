@@ -20,7 +20,7 @@
 * File: PlaylistTable.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.playlist;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -40,6 +40,8 @@ public class PlaylistTable extends JTable {
 		TableRowSorter<PlaylistTableModel> srt = new TableRowSorter<PlaylistTableModel>((PlaylistTableModel) this.getModel());
 		srt.setMaxSortKeys(1);
 		this.setRowSorter(srt);
+		
+		this.setComponentPopupMenu(new PlaylistPopupMenu(this));
 	}
 	
 	public void setTabTitle(String tabTitle) {

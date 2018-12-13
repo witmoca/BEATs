@@ -17,48 +17,23 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: PlaylistPopupMenu.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.playlist;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EnumSet;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 
-import javax.swing.JTabbedPane;
 
-import be.witmoca.BEATs.Launch;
-import be.witmoca.BEATs.model.DataChangedListener;
-import be.witmoca.BEATs.ui.playlist.PlaylistPanel;
-
-public class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
+public class PlaylistPopupMenu extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
-	public static final String TITLE = "Playlists"; 
-
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		Launch.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+	private final JTable connectedTable;
+	
+	public PlaylistPopupMenu(JTable assocTable) {
+		super();
+		connectedTable = assocTable;
+		this.add(new JMenuItem(new DeleteAction(connectedTable)));
 	}
-	
-	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			while(value.next()) {
-				if(value.getRow() <= this.getTabCount()) {
-					this.setTitleAt(value.getRow()-1, value.getString(1));
-				} else {
-					this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
 }
