@@ -112,7 +112,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 				// Load with current values and update with new one (in array)
 				String values[] = new String[3];
 				for (int i = 0; i < values.length; i++) {
-					values[i] = playlistList.get(rowIndex).getColumn(1);
+					values[i] = playlistList.get(rowIndex).getColumn(i);
 				}
 				values[columnIndex] = (String) aValue;
 

@@ -23,13 +23,13 @@
 package be.witmoca.BEATs.ui;
 
 import java.awt.BorderLayout;
-
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import be.witmoca.BEATs.ui.t4j.RowNumberTable;
 
 public class PlaylistPanel extends JPanel implements ChangeListener {
@@ -42,9 +42,9 @@ public class PlaylistPanel extends JPanel implements ChangeListener {
 
 		parent.addChangeListener(this);
 		playlistTable = new PlaylistTable(title);
-		playlistScrollPane = new JScrollPane(playlistTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		playlistScrollPane = new JScrollPane(playlistTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
+		this.add(new PlaylistToolbar(playlistTable), BorderLayout.NORTH);
 		this.add(playlistScrollPane, BorderLayout.CENTER);
 
 		// Row numbers
@@ -63,5 +63,4 @@ public class PlaylistPanel extends JPanel implements ChangeListener {
 			}
 		}
 	}
-
 }
