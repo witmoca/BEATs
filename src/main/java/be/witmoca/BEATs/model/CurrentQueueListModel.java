@@ -25,9 +25,9 @@ package be.witmoca.BEATs.model;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.swing.AbstractListModel;
 
@@ -35,7 +35,7 @@ import be.witmoca.BEATs.Launch;
 
 public class CurrentQueueListModel extends AbstractListModel<String> implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
-	private final List<String> internalList = new ArrayList<String>();
+	private final SortedMap<Integer, String> internalMap = new TreeMap<Integer, String>();
 
 	public CurrentQueueListModel() {
 		Launch.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.CURRENT_QUEUE));
@@ -44,22 +44,22 @@ public class CurrentQueueListModel extends AbstractListModel<String> implements 
 
 	@Override
 	public int getSize() {
-		return internalList.size();
+		return internalMap.size();
 	}
 
 	@Override
 	public String getElementAt(int index) {
-		return internalList.get(index);
+		return internalMap.get(internalMap.keySet().toArray()[index]);
 	}
 
 	@Override
 	public void tableChanged() {
 		// Commit happend that changed the currentqueue => reload
-		internalList.clear();
-		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT (ArtistName || ' - ' || Title) FROM CurrentQueue, Song WHERE CurrentQueue.SongId = Song.SongId ORDER BY SongOrder ASC")) {
+		internalMap.clear();
+		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT SongOrder, (ArtistName || ' - ' || Title) FROM CurrentQueue, Song WHERE CurrentQueue.SongId = Song.SongId ORDER BY SongOrder ASC")) {
 			ResultSet value = getValue.executeQuery();
 			while(value.next()) {
-				internalList.add(value.getString(1));
+				internalMap.put(value.getInt(1) ,value.getString(2));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
