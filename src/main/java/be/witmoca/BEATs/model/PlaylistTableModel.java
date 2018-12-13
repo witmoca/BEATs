@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -98,51 +99,49 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		if(rowIndex >= playlistList.size()) {
-			// INSERT NEW
-			if(((String) aValue).trim().isEmpty() )
-				return;
-			
-			String ins[] = {"","",""};
-			ins[columnIndex] = (String) aValue;
-			try {
+		try {
+			if (rowIndex >= playlistList.size()) {
+				// INSERT NEW
+				if (((String) aValue).trim().isEmpty())
+					return;
+
+				String ins[] = { "", "", "" };
+				ins[columnIndex] = (String) aValue;
 				SQLObjectTransformer.addSongInPlaylist(PlaylistName, ins[0], ins[1], ins[2]);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} else {
-			
-			// Load with current values and update with new one (in array)
-			String values[] = new String[3];
-			for(int i = 0; i < values.length ; i++) {
-				values[i] = playlistList.get(rowIndex).getColumn(1);
-			}
-			values[columnIndex] = (String) aValue;
-			
-			try {
+			} else {
+				// Load with current values and update with new one (in array)
+				String values[] = new String[3];
+				for (int i = 0; i < values.length; i++) {
+					values[i] = playlistList.get(rowIndex).getColumn(1);
+				}
+				values[columnIndex] = (String) aValue;
+
 				// check if a delete isn't more appropriate (all empty cells)
-				if(String.join("", values).trim().isEmpty()) {
-					try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement("DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
-						for(int i = 0; i < values.length; i++) {
-							updateVal.setString(2 + i, playlistList.get(rowIndex).getColumn(i)); //old values
+				if (String.join("", values).trim().isEmpty()) {
+					try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement(
+							"DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
+						for (int i = 0; i < values.length; i++) {
+							updateVal.setString(2 + i, playlistList.get(rowIndex).getColumn(i)); // old values
 						}
 						updateVal.setString(1, PlaylistName);
 						updateVal.executeUpdate();
 					}
 				} else {
-					try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement("UPDATE SongsInPlaylist SET Artist = ?, Song = ?, Comment = ? WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
-						for(int i = 0; i < values.length; i++) {
+					try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement(
+							"UPDATE SongsInPlaylist SET Artist = ?, Song = ?, Comment = ? WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
+						for (int i = 0; i < values.length; i++) {
 							updateVal.setString(1 + i, values[i]); // new values
-							updateVal.setString(5 + i, playlistList.get(rowIndex).getColumn(i)); //old values
+							updateVal.setString(5 + i, playlistList.get(rowIndex).getColumn(i)); // old values
 						}
 						updateVal.setString(4, PlaylistName);
 						updateVal.executeUpdate();
 					}
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+
 			}
+			Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		this.tableChanged();
 	}
 }
