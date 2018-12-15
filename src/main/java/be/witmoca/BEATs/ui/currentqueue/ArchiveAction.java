@@ -17,25 +17,29 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: CurrentQueueToolbar.java
+* File: ArchiveAction.java
 * Created: 2018
 */
 package be.witmoca.BEATs.ui.currentqueue;
 
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JToolBar;
+import java.awt.event.ActionEvent;
 
-public class CurrentQueueToolbar extends JToolBar {
+import javax.swing.AbstractAction;
+import javax.swing.JList;
+
+public class ArchiveAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> queue;
-
-	public CurrentQueueToolbar(JList<String> Queue) {
-		super("CurrentQueue Toolbar",JToolBar.HORIZONTAL);
-		this.setFloatable(false);
+	
+	public ArchiveAction(JList<String> Queue) {
+		super("Archive");
 		queue = Queue;
-		
-		this.add(new JButton(new RevertToPlaylistFromQueueAction(queue)));
-		this.add(new JButton(new ArchiveAction(queue)));
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(queue.getModel().getSize() == 0)
+			return;
+		new ArchivalDialog();
 	}
 }
