@@ -22,19 +22,21 @@
 */
 package be.witmoca.BEATs.model;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+
 import be.witmoca.BEATs.Launch;
 
 public class SQLObjectTransformer {
 	public static String prefixes[] = {"The","De"}; // Prefixes from the different languages
 	
-	public static void addEpisode(int episodeID, Date episodeDate) throws SQLException {
+	public static void addEpisode(int episodeID, LocalDate episodeDate) throws SQLException {
 		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO episode VALUES (?, ?)")){
 			add.setInt(1, episodeID);
-			add.setDate(2, episodeDate);
+			// Actually an int is more than enough for the next few thousands of years (sqlite will take care of the type so no need to convert)
+			add.setLong(2, episodeDate.toEpochDay());
 			add.executeUpdate();
 		}
 	}
