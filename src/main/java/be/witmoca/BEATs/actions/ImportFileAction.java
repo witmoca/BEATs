@@ -26,8 +26,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -121,7 +123,7 @@ public class ImportFileAction implements ActionListener {
 			String artiest = "";
 			String titel = "";
 			int aflNr = 0;
-			Date aflDatum = null;
+			LocalDate aflDatum = null;
 			boolean belgisch = false;
 			String commentaar = "";
 
@@ -143,7 +145,9 @@ public class ImportFileAction implements ActionListener {
 					aflNr = Integer.parseInt(item.getTextContent());
 					break;
 				case "aflDatum":
-					aflDatum = new Date(Long.parseLong(item.getTextContent()));
+					Calendar cdar = Calendar.getInstance();
+					cdar.setTime(new Date(Long.parseLong(item.getTextContent())));
+					aflDatum = LocalDate.of(cdar.get(Calendar.YEAR),cdar.get(Calendar.MONTH)+1,cdar.get(Calendar.DAY_OF_MONTH));
 					break;
 				case "belgisch":
 					belgisch = item.getTextContent().startsWith("1");
