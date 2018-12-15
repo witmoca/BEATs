@@ -27,7 +27,22 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StringUtils {
-
+	public static String prefixes[] = {"The","De"}; // Prefixes from the different languages
+	
+	public static String filterPrefix(String artist) {
+		String result = artist;
+		for(String prefix : prefixes) {
+			if(artist.startsWith(prefix)) {
+				try {
+					artist = artist.substring(prefix.length());
+				} catch (IndexOutOfBoundsException e) {
+					artist = "";
+				}
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * Transforms a string into a sanitized Upper CamelCase string
 	* @param s String to transform
