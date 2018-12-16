@@ -27,20 +27,26 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StringUtils {
-	public static String prefixes[] = {"The","De"}; // Prefixes from the different languages
+	private static String prefixes[] = {"the","de"}; // Prefixes from the different languages (lowercase)
 	
+	/**
+	 *  Filters (a possible prefix) from the given string (while maintaining lower/upper case)
+	* @param artist
+	* @return
+	 */
 	public static String filterPrefix(String artist) {
 		String result = artist;
+		artist = artist.toLowerCase();
 		for(String prefix : prefixes) {
-			if(artist.startsWith(prefix)) {
+			if(artist.startsWith(prefix + " ")) {
 				try {
-					artist = artist.substring(prefix.length());
+					result = result.substring(prefix.length());
 				} catch (IndexOutOfBoundsException e) {
-					artist = "";
+					result = "";
 				}
 			}
 		}
-		return result;
+		return result.trim();
 	}
 	
 	/**

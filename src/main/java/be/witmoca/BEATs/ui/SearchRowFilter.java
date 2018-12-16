@@ -25,11 +25,13 @@ package be.witmoca.BEATs.ui;
 import javax.swing.RowFilter;
 import javax.swing.table.TableModel;
 
+import be.witmoca.BEATs.utils.StringUtils;
+
 public class SearchRowFilter extends RowFilter<TableModel, Integer> {
 	private final String searchString;
 	
 	public SearchRowFilter(String searchString) {
-		this.searchString = searchString.toLowerCase();
+		this.searchString = StringUtils.filterPrefix(searchString).toLowerCase();
 	}
 	
 	@Override
