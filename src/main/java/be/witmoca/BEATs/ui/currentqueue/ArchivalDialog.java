@@ -28,13 +28,15 @@ import java.beans.PropertyChangeListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
+import javax.swing.AbstractSpinnerModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -42,10 +44,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.SpinnerListModel;
 
 import be.witmoca.BEATs.Launch;
-import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
 
 public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private static final long serialVersionUID = 1L;
@@ -54,7 +55,7 @@ public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private final JPanel cPane = new JPanel(new BorderLayout());
 	private final JPanel entryPanel = new JPanel() ;
 	private final JSpinner episodeId;
-	private final JButton newEpisode = new JButton("+");
+	private final JSpinner sectionId;
 	
 	private boolean valid = false;
 	
@@ -62,12 +63,26 @@ public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		super(Launch.getAPP_WINDOW(), "Archive", true);
 		
 		// create the entryPanel
-		entryPanel.setLayout(new GroupLayout(entryPanel)); 
+		GroupLayout gLayout = new GroupLayout(entryPanel);
+		entryPanel.setLayout(gLayout); 
 
-		entryPanel.add(new JLabel("Episode"));
-		int maxExisting = getMaxEpisode();
-		episodeId = new JSpinner(new SpinnerNumberModel(maxExisting, 1, maxExisting, 1));
+		JLabel j1 = new JLabel("Episode");
+		entryPanel.add(j1);
+		episodeId = new JSpinner(new SpinnerEpisodeModel());
 		entryPanel.add(episodeId);
+		JComponent j2 = new JButton(new CreateNewEpisode(this, (SpinnerEpisodeModel) episodeId.getModel()));
+		entryPanel.add(j2);
+		
+		JLabel j3 = new JLabel("Section Code");
+		entryPanel.add(j3);
+		sectionId = new JSpinner(new SpinnerListModel(loadSections()));
+		entryPanel.add(sectionId);
+		
+		gLayout.setHorizontalGroup(gLayout.createSequentialGroup().addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(j1).addComponent(j3))
+		.addGap(5).addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(episodeId).addComponent(sectionId)).addComponent(j2));
+		
+		gLayout.setVerticalGroup(gLayout.createSequentialGroup().addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(j1).addComponent(episodeId).addComponent(j2))
+				.addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(j3).addComponent(sectionId)));
 		
 		// add the entryPanel
 		cPane.add(entryPanel, BorderLayout.CENTER);
@@ -78,7 +93,7 @@ public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		// Include the created cPane as the message of an optionpane, set this optionpane as the content for the dialog
 		// (optionpane just functions as a set of buttons here)
 		JOptionPane oPane = new JOptionPane(cPane, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-		this.setContentPane(cPane);
+		this.setContentPane(oPane);
 		
 		oPane.addPropertyChangeListener("value",this);
 		this.pack();
@@ -100,6 +115,20 @@ public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		
 		valid = true;
 		this.dispose();
+	}
+	
+	private static List<String> loadSections(){
+		List<String> sections = new ArrayList<String>();
+		try (PreparedStatement sel = Launch.getDB_CONN().prepareStatement("SELECT SectionName FROM Section ORDER BY SectionName ASC")) {
+
+			ResultSet rs = sel.executeQuery();
+			while (rs.next()) {
+				sections.add(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return sections;
 	}
 	
 
@@ -130,20 +159,60 @@ public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 			return new JTable(data, columns);
 		}
 	}
-	
-	private static int getMaxEpisode() {
-		try (PreparedStatement findMaxEpisode = Launch.getDB_CONN().prepareStatement("SELECT max(EpisodeId) FROM Episode")) {
-			ResultSet rs = findMaxEpisode.executeQuery();
-			if (rs.next())
-				return rs.getInt(1);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return 0;
-	}
 
 	public boolean isValid() {
 		return valid;
+	}
+	
+	class SpinnerEpisodeModel extends AbstractSpinnerModel {
+		private static final long serialVersionUID = 1L;
+		private List<Integer> episodeList;
+		private int index;
+
+		protected SpinnerEpisodeModel() {
+			this.loadValues();
+		}
+		
+		protected void loadValues() {
+			episodeList = new ArrayList<Integer>();
+			try (PreparedStatement findExclusions = Launch.getDB_CONN().prepareStatement("SELECT EpisodeId FROM Episode ORDER BY EpisodeId ASC")) {
+				ResultSet rs = findExclusions.executeQuery();
+				while (rs.next())
+					episodeList.add(rs.getInt(1));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			index = episodeList.size()-1;
+		}
+
+		@Override
+		public Object getValue() {
+			return episodeList.get(index);
+		}
+
+		@Override
+		public void setValue(Object value) {
+			if(!Integer.class.isInstance(value) || !episodeList.contains(value))
+				throw new IllegalArgumentException(value + " is not an acceptable value");
+			index = episodeList.indexOf(value);
+			this.fireStateChanged();
+		}
+
+		@Override
+		public Object getNextValue() {
+			if(index+1 >= episodeList.size())
+				return null;
+			else
+				return episodeList.get(index+1);
+		}
+
+		@Override
+		public Object getPreviousValue() {
+			if(index <= 0)
+				return null;
+			else
+				return episodeList.get(index-1);
+		}
 	}
 }

@@ -28,35 +28,34 @@ import java.awt.event.ActionEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractSpinnerModel;
-import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-
 import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.model.SQLObjectTransformer;
+import be.witmoca.BEATs.ui.currentqueue.ArchivalDialog.SpinnerEpisodeModel;
 import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
 
 public class CreateNewEpisode extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 
 	private final Component parent;
-	private final int maxEpisode;
 
 	private boolean valid = false;
+	private SpinnerEpisodeModel spinnerEpisodeModel;
 
-	public CreateNewEpisode(Component parent, int maxEpisode) {
+	public CreateNewEpisode(Component parent, SpinnerEpisodeModel spinnerEpisodeModel) {
 		super("+");
 		this.parent = parent;
-		this.maxEpisode = maxEpisode;
+		this.spinnerEpisodeModel = spinnerEpisodeModel;
 	}
 
 	/*
@@ -75,29 +74,50 @@ public class CreateNewEpisode extends AbstractAction {
 		dPanel.add(episodeDate);
 
 		dPanel.add(new JLabel("Episode Id"));
-		JSpinner episodeId = new JSpinner(new SpinnerNewEpisodeModel(maxEpisode));
+		JSpinner episodeId = new JSpinner(new SpinnerNewEpisodeModel());
 		dPanel.add(episodeId);
 
+		valid = false;
 		while (!valid) {
-			if (JOptionPane.showConfirmDialog(parent, null, "New Episode",
+			if (JOptionPane.showConfirmDialog(parent, dPanel, "New Episode",
 					JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION)
 				return;
 			
-			if(episodeDate.getValue())
+			if(!dateFree(episodeDate.getValue())) {
+				JOptionPane.showMessageDialog(parent, "The selected date is already used for another episode! A single day can only be associated with one episode. Please select another date.", "Date already associated with an episode", JOptionPane.ERROR_MESSAGE);
+				continue;
+			}
+			
+			try {
+				SQLObjectTransformer.addEpisode((int)episodeId.getValue(), episodeDate.getValue());
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(parent, e1.getLocalizedMessage(), e1.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+				continue;
+			}
+			
+			this.spinnerEpisodeModel.loadValues();
+			this.spinnerEpisodeModel.setValue(episodeId.getValue());
+			valid = true;
 		}
-
 	}
 
-	private static Date getMaxDate() {
-		try (PreparedStatement findExclusions = Launch.getDB_CONN().prepareStatement("SELECT max(EpisodeDate) FROM Episode")) {
-			ResultSet rs = findExclusions.executeQuery();
+	/**
+	 *  Check if a date is free (as in not associated with an episodeId already)
+	* @param ldate LocalDate instance to check
+	* @return True if ldate is free, false if not or an error occurred
+	 */
+	private static boolean dateFree(LocalDate ldate) {
+		try (PreparedStatement checkDate = Launch.getDB_CONN().prepareStatement("SELECT Episodeid FROM Episode WHERE EpisodeDate = ?")) {
+			checkDate.setLong(1, ldate.toEpochDay());
+			ResultSet rs = checkDate.executeQuery();
 			if(!rs.next())
-				return null;
-			return new Date(rs.getLong(1));
+				return true;
+			return false;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return false;
 	}
 
 	class SpinnerNewEpisodeModel extends AbstractSpinnerModel {
@@ -105,17 +125,20 @@ public class CreateNewEpisode extends AbstractAction {
 		private List<Integer> exclusions = new ArrayList<Integer>();
 		private int index;
 
-		protected SpinnerNewEpisodeModel(int startIndex) {
+		protected SpinnerNewEpisodeModel() {
 			try (PreparedStatement findExclusions = Launch.getDB_CONN()
-					.prepareStatement("SELECT EpisodeId FROM Episode ORDER BY ASC")) {
+					.prepareStatement("SELECT EpisodeId FROM Episode ORDER BY EpisodeId ASC")) {
 				ResultSet rs = findExclusions.executeQuery();
 				while (rs.next())
 					exclusions.add(rs.getInt(1));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-
-			this.setValue(startIndex);
+			
+			// find first available episodeID
+			index = 0;
+			Object val = getNextValue();
+			index = (val == null) ? 1 : (int) val;
 		}
 
 		@Override
@@ -125,37 +148,26 @@ public class CreateNewEpisode extends AbstractAction {
 
 		@Override
 		public void setValue(Object value) {
+			if(!Integer.class.isInstance(value) || exclusions.contains(value))
+				throw new IllegalArgumentException(value + " is not an acceptable value");
 			index = (int) value;
-			// make sure the index is valid by going back and forth
-			this.getNextValue();
-			this.getPreviousValue();
-			// if we stranded on a lower number than the initial value => go forward again
-			if ((int) this.getValue() < (int) value)
-				this.getNextValue();
 			this.fireStateChanged();
 		}
 
 		@Override
 		public Object getNextValue() {
-			index += 1;
-			while (exclusions.contains(index))
-				index += 1;
-			this.fireStateChanged();
-			return index;
+			int offset = 1;
+			while (exclusions.contains(index + offset))
+				offset += 1;
+			return index+offset;
 		}
 
 		@Override
 		public Object getPreviousValue() {
-			index -= 1;
-			while (exclusions.contains(index))
-				index -= 1;
-			this.fireStateChanged();
-			if (index >= 0)
-				return index;
-			else {
-				return this.getNextValue();
-			}
+			int offset = 1;
+			while (exclusions.contains(index - offset))
+				offset += 1;
+			return (index - offset <= 0) ? null : index-offset;
 		}
-
 	}
 }
