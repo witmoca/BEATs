@@ -10,8 +10,3 @@ This product includes the following software developed by xerial.org (Taro L. Sa
 and is licensed under the Apache version 2.0 License:
 
 	SQLite-jdbc (copyright 2009 Taro L. Saito)
-
-This product includes the following software developed at The Apache Software Foundation (http://www.apache.org/)
-and is licensed under the Apache version 2.0 License:
-
-	Apache Log4j (Copyright 1999-2012 Apache Software Foundation)
