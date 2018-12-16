@@ -28,9 +28,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.utils.StringUtils;
 
 public class SQLObjectTransformer {
-	public static String prefixes[] = {"The","De"}; // Prefixes from the different languages
 	
 	public static void addEpisode(int episodeID, LocalDate episodeDate) throws SQLException {
 		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO episode VALUES (?, ?)")){
@@ -50,7 +50,7 @@ public class SQLObjectTransformer {
 	
 	public static void addArtist(String artistName, boolean local) throws SQLException {
 		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO artist VALUES (?, ?)")){
-			add.setString(1, filterPrefix(artistName));
+			add.setString(1, StringUtils.filterPrefix(artistName));
 			add.setBoolean(2, local);
 			add.executeUpdate();
 		}
@@ -59,15 +59,15 @@ public class SQLObjectTransformer {
 	public static int addSong(String title, String artistName) throws SQLException {
 		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO song(Title, ArtistName) VALUES (?, ?)")){
 			add.setString(1, title);
-			add.setString(2, filterPrefix(artistName));
+			add.setString(2, StringUtils.filterPrefix(artistName));
 			add.executeUpdate();
 		}
 		try(PreparedStatement getId = Launch.getDB_CONN().prepareStatement("SELECT songId From song WHERE Title = ? AND ArtistName = ?")){
 			getId.setString(1, title);
-			getId.setString(2, filterPrefix(artistName));
+			getId.setString(2, StringUtils.filterPrefix(artistName));
 			ResultSet rs = getId.executeQuery();
 			if(!rs.next()) {
-				throw new SQLException("SongId expected but not returned for (" + title + "," + filterPrefix(artistName) + ")");
+				throw new SQLException("SongId expected but not returned for (" + title + "," + StringUtils.filterPrefix(artistName) + ")");
 			}
 			return rs.getInt(1);
 		}
@@ -115,20 +115,5 @@ public class SQLObjectTransformer {
 			add.setString(4, comment);
 			add.executeUpdate();
 		}
-	}
-	
-
-	private static String filterPrefix(String artist) {
-		String result = artist;
-		for(String prefix : prefixes) {
-			if(artist.startsWith(prefix)) {
-				try {
-					artist = artist.substring(prefix.length());
-				} catch (IndexOutOfBoundsException e) {
-					artist = "";
-				}
-			}
-		}
-		return result;
 	}
 }

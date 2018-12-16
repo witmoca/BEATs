@@ -2,6 +2,10 @@ The t4j package consists of a number of helpful classes provided by the guys at 
 Below you can find the 'license' for the classes that are included in this project.
 Shout-out to the wonderful programmers over there for their simple and very helpful code!
 
+NOTE: 
+The classes in the t4j contain code modified specifically for this project. Please visit https://tips4java.wordpress.com for the original classes.
+The version inside t4j may also contain fixes or less general version of the originals.
+
 LICENSE:
 
 We assume no responsibility for the code. 
