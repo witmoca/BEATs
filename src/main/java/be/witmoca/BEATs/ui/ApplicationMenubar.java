@@ -25,6 +25,8 @@ package be.witmoca.BEATs.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+
+import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -36,6 +38,7 @@ import be.witmoca.BEATs.actions.ImportFileAction;
 import be.witmoca.BEATs.actions.NewFileAction;
 import be.witmoca.BEATs.actions.OpenFileAction;
 import be.witmoca.BEATs.actions.SaveFileAction;
+import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
 
 public class ApplicationMenubar extends JMenuBar {
 	private static final long serialVersionUID = 1L;
@@ -87,6 +90,17 @@ public class ApplicationMenubar extends JMenuBar {
 		fileMenu.add(exitApplication);
 
 		this.add(fileMenu);
+		
+		// TOOLS MENU
+		JMenu toolsMenu = new JMenu("Tools");
+		toolsMenu.setMnemonic(KeyEvent.VK_T);
+		
+		JMenuItem playlistManager = new JMenuItem("Playlist Manager", new ImageIcon(getClass().getClassLoader().getResource("Icons/book.png")));
+		playlistManager.setMnemonic(KeyEvent.VK_P);
+		playlistManager.addActionListener(new PlaylistManagerShowAction());
+		toolsMenu.add(playlistManager);
+		
+		this.add(toolsMenu);
 	}
 
 }

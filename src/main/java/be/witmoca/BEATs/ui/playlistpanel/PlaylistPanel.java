@@ -27,12 +27,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import be.witmoca.BEATs.ui.t4j.RowNumberTable;
 
-public class PlaylistPanel extends JPanel implements ChangeListener {
+public class PlaylistPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private final PlaylistTable playlistTable;
 	private final JScrollPane playlistScrollPane;
@@ -40,7 +37,6 @@ public class PlaylistPanel extends JPanel implements ChangeListener {
 	public PlaylistPanel(JTabbedPane parent, String title) {
 		super(new BorderLayout());
 
-		parent.addChangeListener(this);
 		playlistTable = new PlaylistTable(title);
 		playlistScrollPane = new JScrollPane(playlistTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
@@ -51,16 +47,5 @@ public class PlaylistPanel extends JPanel implements ChangeListener {
 		JTable rowTable = new RowNumberTable(playlistTable);
 		playlistScrollPane.setRowHeaderView(rowTable);
 		playlistScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
-	}
-
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		// If the parent JTabbedPane selects this tab, reload the model
-		if (e.getSource() instanceof JTabbedPane) {
-			JTabbedPane parent = (JTabbedPane) e.getSource();
-			if (parent.getSelectedComponent().equals(this)) {
-				playlistTable.setTabTitle(parent.getTitleAt(parent.getSelectedIndex()));
-			}
-		}
 	}
 }

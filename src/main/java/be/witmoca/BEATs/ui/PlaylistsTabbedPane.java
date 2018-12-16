@@ -48,12 +48,9 @@ public class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListe
 	public void tableChanged() {
 		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
 			ResultSet value = getValue.executeQuery();
+			this.removeAll();
 			while(value.next()) {
-				if(value.getRow() <= this.getTabCount()) {
-					this.setTitleAt(value.getRow()-1, value.getString(1));
-				} else {
-					this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-				}
+				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
