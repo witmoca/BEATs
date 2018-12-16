@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -40,6 +41,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.model.SQLObjectTransformer;
 import be.witmoca.BEATs.ui.currentqueue.ArchivalDialog.SpinnerEpisodeModel;
 import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
@@ -90,6 +92,7 @@ public class CreateNewEpisode extends AbstractAction {
 			
 			try {
 				SQLObjectTransformer.addEpisode((int)episodeId.getValue(), episodeDate.getValue());
+				Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.EPISODE));
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(parent, e1.getLocalizedMessage(), e1.getClass().getName(), JOptionPane.ERROR_MESSAGE);

@@ -23,9 +23,17 @@
 package be.witmoca.BEATs.ui.currentqueue;
 
 import java.awt.event.ActionEvent;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.EnumSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.JList;
+
+import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.model.DataChangedListener;
+import be.witmoca.BEATs.model.SQLObjectTransformer;
 
 public class ArchiveAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
@@ -40,6 +48,29 @@ public class ArchiveAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		if(queue.getModel().getSize() == 0)
 			return;
-		new ArchivalDialog();
+		ArchivalDialog ad = new ArchivalDialog();
+		// Archive action cancelled
+		if(!ad.isValid())
+			return;
+		
+		int episodeId = ad.getEpisode();
+		String section = ad.getSection();
+		
+		try (PreparedStatement listCQ = Launch.getDB_CONN().prepareStatement("SELECT SongId, Comment FROM CurrentQueue ORDER BY SongOrder ASC")) {
+			ResultSet rs = listCQ.executeQuery();
+			while (rs.next())
+				SQLObjectTransformer.addSongInArchive(rs.getInt(1), episodeId, section, rs.getString(2));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		
+		
+		try (PreparedStatement listCQ = Launch.getDB_CONN().prepareStatement("DELETE FROM CurrentQueue")) {
+			listCQ.executeUpdate();
+			Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_ARCHIVE, DataChangedListener.DataType.CURRENT_QUEUE));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 	}
 }

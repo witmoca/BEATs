@@ -102,6 +102,14 @@ public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		this.setVisible(true);
 	}
 	
+	public int getEpisode() {
+		return (int) episodeId.getValue();
+	}
+	
+	public String getSection() {
+		return (String) sectionId.getValue();
+	}
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if(!this.isVisible())
