@@ -50,24 +50,27 @@ public class SQLObjectTransformer {
 	
 	public static void addArtist(String artistName, boolean local) throws SQLException {
 		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO artist VALUES (?, ?)")){
-			add.setString(1, StringUtils.filterPrefix(artistName));
+			add.setString(1, StringUtils.ToUpperCamelCase(StringUtils.filterPrefix(artistName)));
 			add.setBoolean(2, local);
 			add.executeUpdate();
 		}
 	}
 	
 	public static int addSong(String title, String artistName) throws SQLException {
+		title = StringUtils.ToUpperCamelCase(title);
+		artistName = StringUtils.ToUpperCamelCase(StringUtils.filterPrefix(artistName));
+		
 		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO song(Title, ArtistName) VALUES (?, ?)")){
 			add.setString(1, title);
-			add.setString(2, StringUtils.filterPrefix(artistName));
+			add.setString(2, artistName);
 			add.executeUpdate();
 		}
 		try(PreparedStatement getId = Launch.getDB_CONN().prepareStatement("SELECT songId From song WHERE Title = ? AND ArtistName = ?")){
 			getId.setString(1, title);
-			getId.setString(2, StringUtils.filterPrefix(artistName));
+			getId.setString(2, artistName);
 			ResultSet rs = getId.executeQuery();
 			if(!rs.next()) {
-				throw new SQLException("SongId expected but not returned for (" + title + "," + StringUtils.filterPrefix(artistName) + ")");
+				throw new SQLException("SongId expected but not returned for (" + title + "," + artistName + ")");
 			}
 			return rs.getInt(1);
 		}
@@ -78,7 +81,7 @@ public class SQLObjectTransformer {
 			add.setInt(1, songId);
 			add.setInt(2, episodeId);
 			add.setString(3, section);
-			add.setString(4, comment);
+			add.setString(4, StringUtils.ToUpperCamelCase(comment) );
 			add.executeUpdate();
 		}
 	}
@@ -110,9 +113,9 @@ public class SQLObjectTransformer {
 	public static void addSongInPlaylist(String playlistName, String artist, String song, String comment) throws SQLException {
 		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT INTO SongsInPlaylist VALUES (?, ?, ?, ?)")){
 			add.setString(1, playlistName);
-			add.setString(2, artist);
-			add.setString(3, song);
-			add.setString(4, comment);
+			add.setString(2, StringUtils.ToUpperCamelCase(StringUtils.filterPrefix(artist)) );
+			add.setString(3, StringUtils.ToUpperCamelCase(song) );
+			add.setString(4, StringUtils.ToUpperCamelCase(comment) );
 			add.executeUpdate();
 		}
 	}
