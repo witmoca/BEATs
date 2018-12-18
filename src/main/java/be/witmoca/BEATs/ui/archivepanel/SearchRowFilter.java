@@ -17,28 +17,32 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: ArchiveTable.java
+* File: SearchRowFilter.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.archivepanel;
 
-import javax.swing.JTable;
-import be.witmoca.BEATs.model.ArchiveTableModel;
-import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
-import be.witmoca.BEATs.ui.t4j.TableColumnManager;
+import javax.swing.RowFilter;
+import javax.swing.table.TableModel;
 
-public class ArchiveTable extends JTable {
-	private static final long serialVersionUID = 1L;
+import be.witmoca.BEATs.utils.StringUtils;
 
-	public ArchiveTable() {
-		super(new ArchiveTableModel());
-		this.getTableHeader().setReorderingAllowed(false);
-
-		// Table Column Manager (choose the available columns)
-		new TableColumnManager(this);
-
-		// Add a rowsorter and render icons at the top to indicate sorting order
-		this.setRowSorter(new ArchiveTableRowSorter<>(this.getModel()));
-		this.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
+public class SearchRowFilter extends RowFilter<TableModel, Integer> {
+	private final String searchString;
+	
+	public SearchRowFilter(String searchString) {
+		this.searchString = StringUtils.filterPrefix(searchString).toLowerCase();
+	}
+	
+	@Override
+	public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
+		TableModel model = entry.getModel();
+		int cCount = model.getColumnCount();
+		
+		for(int i = 0; i < cCount; i ++) {
+			if (model.getValueAt(entry.getIdentifier(), i).toString().toLowerCase().contains(searchString))
+				return true;
+		}
+		return false;
 	}
 }

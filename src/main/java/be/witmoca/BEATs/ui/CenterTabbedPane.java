@@ -25,6 +25,8 @@ package be.witmoca.BEATs.ui;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
+import be.witmoca.BEATs.ui.archivepanel.ArchivePanel;
+
 public class CenterTabbedPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
 	

@@ -17,32 +17,45 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: SearchRowFilter.java
+* File: ArchiveTableRowSorter.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.archivepanel;
 
-import javax.swing.RowFilter;
+import java.util.Comparator;
+
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
-import be.witmoca.BEATs.utils.StringUtils;
-
-public class SearchRowFilter extends RowFilter<TableModel, Integer> {
-	private final String searchString;
-	
-	public SearchRowFilter(String searchString) {
-		this.searchString = StringUtils.filterPrefix(searchString).toLowerCase();
+public class ArchiveTableRowSorter<M extends TableModel> extends TableRowSorter<M>{
+	public ArchiveTableRowSorter(M model) {
+		super(model);	
+		this.setSortsOnUpdates(true);
+		this.setMaxSortKeys(2);
+		this.setComparator(2, new EpisodeComparator());
 	}
 	
-	@Override
-	public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-		TableModel model = entry.getModel();
-		int cCount = model.getColumnCount();
-		
-		for(int i = 0; i < cCount; i ++) {
-			if (model.getValueAt(entry.getIdentifier(), i).toString().toLowerCase().contains(searchString))
-				return true;
+    private static class EpisodeComparator implements Comparator<String> {
+		@Override
+		public int compare(String o1, String o2) {
+			char c1[] = o1.toCharArray();
+			char c2[] = o2.toCharArray();
+			
+			// Parse into numeric values
+			int i1 = 0;
+			for(int i = 0; Character.isDigit(c1[i]); i++) {
+				i1 = (i1*10) + Character.getNumericValue(c1[i]);
+			}
+			int i2 = 0;
+			for(int i = 0; Character.isDigit(c2[i]); i++) {
+				i2 = (i2*10) + Character.getNumericValue(c2[i]);
+			}
+			// compare numeric values
+			if(i1 != i2)
+				return i1 - i2;
+			
+			// if numeric values are the same => compare OLDSKEWL
+			return o1.compareTo(o2);		
 		}
-		return false;
-	}
+    }
 }

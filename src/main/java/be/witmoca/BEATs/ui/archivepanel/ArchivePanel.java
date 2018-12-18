@@ -17,52 +17,33 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: ArchiveToolbar.java
+* File: ArchivePanel.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.archivepanel;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
 
-import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
+import be.witmoca.BEATs.ui.t4j.RowNumberTable;
 
-public class ArchiveToolbar extends JToolBar {
+public class ArchivePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-
-	private final JTextField searchTerm = new JTextField(20);
-	private final JButton searchSubmit = new JButton("Search");
-	private final JTable archiveTable;
-
-	public ArchiveToolbar(JTable table) {
-		super("Archive Toolbar",JToolBar.HORIZONTAL);
-		archiveTable = table;
-		
-		// Adhere to the given column count in the text fields constructor
-		searchTerm.setMaximumSize(searchTerm.getPreferredSize());
-		this.add(searchTerm);
-		this.add(searchSubmit);
-		this.setFloatable(false);
-		
-		SortAction sa = new SortAction();
-		// Search on ENTER while in textfield
-		searchTerm.addActionListener(sa);
-		// search on buttonpress
-		searchSubmit.addActionListener(sa);
-		
-	}
+	public static final String TITLE = "Archive"; 
 	
-	class SortAction implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String sTerm = searchTerm.getText().trim();
-			if(!sTerm.isEmpty())
-				((ArchiveTableRowSorter<?>) archiveTable.getRowSorter()).setRowFilter(new SearchRowFilter(sTerm));
-			else
-				((ArchiveTableRowSorter<?>) archiveTable.getRowSorter()).setRowFilter(null);
-		}					
+	private final JTable archiveTable = new ArchiveTable();
+	private final JScrollPane archiveScrollPane = new JScrollPane(archiveTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	
+	public ArchivePanel() {
+		super(new BorderLayout());
+		
+		this.add(new ArchiveToolbar(archiveTable), BorderLayout.NORTH);
+		this.add(archiveScrollPane, BorderLayout.CENTER);
+		
+		JTable rowTable = new RowNumberTable(archiveTable);
+		archiveScrollPane.setRowHeaderView(rowTable);
+		archiveScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
 	}
 }
