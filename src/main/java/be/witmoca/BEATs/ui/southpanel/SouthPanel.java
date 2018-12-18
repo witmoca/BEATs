@@ -1,3 +1,11 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.ui.southpanel;
+
+import javax.swing.JPanel;
+import javax.swing.JTable;
+
 /*
 *
 +===============================================================================+
@@ -17,37 +25,20 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: ArchivePanel.java
+* File: SouthPanel.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.archivepanel;
-
-import java.awt.BorderLayout;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
-import be.witmoca.BEATs.ui.southpanel.SouthPanel;
-import be.witmoca.BEATs.ui.t4j.RowNumberTable;
-
-public class ArchivePanel extends JPanel {
+public class SouthPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	public static final String TITLE = "Archive"; 
 	
-	private final JTable archiveTable = new ArchiveTable();
-	private final JScrollPane archiveScrollPane = new JScrollPane(archiveTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-	private final JPanel southPanel = new SouthPanel(archiveTable,0,1);
-	
-	public ArchivePanel() {
-		super(new BorderLayout());
-		
-		this.add(new ArchiveToolbar(archiveTable), BorderLayout.NORTH);
-		this.add(archiveScrollPane, BorderLayout.CENTER);
-		this.add(southPanel, BorderLayout.SOUTH);
-		
-		JTable rowTable = new RowNumberTable(archiveTable);
-		archiveScrollPane.setRowHeaderView(rowTable);
-		archiveScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
+	/**
+	 * 
+	 * @param infoTrackingTable See InfoPanel
+	 * @param infoArtistColumn See InfoPanel
+	 * @param infoSongTitleColumn See InfoPanel
+	 */
+	public SouthPanel(JTable infoTrackingTable, int infoArtistColumn, int infoSongTitleColumn) {
+		super();
+		this.add(new InfoPanel(infoTrackingTable, infoArtistColumn, infoSongTitleColumn));
 	}
 }

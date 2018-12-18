@@ -27,21 +27,26 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+
+import be.witmoca.BEATs.ui.southpanel.SouthPanel;
 import be.witmoca.BEATs.ui.t4j.RowNumberTable;
 
 public class PlaylistPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private final PlaylistTable playlistTable;
 	private final JScrollPane playlistScrollPane;
+	private final JPanel southPanel;
 
 	public PlaylistPanel(JTabbedPane parent, String title) {
 		super(new BorderLayout());
 
 		playlistTable = new PlaylistTable(title);
+		southPanel = new SouthPanel(playlistTable,0,1);
 		playlistScrollPane = new JScrollPane(playlistTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		this.add(new PlaylistToolbar(playlistTable), BorderLayout.NORTH);
 		this.add(playlistScrollPane, BorderLayout.CENTER);
+		this.add(southPanel, BorderLayout.SOUTH);
 
 		// Row numbers
 		JTable rowTable = new RowNumberTable(playlistTable);
