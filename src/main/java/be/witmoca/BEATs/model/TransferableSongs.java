@@ -1,3 +1,14 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.model;
+
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+import java.util.List;
+
 /*
 *
 +===============================================================================+
@@ -17,38 +28,49 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistEntry.java
+* File: TransferableSong.java
 * Created: 2018
 */
-package be.witmoca.BEATs.model;
-
-public class PlaylistEntry {
-	private final String ARTIST;
-	private final String SONG;
-	private final String COMMENT;	
+public class TransferableSongs implements Transferable {
+	public static final String MIME_TYPE = "application/x.transferable-song-list";
+	List<PlaylistEntry> data;
 	
-	public PlaylistEntry(String aRTIST, String sONG, String cOMMENT) {
+	public TransferableSongs(List<PlaylistEntry> entries) {
 		super();
-		ARTIST = aRTIST;
-		SONG = sONG;
-		COMMENT = cOMMENT;
-	}
-	
-	public String getColumn(int i) {
-		switch(i) {
-		case 0: return this.ARTIST;
-		case 1: return this.SONG;
-		case 2: return this.COMMENT;
-		default: return null;
-		}
+		data = entries;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
+	 */
 	@Override
-	public String toString() {
-		return ARTIST + " - " + SONG + (COMMENT.isEmpty() ? "" : " (" +  COMMENT + ")");
+	public DataFlavor[] getTransferDataFlavors() {
+		DataFlavor[] df = new DataFlavor[1];
+		try {
+			df[0] = new DataFlavor(MIME_TYPE);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
+		return df;
 	}
-	
-	public boolean isEmpty() {
-		return ARTIST.isEmpty() && SONG.isEmpty();
+
+	/* (non-Javadoc)
+	 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
+	 */
+	@Override
+	public boolean isDataFlavorSupported(DataFlavor flavor) {
+		return flavor.isMimeTypeEqual(MIME_TYPE);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
+	 */
+	@Override
+	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+		if(!this.isDataFlavorSupported(flavor))
+			throw new UnsupportedFlavorException(flavor);
+		
+		return data;
 	}
 }

@@ -1,3 +1,13 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.ui.southpanel;
+
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
+
+import be.witmoca.BEATs.model.TransferableSongs;
+
 /*
 *
 +===============================================================================+
@@ -17,35 +27,20 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: Utils.java
+* File: SongTable.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.playlistpanel;
 
-import javax.swing.JTable;
-import javax.swing.RowSorter;
-import javax.swing.table.TableModel;
-
-public class Utils {
-
-	/**
-	 * General purpose selectionmodel converter
-	 * 
-	 * @param viewSelection
-	 *            the {@code int[]} holding indices from the view
-	 * @return {@code int[]} holding corresponding indices from the model (returns
-	 *         viewSelection if no rowsorter present)
-	 */
-	protected static int[] convertSelectionToModel(int[] viewSelection, JTable table) {
-		if (table.getRowSorter() == null)
-			return viewSelection;
-		else {
-			RowSorter<? extends TableModel> rs = table.getRowSorter();
-			int modelSel[] = new int[viewSelection.length];
-			for (int i = 0; i < viewSelection.length; i++) {
-				modelSel[i] = rs.convertRowIndexToModel(viewSelection[i]);
-			}
-			return modelSel;
-		}
+/**
+ * 
+ * SongTable describes a JTable capable of transferring Songs for CCP or drag-and-drop operation
+ */
+public abstract class SongTable extends JTable {
+	private static final long serialVersionUID = 1L;
+	
+	public SongTable(TableModel model) {
+		super(model); // Just fabulous, a supermodel! Note: need to think of a reason to add a method Catwalk
 	}
+	
+	abstract public TransferableSongs getSelectedSongs();
 }

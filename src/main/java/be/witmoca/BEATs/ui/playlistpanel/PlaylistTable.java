@@ -22,19 +22,29 @@
 */
 package be.witmoca.BEATs.ui.playlistpanel;
 
-import javax.swing.JTable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.DropMode;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import be.witmoca.BEATs.model.PlaylistEntry;
 import be.witmoca.BEATs.model.PlaylistTableModel;
+import be.witmoca.BEATs.model.TransferableSongs;
 import be.witmoca.BEATs.ui.currentqueue.MoveToQueueAction;
+import be.witmoca.BEATs.ui.southpanel.SongTable;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
+import be.witmoca.BEATs.utils.UiUtils;
 
-public class PlaylistTable extends JTable {
+public class PlaylistTable extends SongTable {
 	private static final long serialVersionUID = 1L;
+	private final String playlistName;
 
 	protected PlaylistTable(String PlaylistName) {
 		super(new PlaylistTableModel(PlaylistName));
+		this.playlistName = PlaylistName;
 		this.getTableHeader().setReorderingAllowed(false);
 		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		
@@ -46,9 +56,31 @@ public class PlaylistTable extends JTable {
 		
 		this.setComponentPopupMenu(new PlaylistPopupMenu(this));
 		new ButtonColumn(this, new MoveToQueueAction(), 3);
+		
+		this.setDragEnabled(true);
+		this.setDropMode(DropMode.USE_SELECTION);
+		this.setTransferHandler(new PlaylistTransferHandler());
 	}
 	
 	protected void setTabTitle(String tabTitle) {
 		((PlaylistTableModel) this.getModel()).setPlaylistName(tabTitle);
+	}
+
+	@Override
+	public TransferableSongs getSelectedSongs() {
+		int[] rowIndices = UiUtils.convertSelectionToModel(this.getSelectedRows(), this);
+		TableModel model = this.getModel();
+		
+		List<PlaylistEntry> tfs = new ArrayList<PlaylistEntry>();		
+		for(int i = 0; i < rowIndices.length; i++) {
+			PlaylistEntry pe = new PlaylistEntry( (String) model.getValueAt(rowIndices[i], 0), (String) model.getValueAt(rowIndices[i], 1), (String) model.getValueAt(rowIndices[i], 2) );
+			if(!pe.isEmpty())
+				tfs.add(pe);
+		}
+		return new TransferableSongs(tfs);
+	}
+
+	public String getPlaylistName() {
+		return playlistName;
 	}
 }

@@ -1,3 +1,18 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.ui.southpanel;
+
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.DropMode;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 /*
 *
 +===============================================================================+
@@ -17,38 +32,31 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistEntry.java
+* File: CCPPanel.java
 * Created: 2018
 */
-package be.witmoca.BEATs.model;
 
-public class PlaylistEntry {
-	private final String ARTIST;
-	private final String SONG;
-	private final String COMMENT;	
+/**
+ *  UI representation of the Cut/Copy/Paste container for songs
+ */
+public class CCPPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
 	
-	public PlaylistEntry(String aRTIST, String sONG, String cOMMENT) {
-		super();
-		ARTIST = aRTIST;
-		SONG = sONG;
-		COMMENT = cOMMENT;
-	}
-	
-	public String getColumn(int i) {
-		switch(i) {
-		case 0: return this.ARTIST;
-		case 1: return this.SONG;
-		case 2: return this.COMMENT;
-		default: return null;
-		}
-	}
-
-	@Override
-	public String toString() {
-		return ARTIST + " - " + SONG + (COMMENT.isEmpty() ? "" : " (" +  COMMENT + ")");
-	}
-	
-	public boolean isEmpty() {
-		return ARTIST.isEmpty() && SONG.isEmpty();
+	public CCPPanel() {
+		super(new GridBagLayout());		
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		
+		
+		JList<String> ccpList = new JList<>(new CCPListModel());
+		ccpList.setDropMode(DropMode.USE_SELECTION);
+		ccpList.setDragEnabled(true);
+		ccpList.setTransferHandler(new CCPTransferHandler());
+		
+		add(new JScrollPane(ccpList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), gbc);
+		
+		this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 	}
 }

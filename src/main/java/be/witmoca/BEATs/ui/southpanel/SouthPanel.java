@@ -3,8 +3,8 @@
  */
 package be.witmoca.BEATs.ui.southpanel;
 
+import java.awt.GridLayout;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 
 /*
 *
@@ -31,14 +31,18 @@ import javax.swing.JTable;
 public class SouthPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
+
 	/**
 	 * 
-	 * @param infoTrackingTable See InfoPanel
-	 * @param infoArtistColumn See InfoPanel
-	 * @param infoSongTitleColumn See InfoPanel
+	 * @param trackingTable The table to track for the InfoPanel
+	 * @param infoArtistColumn column of the table that holds the artist (artist should be in String format)
+	 * @param infoSongTitleColumn column of the table that holds the song title (title should be in String format)
 	 */
-	public SouthPanel(JTable infoTrackingTable, int infoArtistColumn, int infoSongTitleColumn) {
-		super();
-		this.add(new InfoPanel(infoTrackingTable, infoArtistColumn, infoSongTitleColumn));
+	public SouthPanel(SongTable trackingTable, int infoArtistColumn, int infoSongTitleColumn) {
+		super(new GridLayout(0,2));	
+		
+		this.add(new CCPPanel());
+		this.add(new InfoPanel(trackingTable, infoArtistColumn, infoSongTitleColumn));
+		//this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 	}
 }

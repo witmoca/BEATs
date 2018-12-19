@@ -3,13 +3,17 @@
  */
 package be.witmoca.BEATs.ui.southpanel;
 
-import java.awt.GridLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -62,23 +66,38 @@ public class InfoPanel extends JPanel implements ListSelectionListener {
 	 *                      representing a song title
 	 */
 	public InfoPanel(JTable trackingTable, int artistColumn, int songColumn) {
-		super(new GridLayout(0, 2));
+		super(new GridBagLayout());
 		this.artistColumn = artistColumn;
 		this.songColumn = songColumn;
 		
-		add(new JLabel("Artist (#played):"));
-		add(artistLabel);
-		add(new JLabel("Song (#played):"));
-		add(songLabel);
-		add(new JLabel("Song last played:"));
-		add(songLast);
-		add(new JLabel("Artist last played:"));
-		add(artistLast);
-		add(new JLabel("Artist is local:"));
-		add(artistLocal);
+		GridBagConstraints left = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,10,0,10), 0, 0);
+		GridBagConstraints right = new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,10,0,10), 0, 0);
+		
+		add(new JLabel("Artist (#played):"), left);
+		left.gridy += 1;
+		left.insets = new Insets(0,10,0,10); // only the top one needs a top inset
+		add(artistLabel, right);
+		right.gridy += 1;
+		right.insets = new Insets(0,10,0,10); // only the top one needs a top inset
+		add(new JLabel("Song (#played):"), left);
+		left.gridy += 1;
+		add(songLabel, right);
+		right.gridy += 1;
+		add(new JLabel("Song last played:"), left);
+		left.gridy += 1;
+		add(songLast, right);
+		right.gridy += 1;
+		add(new JLabel("Artist last played:"), left);
+		left.gridy += 1;
+		add(artistLast, right);
+		right.gridy += 1;
+		right.weighty = 1; // The last box (the most south one) takes all the whitespace (and postions the element in the north-west
+		add(new JLabel("Artist is local:"), left);
+		add(artistLocal, right);
 
 		tracking = trackingTable;
 		trackingTable.getSelectionModel().addListSelectionListener(this);
+		this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 	}
 
 	@Override

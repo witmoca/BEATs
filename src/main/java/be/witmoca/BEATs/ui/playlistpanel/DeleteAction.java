@@ -35,6 +35,7 @@ import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import be.witmoca.BEATs.Launch;
 import be.witmoca.BEATs.model.PlaylistTableModel;
+import be.witmoca.BEATs.utils.UiUtils;
 
 public class DeleteAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
@@ -61,7 +62,7 @@ public class DeleteAction extends AbstractAction {
 				 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
 			return;
 
-		int rowIndices[] = Utils.convertSelectionToModel(connectedTable.getSelectedRows(), connectedTable);
+		int rowIndices[] = UiUtils.convertSelectionToModel(connectedTable.getSelectedRows(), connectedTable);
 		// Make sure that we start deleting at the end of the list
 		Arrays.sort(rowIndices);
 

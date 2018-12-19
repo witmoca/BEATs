@@ -17,38 +17,35 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistEntry.java
+* File: Utils.java
 * Created: 2018
 */
-package be.witmoca.BEATs.model;
+package be.witmoca.BEATs.utils;
 
-public class PlaylistEntry {
-	private final String ARTIST;
-	private final String SONG;
-	private final String COMMENT;	
-	
-	public PlaylistEntry(String aRTIST, String sONG, String cOMMENT) {
-		super();
-		ARTIST = aRTIST;
-		SONG = sONG;
-		COMMENT = cOMMENT;
-	}
-	
-	public String getColumn(int i) {
-		switch(i) {
-		case 0: return this.ARTIST;
-		case 1: return this.SONG;
-		case 2: return this.COMMENT;
-		default: return null;
+import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.table.TableModel;
+
+public class UiUtils {
+
+	/**
+	 * General purpose selectionmodel converter
+	 * 
+	 * @param viewSelection
+	 *            the {@code int[]} holding indices from the view
+	 * @return {@code int[]} holding corresponding indices from the model (returns
+	 *         viewSelection if no rowsorter present)
+	 */
+	public static int[] convertSelectionToModel(int[] viewSelection, JTable table) {
+		if (table.getRowSorter() == null)
+			return viewSelection;
+		else {
+			RowSorter<? extends TableModel> rs = table.getRowSorter();
+			int modelSel[] = new int[viewSelection.length];
+			for (int i = 0; i < viewSelection.length; i++) {
+				modelSel[i] = rs.convertRowIndexToModel(viewSelection[i]);
+			}
+			return modelSel;
 		}
-	}
-
-	@Override
-	public String toString() {
-		return ARTIST + " - " + SONG + (COMMENT.isEmpty() ? "" : " (" +  COMMENT + ")");
-	}
-	
-	public boolean isEmpty() {
-		return ARTIST.isEmpty() && SONG.isEmpty();
 	}
 }

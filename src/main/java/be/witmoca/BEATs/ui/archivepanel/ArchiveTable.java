@@ -22,12 +22,20 @@
 */
 package be.witmoca.BEATs.ui.archivepanel;
 
-import javax.swing.JTable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.table.TableModel;
+
 import be.witmoca.BEATs.model.ArchiveTableModel;
+import be.witmoca.BEATs.model.PlaylistEntry;
+import be.witmoca.BEATs.model.TransferableSongs;
+import be.witmoca.BEATs.ui.southpanel.SongTable;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
 import be.witmoca.BEATs.ui.t4j.TableColumnManager;
+import be.witmoca.BEATs.utils.UiUtils;
 
-public class ArchiveTable extends JTable {
+public class ArchiveTable extends SongTable {
 	private static final long serialVersionUID = 1L;
 
 	public ArchiveTable() {
@@ -40,5 +48,20 @@ public class ArchiveTable extends JTable {
 		// Add a rowsorter and render icons at the top to indicate sorting order
 		this.setRowSorter(new ArchiveTableRowSorter<>(this.getModel()));
 		this.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
+		
+		this.setDragEnabled(true);
+		this.setTransferHandler(new ArchiveTransferHandler());
+	}
+
+	@Override
+	public TransferableSongs getSelectedSongs() {
+		int[] rowIndices = UiUtils.convertSelectionToModel(this.getSelectedRows(), this);
+		TableModel model = this.getModel();
+		
+		List<PlaylistEntry> tfs = new ArrayList<PlaylistEntry>();		
+		for(int i = 0; i < rowIndices.length; i++) {
+			tfs.add(new PlaylistEntry( (String) model.getValueAt(rowIndices[i], 0), (String) model.getValueAt(rowIndices[i], 1), "" ) );
+		}
+		return new TransferableSongs(tfs);
 	}
 }

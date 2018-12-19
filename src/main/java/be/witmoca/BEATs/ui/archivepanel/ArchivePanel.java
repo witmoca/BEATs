@@ -35,7 +35,7 @@ public class ArchivePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public static final String TITLE = "Archive"; 
 	
-	private final JTable archiveTable = new ArchiveTable();
+	private final ArchiveTable archiveTable = new ArchiveTable();
 	private final JScrollPane archiveScrollPane = new JScrollPane(archiveTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 	private final JPanel southPanel = new SouthPanel(archiveTable,0,1);
 	
