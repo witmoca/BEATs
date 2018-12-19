@@ -23,10 +23,14 @@
 package be.witmoca.BEATs.ui.archivepanel;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 
 import be.witmoca.BEATs.ui.southpanel.SouthPanel;
 import be.witmoca.BEATs.ui.t4j.RowNumberTable;
@@ -46,7 +50,10 @@ public class ArchivePanel extends JPanel {
 		this.add(archiveScrollPane, BorderLayout.CENTER);
 		this.add(southPanel, BorderLayout.SOUTH);
 		
-		JTable rowTable = new RowNumberTable(archiveTable);
+		List<SortKey> defaultSort = new ArrayList<SortKey>();
+		defaultSort.add(new SortKey(0, SortOrder.ASCENDING));
+		defaultSort.add(new SortKey(2, SortOrder.ASCENDING));
+		JTable rowTable = new RowNumberTable(archiveTable, defaultSort);
 		archiveScrollPane.setRowHeaderView(rowTable);
 		archiveScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
 	}

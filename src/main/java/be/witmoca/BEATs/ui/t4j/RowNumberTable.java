@@ -4,7 +4,10 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.*;
+import java.util.List;
+
 import javax.swing.*;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
@@ -19,10 +22,19 @@ import javax.swing.table.*;
  */
 public class RowNumberTable extends JTable implements ChangeListener, PropertyChangeListener, TableModelListener {
 	private static final long serialVersionUID = 1L;
+	
+	private final List<? extends SortKey> defaultKeys;
+	
 	private JTable main;
 
-	public RowNumberTable(JTable table) {
+	/**
+	 * 
+	 * @param table The table to extend the row numbers to
+	 * @param defaultKeys Pressing the left header sets the sortingkeys to this parameter (NULL = turn off sort when this cell is pressed)
+	 */
+	public RowNumberTable(JTable table, List<? extends SortKey> defaultKeys) {
 		main = table;
+		this.defaultKeys = defaultKeys;
 		main.addPropertyChangeListener(this);
 		main.getModel().addTableModelListener(this);
 
@@ -39,9 +51,10 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		setPreferredScrollableViewportSize(getPreferredSize());
 		tableHeader.setReorderingAllowed(false);
 
-		// If the table has a rowsorter => track it for changes
+		// If the table has a rowsorter => track it for changes (and set the defaultsortkeys)
 		if (table.getRowSorter() != null) {
 			table.getRowSorter().addRowSorterListener(new RowSorterPainter(table));
+			table.getRowSorter().setSortKeys(defaultKeys);
 		}
 
 		this.getTableHeader().addMouseListener(new HeaderClickListener(table));
@@ -199,7 +212,7 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 	/*
 	 * Clears the sorting keys of the accompanying table if a sorter exists
 	 */
-	private static class HeaderClickListener implements MouseListener {
+	private class HeaderClickListener implements MouseListener {
 		private final JTable rowTable;
 
 		public HeaderClickListener(JTable rowTable) {
@@ -217,7 +230,7 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (rowTable.getRowSorter() != null) {
-				rowTable.getRowSorter().setSortKeys(null);
+				rowTable.getRowSorter().setSortKeys(defaultKeys);
 			}
 		}
 

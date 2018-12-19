@@ -49,7 +49,7 @@ public class PlaylistPanel extends JPanel {
 		this.add(southPanel, BorderLayout.SOUTH);
 
 		// Row numbers
-		JTable rowTable = new RowNumberTable(playlistTable);
+		JTable rowTable = new RowNumberTable(playlistTable, null);
 		playlistScrollPane.setRowHeaderView(rowTable);
 		playlistScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
 	}
