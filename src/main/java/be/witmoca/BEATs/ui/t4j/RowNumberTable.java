@@ -53,7 +53,7 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 
 		// If the table has a rowsorter => track it for changes (and set the defaultsortkeys)
 		if (table.getRowSorter() != null) {
-			table.getRowSorter().addRowSorterListener(new RowSorterPainter(table));
+			table.getRowSorter().addRowSorterListener(new RowSorterPainter());
 			table.getRowSorter().setSortKeys(defaultKeys);
 		}
 
@@ -192,24 +192,20 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		}
 	}
 
-	/*
-	 * This class is a workaround fix => repaints the RowNumberTable when the
-	 * rowsorter gets changed
+	/**
+	 * When the sorter gets changed, the table updates
+	 * The rownumbers could possible be dirty (or the amount changed, etc)
+	 * => revalidate and repaint
 	 */
-	private static class RowSorterPainter implements RowSorterListener {
-		private final JTable rowTable;
-
-		public RowSorterPainter(JTable rowTable) {
-			this.rowTable = rowTable;
-		}
-
+	private class RowSorterPainter implements RowSorterListener {
 		@Override
 		public void sorterChanged(RowSorterEvent e) {
-			rowTable.repaint();
+			revalidate();
+			repaint();
 		}
 	}
 
-	/*
+	/**
 	 * Clears the sorting keys of the accompanying table if a sorter exists
 	 */
 	private class HeaderClickListener implements MouseListener {
