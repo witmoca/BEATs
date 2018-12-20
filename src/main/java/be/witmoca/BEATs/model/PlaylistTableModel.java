@@ -118,6 +118,8 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		if(aValue == null)
+			return;
 		String sValue = StringUtils.ToUpperCamelCase( (String) aValue);
 		if(columnIndex == 0)
 			sValue = StringUtils.filterPrefix(sValue);

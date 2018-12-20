@@ -33,6 +33,8 @@ import javax.swing.table.TableRowSorter;
 import be.witmoca.BEATs.model.PlaylistEntry;
 import be.witmoca.BEATs.model.PlaylistTableModel;
 import be.witmoca.BEATs.model.TransferableSongs;
+import be.witmoca.BEATs.ui.SuggestCellEditor.ArtistMatcher;
+import be.witmoca.BEATs.ui.SuggestCellEditor.AutoCompletingEditor;
 import be.witmoca.BEATs.ui.currentqueue.MoveToQueueAction;
 import be.witmoca.BEATs.ui.southpanel.SongTable;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
@@ -54,12 +56,18 @@ public class PlaylistTable extends SongTable {
 		srt.setMaxSortKeys(1);
 		this.setRowSorter(srt);
 		
+		// right click menu
 		this.setComponentPopupMenu(new PlaylistPopupMenu(this));
+		// Translate the cells from the last column into buttons
 		new ButtonColumn(this, new MoveToQueueAction(), 3);
 		
+		// Drag and drop logic
 		this.setDragEnabled(true);
 		this.setDropMode(DropMode.USE_SELECTION);
 		this.setTransferHandler(new PlaylistTransferHandler());
+		
+		// Suggest support for artist column
+		this.getColumnModel().getColumn(0).setCellEditor(new AutoCompletingEditor(new ArtistMatcher()));
 	}
 	
 	protected void setTabTitle(String tabTitle) {
@@ -67,7 +75,7 @@ public class PlaylistTable extends SongTable {
 	}
 
 	@Override
-	public TransferableSongs getSelectedSongs() {
+	public TransferableSongs getSelectedSongs() {			
 		int[] rowIndices = UiUtils.convertSelectionToModel(this.getSelectedRows(), this);
 		TableModel model = this.getModel();
 		
