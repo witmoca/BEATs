@@ -5,6 +5,8 @@ package be.witmoca.BEATs.ui.SuggestCellEditor;
 
 import java.util.List;
 
+import javax.swing.JTable;
+
 /*
 *
 +===============================================================================+
@@ -28,5 +30,16 @@ import java.util.List;
 * Created: 2018
 */
 public interface IMatcher {
-	public List<String> match(String search,  boolean forwardOnly);
+	/** 
+	 * The table, row and col parameter are used for determining extra information.
+	 * They should NEVER be used to edit the model of the jtable while an edit is in progress
+	 * 
+	 * @param search The string to search for
+	 * @param forwardOnly True when {@code search} has to be the start of a match. False when it may be anywhere within a match string
+	 * @param table The JTable that contains the cell being edited
+	 * @param row The row of the cell being edited
+	 * @param col The column of the cell being edited
+	 * @return A list of matches for the given parameters
+	 */
+	public List<String> match(String search, boolean forwardOnly, JTable table, int row, int col);
 }

@@ -35,6 +35,7 @@ import be.witmoca.BEATs.model.PlaylistTableModel;
 import be.witmoca.BEATs.model.TransferableSongs;
 import be.witmoca.BEATs.ui.SuggestCellEditor.ArtistMatcher;
 import be.witmoca.BEATs.ui.SuggestCellEditor.AutoCompletingEditor;
+import be.witmoca.BEATs.ui.SuggestCellEditor.SongMatcher;
 import be.witmoca.BEATs.ui.currentqueue.MoveToQueueAction;
 import be.witmoca.BEATs.ui.southpanel.SongTable;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
@@ -66,8 +67,9 @@ public class PlaylistTable extends SongTable {
 		this.setDropMode(DropMode.USE_SELECTION);
 		this.setTransferHandler(new PlaylistTransferHandler());
 		
-		// Suggest support for artist column
+		// Suggest support for artist and song column
 		this.getColumnModel().getColumn(0).setCellEditor(new AutoCompletingEditor(new ArtistMatcher()));
+		this.getColumnModel().getColumn(1).setCellEditor(new AutoCompletingEditor(new SongMatcher(0)));
 	}
 	
 	protected void setTabTitle(String tabTitle) {

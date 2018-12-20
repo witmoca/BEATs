@@ -4,9 +4,11 @@
 package be.witmoca.BEATs.ui.SuggestCellEditor;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.util.List;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
@@ -15,7 +17,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
-import be.witmoca.BEATs.utils.StringUtils;
 
 /*
 *
@@ -46,14 +47,39 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 		super(new CompletingTextField(matcher));
 	}
 	
+	
+	
+	@Override
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+		if(table == null)
+			return null;
+		CompletingTextField editor = (CompletingTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);
+		editor.setFocusOn(table, row, column);
+		return editor;
+	}
+
+
+
 	static class CompletingTextField extends JTextField{
 		private static final long serialVersionUID = 1L;
 		
+		private final IMatcher matcher;
+		
+		private UpdateMatch currentUpdater;
+		
 		public CompletingTextField(IMatcher matcher) {
 			this.setBorder(new LineBorder(Color.black));
+			this.matcher = matcher;
+		}
+		
+		public void setFocusOn(JTable table, int row, int col) {
+			// Remove old updater
+			if(currentUpdater != null)
+				this.getDocument().removeDocumentListener(currentUpdater);
 			
-			// register the updater as a listener
-			this.getDocument().addDocumentListener(new UpdateMatch(matcher, this.getDocument(), this));
+			// register new updater
+			currentUpdater = new UpdateMatch(matcher, this.getDocument(), this, table, row, col);
+			this.getDocument().addDocumentListener(currentUpdater);
 		}
 	}
 	
@@ -64,11 +90,17 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 		private final IMatcher matcher;
 		private final Document source;
 		private final JTextComponent parent;
+		private final JTable table;
+		private final int row;
+		private final int col;
 		
-		public UpdateMatch(IMatcher match, Document doc, JTextComponent parent) {
+		public UpdateMatch(IMatcher match, Document doc, JTextComponent parent, JTable table, int row, int col) {
 			this.matcher = match;
 			this.source = doc;
 			this.parent = parent;
+			this.table = table;
+			this.row = row;
+			this.col = col;
 		}
 		@Override
 		public void run() {
@@ -79,7 +111,7 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 				if(original.isEmpty() || original.startsWith(" ") )
 					return;
 				
-				List<String> matches = matcher.match(StringUtils.filterPrefix(original).toLowerCase(), true);
+				List<String> matches = matcher.match(original.toLowerCase(), true, table, row, col);
 				if(matches == null || matches.isEmpty())
 					return;
 				

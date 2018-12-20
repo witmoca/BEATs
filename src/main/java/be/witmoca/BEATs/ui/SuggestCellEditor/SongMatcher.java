@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JTable;
+
 import be.witmoca.BEATs.Launch;
 
 /*
@@ -33,30 +35,50 @@ import be.witmoca.BEATs.Launch;
 * File: SongMatcher.java
 * Created: 2018
 */
-public class SongMatcher implements IMatcher {
 
-	/* (non-Javadoc)
+public class SongMatcher implements IMatcher {
+	private final int artistColumn;
+	
+	/**
+	 * 
+	 * @param artistColumn The column containing the matching ArtistName values of the SongTitle being edited in String format. 
+	 */
+	public SongMatcher(int artistColumn) {
+		this.artistColumn = artistColumn;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see be.witmoca.BEATs.ui.SuggestCellEditor.IMatcher#match(java.lang.String)
 	 */
 	@Override
-	public List<String> match(String search, boolean forwardOnly) {
-		// Does not support % or _ characters (special characters from the SQLite LIKE function)
-		if(search.contains("%") || search.contains("_"))
-			return new ArrayList<String>();;
-		
-		try (PreparedStatement selMatches = Launch.getDB_CONN().prepareStatement("SELECT Title FROM Song WHERE Title LIKE ? ORDER BY Title ASC")) {
-			selMatches.setString(1, (forwardOnly ? "" : "%" )+search+"%");
-			List<String> result = new ArrayList<String>();	
+	public List<String> match(String search, boolean forwardOnly, JTable table, int row, int col) {
+		// Does not support % or _ characters (special characters from the SQLite LIKE
+		// function)
+		if (search.contains("%") || search.contains("_"))
+			return null;
+
+		// To find a song, we need to know the artist first
+		String artist = (String) table.getModel().getValueAt(row, this.artistColumn);
+		if (artist.isEmpty())
+			return null;
+
+		try (PreparedStatement selMatches = Launch.getDB_CONN()
+				.prepareStatement("SELECT Title FROM Song WHERE ArtistName = ? AND Title LIKE ? ORDER BY Title ASC")) {
+			selMatches.setString(1, artist);
+			selMatches.setString(2, (forwardOnly ? "" : "%") + search + "%");
+			List<String> result = new ArrayList<String>();
 			ResultSet rs = selMatches.executeQuery();
-			
-			while(rs.next()) {
+
+			while (rs.next()) {
 				result.add(rs.getString(1));
 			}
 			return result;
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		return new ArrayList<String>();
+		return null;
 	}
 
 }

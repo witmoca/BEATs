@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JTable;
+
 import be.witmoca.BEATs.Launch;
 
 /*
@@ -39,10 +41,10 @@ public class ArtistMatcher implements IMatcher {
 	 * @see be.witmoca.BEATs.ui.SuggestCellEditor.IMatcher#match(java.lang.String)
 	 */
 	@Override
-	public List<String> match(String search, boolean forwardOnly) {
+	public List<String> match(String search, boolean forwardOnly, JTable table, int row, int col) {
 		// Does not support % or _ characters (special characters from the SQLite LIKE function)
 		if(search.contains("%") || search.contains("_"))
-			return new ArrayList<String>();
+			return null;
 		
 		try (PreparedStatement selMatches = Launch.getDB_CONN().prepareStatement("SELECT ArtistName FROM Artist WHERE ArtistName LIKE ? ORDER BY ArtistName ASC")) {
 			selMatches.setString(1, (forwardOnly ? "" : "%" )+search+"%");
@@ -56,7 +58,7 @@ public class ArtistMatcher implements IMatcher {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		return new ArrayList<String>();
+		return null;
 	}
 
 }
