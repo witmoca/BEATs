@@ -43,28 +43,24 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 	private static final long serialVersionUID = 1L;
 
 	public AutoCompletingEditor(IMatcher matcher) {
-		super(new JTextField());
-		
-		JTextField field = ((JTextField) getComponent());
-		field.setBorder(new LineBorder(Color.black));
-		
-		field.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				if(e.getLength() > 0)
-					SwingUtilities.invokeLater(new UpdateMatch(matcher, e.getDocument(), field));
-			}
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-			}
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-			}
-			
-		});
+		super(new CompletingTextField(matcher));
 	}
 	
-	static class UpdateMatch implements Runnable{
+	static class CompletingTextField extends JTextField{
+		private static final long serialVersionUID = 1L;
+		
+		public CompletingTextField(IMatcher matcher) {
+			this.setBorder(new LineBorder(Color.black));
+			
+			// register the updater as a listener
+			this.getDocument().addDocumentListener(new UpdateMatch(matcher, this.getDocument(), this));
+		}
+	}
+	
+	/**
+	 * Listens to the document and when necessary adds itself to the EDT for execution
+	 */
+	static class UpdateMatch implements Runnable, DocumentListener{
 		private final IMatcher matcher;
 		private final Document source;
 		private final JTextComponent parent;
@@ -78,8 +74,9 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 		public void run() {
 			try {
 				String original = source.getText(0, source.getLength());
-				System.out.println(" orig: " + original);
-				if(original.isEmpty())
+				
+				// empty string => do nothing | SQL Query does not respect leading spaces => no query
+				if(original.isEmpty() || original.startsWith(" ") )
 					return;
 				
 				List<String> matches = matcher.match(StringUtils.filterPrefix(original).toLowerCase(), true);
@@ -88,7 +85,7 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 				
 				String topSuggestion = matches.get(0).toLowerCase();
 				
-				if(topSuggestion == null || original.length() == topSuggestion.length())
+				if(topSuggestion == null  || original.length() >= topSuggestion.length())
 					return;
 						
 				source.insertString(original.length(), topSuggestion.substring(original.length()), null);
@@ -97,6 +94,20 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			if(e.getLength() > 0)
+				SwingUtilities.invokeLater(this);
+		}
+		
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+		}
+		
+		@Override
+		public void changedUpdate(DocumentEvent e) {
 		}
 	}
 }

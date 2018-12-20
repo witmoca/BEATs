@@ -42,7 +42,7 @@ public class ArtistMatcher implements IMatcher {
 	public List<String> match(String search, boolean forwardOnly) {
 		// Does not support % or _ characters (special characters from the SQLite LIKE function)
 		if(search.contains("%") || search.contains("_"))
-			return new ArrayList<String>();;
+			return new ArrayList<String>();
 		
 		try (PreparedStatement selMatches = Launch.getDB_CONN().prepareStatement("SELECT ArtistName FROM Artist WHERE ArtistName LIKE ? ORDER BY ArtistName ASC")) {
 			selMatches.setString(1, (forwardOnly ? "" : "%" )+search+"%");
