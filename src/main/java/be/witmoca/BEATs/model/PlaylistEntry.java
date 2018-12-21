@@ -26,13 +26,16 @@ public class PlaylistEntry {
 	private final String ARTIST;
 	private final String SONG;
 	private final String COMMENT;	
+	private final int ROWID;
 	
-	public PlaylistEntry(String aRTIST, String sONG, String cOMMENT) {
+	public PlaylistEntry(int rowid, String aRTIST, String sONG, String cOMMENT) {
 		super();
 		ARTIST = aRTIST;
 		SONG = sONG;
 		COMMENT = cOMMENT;
+		ROWID = rowid;
 	}
+	
 	
 	public String getColumn(int i) {
 		switch(i) {
@@ -50,5 +53,10 @@ public class PlaylistEntry {
 	
 	public boolean isEmpty() {
 		return ARTIST.isEmpty() && SONG.isEmpty();
+	}
+
+
+	public int getROWID() {
+		return ROWID;
 	}
 }

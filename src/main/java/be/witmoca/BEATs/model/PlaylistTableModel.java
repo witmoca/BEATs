@@ -52,11 +52,11 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 	public void tableChanged() {
 		playlistList = new ArrayList<PlaylistEntry>();
 		try (PreparedStatement getValue = Launch.getDB_CONN()
-				.prepareStatement("SELECT Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = ?")) {
+				.prepareStatement("SELECT rowid, Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = ? ORDER BY rowid")) {
 			getValue.setString(1, PlaylistName);
 			ResultSet value = getValue.executeQuery();
 			while (value.next()) {
-				playlistList.add(new PlaylistEntry(value.getString(1), value.getString(2), value.getString(3)));
+				playlistList.add(new PlaylistEntry(value.getInt(1), value.getString(2), value.getString(3), value.getString(4)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -104,11 +104,12 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 		if(rowIndex >= this.getRowCount()-1)
 			return;
 		try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement(
-				"DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
+				"DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ? AND rowid = ?")) {
 			for (int i = 0; i < 3; i++) {
 				updateVal.setString(2 + i, playlistList.get(rowIndex).getColumn(i)); // old values
 			}
 			updateVal.setString(1, PlaylistName);
+			updateVal.setInt(5, playlistList.get(rowIndex).getROWID());
 			updateVal.executeUpdate();
 			Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
@@ -147,12 +148,13 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 					this.deleteRow(rowIndex);
 				} else {
 					try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement(
-							"UPDATE SongsInPlaylist SET Artist = ?, Song = ?, Comment = ? WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
+							"UPDATE SongsInPlaylist SET Artist = ?, Song = ?, Comment = ? WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ? AND rowid = ?")) {
 						for (int i = 0; i < values.length; i++) {
 							updateVal.setString(1 + i, values[i]); // new values
 							updateVal.setString(5 + i, playlistList.get(rowIndex).getColumn(i)); // old values
 						}
 						updateVal.setString(4, PlaylistName);
+						updateVal.setInt(8, playlistList.get(rowIndex).getROWID());
 						updateVal.executeUpdate();
 					}
 				}

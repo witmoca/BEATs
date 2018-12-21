@@ -60,7 +60,7 @@ public class ArchiveTable extends SongTable {
 		
 		List<PlaylistEntry> tfs = new ArrayList<PlaylistEntry>();		
 		for(int i = 0; i < rowIndices.length; i++) {
-			tfs.add(new PlaylistEntry( (String) model.getValueAt(rowIndices[i], 0), (String) model.getValueAt(rowIndices[i], 1), "" ) );
+			tfs.add(new PlaylistEntry(0, (String) model.getValueAt(rowIndices[i], 0), (String) model.getValueAt(rowIndices[i], 1), "" ) );
 		}
 		return new TransferableSongs(tfs);
 	}

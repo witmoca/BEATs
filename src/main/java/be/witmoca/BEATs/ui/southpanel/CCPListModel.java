@@ -78,7 +78,7 @@ public class CCPListModel implements ListModel<String>, DataChangedListener{
 			
 			content.clear();
 			while(rs.next()) {
-				content.add(new PlaylistEntry(rs.getString(1), rs.getString(2), rs.getString(3)));
+				content.add(new PlaylistEntry(0, rs.getString(1), rs.getString(2), rs.getString(3)));
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
