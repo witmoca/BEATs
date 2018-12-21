@@ -46,8 +46,7 @@ public class SQLConnection implements AutoCloseable {
 
 	/**
 	 * 
-	 * @throws SQLException
-	 *             when creating a Db has failed (critically)
+	 * @throws SQLException when creating a Db has failed (critically)
 	 */
 	public SQLConnection() throws SQLException {
 		// internal memory: "jdbc:sqlite::memory:" OR on disk: "jdbc:sqlite:"+DB_LOC
@@ -66,6 +65,7 @@ public class SQLConnection implements AutoCloseable {
 			load.executeUpdate("restore from " + loadPath);
 		}
 		this.contentCheck();
+		this.vacuum();
 	}
 
 	public void saveDatabase(String savePath) throws SQLException {
@@ -73,7 +73,7 @@ public class SQLConnection implements AutoCloseable {
 		try (Statement optimize = Db.createStatement()) {
 			optimize.execute("PRAGMA optimize");
 		}
-		Db.commit();
+		
 		try (Statement save = Db.createStatement()) {
 			save.executeUpdate("backup to " + savePath);
 		}
@@ -104,7 +104,8 @@ public class SQLConnection implements AutoCloseable {
 			createEmptyTables.executeUpdate(
 					"CREATE TABLE IF NOT EXISTS Episode(EpisodeId INTEGER PRIMARY KEY, EpisodeDate INTEGER NOT NULL UNIQUE)");
 			createEmptyTables.executeUpdate("CREATE TABLE IF NOT EXISTS Section(SectionName TEXT PRIMARY KEY)");
-			createEmptyTables.executeUpdate("CREATE TABLE IF NOT EXISTS ccp(Artist TEXT NOT NULL, Song TEXT NOT NULL, Comment TEXT)");
+			createEmptyTables.executeUpdate(
+					"CREATE TABLE IF NOT EXISTS ccp(Artist TEXT NOT NULL, Song TEXT NOT NULL, Comment TEXT)");
 			// Relation Tables
 			createEmptyTables.executeUpdate(
 					"CREATE TABLE IF NOT EXISTS SongsInPlaylist(PlaylistName REFERENCES Playlist NOT NULL,Artist TEXT NOT NULL, Song TEXT NOT NULL, Comment TEXT)");
@@ -174,6 +175,18 @@ public class SQLConnection implements AutoCloseable {
 		}
 	}
 
+	private void vacuum() throws SQLException {
+		// No transaction can be open during vacuum 
+		// => easy workaround by putting the DB in autocommit for the duration of the execution
+		Db.commit();
+		Db.setAutoCommit(true);
+		// Rebuild database (restructure logically & pack into minimal amount of space)
+		try (Statement vacuum = Db.createStatement()) {
+			vacuum.execute("VACUUM");
+		}
+		Db.setAutoCommit(false);
+	}
+
 	public PreparedStatement prepareStatement(String sql) throws SQLException {
 		return Db.prepareStatement(sql);
 	}
@@ -195,7 +208,7 @@ public class SQLConnection implements AutoCloseable {
 
 		// only now notify them (this might cause clients to add/modify/delete
 		// DataChangedListeners, so this list has to be static)
-		for(DataChangedListener client : clientsToNotify) {
+		for (DataChangedListener client : clientsToNotify) {
 			client.tableChanged();
 		}
 	}
