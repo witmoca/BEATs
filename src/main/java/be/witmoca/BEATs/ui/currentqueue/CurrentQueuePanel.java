@@ -23,16 +23,12 @@
 package be.witmoca.BEATs.ui.currentqueue;
 
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
