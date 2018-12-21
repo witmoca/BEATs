@@ -75,6 +75,8 @@ public class RevertToPlaylistFromQueueAction extends AbstractAction {
 			String[] options = playlists.toArray(new String[0]);
 			String playlistName = (String) JOptionPane.showInputDialog(Launch.getAPP_WINDOW(), "Playlist to revert to:",
 					"Revert played song", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if(playlistName == null)
+				return;
 			
 			String artist;
 			String song;
