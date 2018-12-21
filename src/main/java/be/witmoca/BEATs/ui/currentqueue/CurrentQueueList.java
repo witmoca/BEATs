@@ -4,6 +4,7 @@
 package be.witmoca.BEATs.ui.currentqueue;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -61,7 +62,10 @@ public class CurrentQueueList extends JList<String> {
 		if(index < 0)
 			return null;
 		Point t = this.indexToLocation(index);
-		return new Point(t.x, t.y + this.getCellBounds(index, index).height);
+		Rectangle bounds = this.getCellBounds(index, index);
+		if(bounds == null)
+			return null;
+		return new Point(t.x, t.y + bounds.height);
 	}	
 
 }
