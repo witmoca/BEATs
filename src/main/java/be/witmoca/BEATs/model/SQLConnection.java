@@ -23,6 +23,7 @@
 package be.witmoca.BEATs.model;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,45 +36,63 @@ import java.util.Map;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConnection;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.FileManager;
 
 public class SQLConnection implements AutoCloseable {
 	private final SQLiteConnection Db; // Internal Connection
-	private static final String DB_LOC = Launch.APP_FOLDER + File.separator + "InternalStorage.db";
 	private static final int APPLICATION_ID = 0x77776462;
 	private boolean changedState = false;
 	private Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> dataListeners = new HashMap<>();
 
 	/**
-	 * 
-	 * @throws SQLException when creating a Db has failed (critically)
+	 *  Creates a new internal storage and sets up the content
+	 *  
+	 * @param loadFile the File to load the content from, {@code null} if an empty database is desired.
+	 * @throws SQLException if SQLConnection failed to instantiate
 	 */
-	public SQLConnection() throws SQLException {
-		// internal memory: "jdbc:sqlite::memory:" OR on disk: "jdbc:sqlite:"+DB_LOC
-		Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + DB_LOC, configSettings().toProperties());
+	public SQLConnection(File loadFile) throws SQLException {
+		Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + FileManager.DB_LOC,configSettings().toProperties());
 		Db.setAutoCommit(false);
 		createTables();
 		Db.commit();
-	}
-
-	/**
-	 * Creates a new SQLConnection and loads the db from path
-	 */
-	public SQLConnection(String loadPath) throws SQLException {
-		this();
-		try (Statement load = Db.createStatement()) {
-			load.executeUpdate("restore from " + loadPath);
+		if (loadFile != null) {
+			try (Statement load = Db.createStatement()) {
+				load.executeUpdate("restore from " + loadFile.getAbsolutePath());
+			}
 		}
 		this.contentCheck();
 		this.vacuum();
 	}
+	
+	/**
+	 *  Internal method only! Used to open a connection to a (possibly) recoverable database.
+	 * @throws SQLException if recovery failed.
+	 */
+	
+	private SQLConnection() throws SQLException {
+		Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + FileManager.DB_LOC,configSettings().toProperties());
+		Db.setAutoCommit(false);
+		this.contentCheck();
+	}
+	
+	/**
+	 *  Opens a connection to a (possibly) recoverable database.
+	 *  
+	 * @return the recovered database.
+	 * @throws SQLException if recovery failed.
+	 */
+	public static SQLConnection recoverDatabase() throws SQLException {
+		return new SQLConnection();
+	}
+	
 
 	public void saveDatabase(String savePath) throws SQLException {
 		// Call optimize first
 		try (Statement optimize = Db.createStatement()) {
 			optimize.execute("PRAGMA optimize");
 		}
-		
+
 		try (Statement save = Db.createStatement()) {
 			save.executeUpdate("backup to " + savePath);
 		}
@@ -83,7 +102,7 @@ public class SQLConnection implements AutoCloseable {
 	private SQLiteConfig configSettings() {
 		SQLiteConfig config = new SQLiteConfig();
 		// Add application_id & user_version
-		config.setUserVersion(Launch.APP_VERSION);
+		config.setUserVersion(ApplicationManager.APP_VERSION);
 		config.setApplicationId(APPLICATION_ID);
 		// Enforce foreign key correctness
 		config.enforceForeignKeys(true);
@@ -132,11 +151,11 @@ public class SQLConnection implements AutoCloseable {
 																									// value! (0 as
 																									// default)
 			int fileVersion = appversionCheckIdResult.getInt(1);
-			if (fileVersion > Launch.APP_VERSION) {
+			if (fileVersion > ApplicationManager.APP_VERSION) {
 				// File is newer than app => update app
 				throw new SQLException(
 						"The requested database has a higher version number. Please update BEATs to a newer version.");
-			} else if ((fileVersion >>> 6) < (Launch.APP_VERSION >>> 6)) {
+			} else if ((fileVersion >>> 6) < (ApplicationManager.APP_VERSION >>> 6)) {
 				// Major version of file < major version of app => not compatible
 				throw new SQLException(
 						"Could not load database because it is too old. Please try to import it instead.");
@@ -176,8 +195,9 @@ public class SQLConnection implements AutoCloseable {
 	}
 
 	private void vacuum() throws SQLException {
-		// No transaction can be open during vacuum 
-		// => easy workaround by putting the DB in autocommit for the duration of the execution
+		// No transaction can be open during vacuum
+		// => easy workaround by putting the DB in autocommit for the duration of the
+		// execution
 		Db.commit();
 		Db.setAutoCommit(true);
 		// Rebuild database (restructure logically & pack into minimal amount of space)
@@ -196,7 +216,7 @@ public class SQLConnection implements AutoCloseable {
 		this.setChanged();
 		this.notifyDataChangedListeners(eSet);
 	}
-	
+
 	public void notifyDataChangedListeners(EnumSet<DataChangedListener.DataType> eSet) {
 		ArrayList<DataChangedListener> clientsToNotify = new ArrayList<>();
 		// First compile a list of clients to notify
@@ -222,8 +242,11 @@ public class SQLConnection implements AutoCloseable {
 			return;
 		Db.commit();
 		Db.close();
-		if (!(new File(DB_LOC)).delete())
-			throw new SQLException("Could not cleanup BEATS internal storage");
+		try {
+			FileManager.deleteDb();
+		} catch (IOException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public SQLiteConnection getDb() {

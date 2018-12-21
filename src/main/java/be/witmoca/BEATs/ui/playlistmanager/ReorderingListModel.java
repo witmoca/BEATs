@@ -32,14 +32,14 @@ import java.util.Map;
 
 import javax.swing.AbstractListModel;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 
 public class ReorderingListModel extends AbstractListModel<String> {
 	private static final long serialVersionUID = 1L;
 	private final Map<Integer, String> contents = new HashMap<Integer, String>();
 	
 	public ReorderingListModel() {
-		try (PreparedStatement selPlaylist = Launch.getDB_CONN().prepareStatement("SELECT PlaylistName FROM playlist ORDER BY TabOrder ASC")) {
+		try (PreparedStatement selPlaylist = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM playlist ORDER BY TabOrder ASC")) {
 			ResultSet rs = selPlaylist.executeQuery();
 			int i = 0;
 			while (rs.next())

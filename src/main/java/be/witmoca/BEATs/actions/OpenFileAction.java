@@ -27,7 +27,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFileChooser;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
 
 public class OpenFileAction implements ActionListener {
 
@@ -42,8 +43,8 @@ public class OpenFileAction implements ActionListener {
 		final JFileChooser fc = new JFileChooser();
 		fc.setAcceptAllFileFilterUsed(false);
 		fc.setFileFilter(new BEATsFileFilter());
-		if (fc.showOpenDialog(Launch.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
-			Launch.changeModel(fc.getSelectedFile().getAbsolutePath());
+		if (fc.showOpenDialog(ApplicationManager.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
+			ApplicationManager.changeModel(fc.getSelectedFile());
 		}
 	}
 

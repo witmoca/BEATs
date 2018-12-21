@@ -33,7 +33,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.DataChangedListener;
 
 public class PlaylistManagerShowAction implements ActionListener {
@@ -90,12 +90,12 @@ public class PlaylistManagerShowAction implements ActionListener {
 			// start by removing
 			for(String pName : delete) {
 				// first delete all the playlist entries
-				try (PreparedStatement delPS = Launch.getDB_CONN().prepareStatement("DELETE FROM SongsInPlaylist WHERE PlaylistName = ?")) {
+				try (PreparedStatement delPS = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM SongsInPlaylist WHERE PlaylistName = ?")) {
 					delPS.setString(1, pName);
 					delPS.executeUpdate();
 				}
 				// then delete the playlist
-				try (PreparedStatement delP = Launch.getDB_CONN().prepareStatement("DELETE FROM Playlist WHERE PlaylistName = ?")) {
+				try (PreparedStatement delP = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM Playlist WHERE PlaylistName = ?")) {
 					delP.setString(1, pName);
 					delP.executeUpdate();
 				}
@@ -103,7 +103,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 			// Move all existing tabOrders upwards, so that we can guarantee unique tabOrders
 			// select max taborder
 			int maxTab = 0;
-			try (PreparedStatement selMaxTab = Launch.getDB_CONN()
+			try (PreparedStatement selMaxTab = ApplicationManager.getDB_CONN()
 					.prepareStatement("SELECT max(TabOrder) FROM playlist")) {
 				ResultSet rs = selMaxTab.executeQuery();
 				if (rs.next())
@@ -111,14 +111,14 @@ public class PlaylistManagerShowAction implements ActionListener {
 			}
 			
 			// move tabOrders up
-			try (PreparedStatement tabUp = Launch.getDB_CONN().prepareStatement("UPDATE Playlist SET TabOrder = TabOrder + ?")) {
+			try (PreparedStatement tabUp = ApplicationManager.getDB_CONN().prepareStatement("UPDATE Playlist SET TabOrder = TabOrder + ?")) {
 				tabUp.setInt(1, maxTab);
 				tabUp.executeUpdate();
 			}
 			
 			// Create the playlists
 			for(String newP : create) {
-				try (PreparedStatement addP = Launch.getDB_CONN().prepareStatement("INSERT INTO Playlist VALUES (?, ( SELECT coalesce(max(TabOrder)+1,1) FROM Playlist) )")) {
+				try (PreparedStatement addP = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO Playlist VALUES (?, ( SELECT coalesce(max(TabOrder)+1,1) FROM Playlist) )")) {
 					addP.setString(1, newP);
 					addP.executeUpdate();
 				}
@@ -127,7 +127,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 			// Reorder all the playlists
 			int i = 0;
 			for(String name : newNames) {
-				try (PreparedStatement order = Launch.getDB_CONN().prepareStatement("UPDATE Playlist SET TabOrder = ? WHERE PlaylistName = ?")) {
+				try (PreparedStatement order = ApplicationManager.getDB_CONN().prepareStatement("UPDATE Playlist SET TabOrder = ? WHERE PlaylistName = ?")) {
 					order.setInt(1, i++);
 					order.setString(2, name);
 					order.executeUpdate();
@@ -135,7 +135,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 			}
 			
 			// commit the changes
-			Launch.getDB_CONN().commit(DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
+			ApplicationManager.getDB_CONN().commit(DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

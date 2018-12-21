@@ -28,7 +28,7 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 
 public class ExitApplicationAction implements ActionListener {
 	private boolean hasSucceeded = false;
@@ -42,9 +42,9 @@ public class ExitApplicationAction implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// Check if data has changed
-		if(Launch.getDB_CONN().isChanged()) {
+		if(ApplicationManager.getDB_CONN().isChanged()) {
 			String options[] = {"Save", "Close without saving", "Cancel"};
-			int response = JOptionPane.showOptionDialog(Launch.getAPP_WINDOW(), "You have not saved this file.\nYour changes will be discarded if you continue wihout saving.", "Confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, null);
+			int response = JOptionPane.showOptionDialog(ApplicationManager.getAPP_WINDOW(), "You have not saved this file.\nYour changes will be discarded if you continue wihout saving.", "Confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, null);
 			if(response == 2 || response == -1) {
 				// Cancelled
 				return;
@@ -61,11 +61,11 @@ public class ExitApplicationAction implements ActionListener {
 		
 		// Exit Application
 		// Kill GUI
-		Launch.getAPP_WINDOW().dispose();
+		ApplicationManager.getAPP_WINDOW().dispose();
 		
 		// KILL DB Connection
 		try {
-			Launch.getDB_CONN().close();
+			ApplicationManager.getDB_CONN().close();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

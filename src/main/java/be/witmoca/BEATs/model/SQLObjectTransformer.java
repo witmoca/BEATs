@@ -27,13 +27,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.utils.StringUtils;
 
 public class SQLObjectTransformer {
 	
 	public static void addEpisode(int episodeID, LocalDate episodeDate) throws SQLException {
-		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO episode VALUES (?, ?)")){
+		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO episode VALUES (?, ?)")){
 			add.setInt(1, episodeID);
 			// Actually an int is more than enough for the next few thousands of years (sqlite will take care of the type so no need to convert)
 			add.setLong(2, episodeDate.toEpochDay());
@@ -42,14 +42,14 @@ public class SQLObjectTransformer {
 	}
 	
 	public static void addSection(String sectionCode) throws SQLException {
-		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO section VALUES (?)")){
+		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO section VALUES (?)")){
 			add.setString(1, sectionCode);
 			add.executeUpdate();
 		}
 	}
 	
 	public static void addArtist(String artistName, boolean local) throws SQLException {
-		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO artist VALUES (?, ?)")){
+		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO artist VALUES (?, ?)")){
 			add.setString(1, StringUtils.ToUpperCamelCase(StringUtils.filterPrefix(artistName)));
 			add.setBoolean(2, local);
 			add.executeUpdate();
@@ -60,12 +60,12 @@ public class SQLObjectTransformer {
 		title = StringUtils.ToUpperCamelCase(title);
 		artistName = StringUtils.ToUpperCamelCase(StringUtils.filterPrefix(artistName));
 		
-		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO song(Title, ArtistName) VALUES (?, ?)")){
+		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO song(Title, ArtistName) VALUES (?, ?)")){
 			add.setString(1, title);
 			add.setString(2, artistName);
 			add.executeUpdate();
 		}
-		try(PreparedStatement getId = Launch.getDB_CONN().prepareStatement("SELECT songId From song WHERE Title = ? AND ArtistName = ?")){
+		try(PreparedStatement getId = ApplicationManager.getDB_CONN().prepareStatement("SELECT songId From song WHERE Title = ? AND ArtistName = ?")){
 			getId.setString(1, title);
 			getId.setString(2, artistName);
 			ResultSet rs = getId.executeQuery();
@@ -77,7 +77,7 @@ public class SQLObjectTransformer {
 	}
 	
 	public static void addSongInArchive(int songId, int episodeId, String section, String comment) throws SQLException {
-		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT INTO SongsInArchive VALUES (?, ?, ?, ?)")){
+		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO SongsInArchive VALUES (?, ?, ?, ?)")){
 			add.setInt(1, songId);
 			add.setInt(2, episodeId);
 			add.setString(3, section);
@@ -94,7 +94,7 @@ public class SQLObjectTransformer {
 	 */
 	public static void addPlaylist(String playlistName, int tabOrder) throws SQLException {
 		if(tabOrder <= 0) {
-			try(PreparedStatement getMaxTab = Launch.getDB_CONN().prepareStatement("SELECT max(tabOrder) FROM playlist")){
+			try(PreparedStatement getMaxTab = ApplicationManager.getDB_CONN().prepareStatement("SELECT max(tabOrder) FROM playlist")){
 				ResultSet rs = getMaxTab.executeQuery();
 				if(!rs.next()) {
 					tabOrder = 0;
@@ -103,7 +103,7 @@ public class SQLObjectTransformer {
 			}
 		}
 		
-		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO playlist VALUES (?, ?)")){
+		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO playlist VALUES (?, ?)")){
 			add.setString(1, playlistName);
 			add.setInt(2, tabOrder);
 			add.executeUpdate();
@@ -111,7 +111,7 @@ public class SQLObjectTransformer {
 	}
 	
 	public static void addSongInPlaylist(String playlistName, String artist, String song, String comment) throws SQLException {
-		try(PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT INTO SongsInPlaylist VALUES (?, ?, ?, ?)")){
+		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO SongsInPlaylist VALUES (?, ?, ?, ?)")){
 			add.setString(1, playlistName);
 			add.setString(2, StringUtils.ToUpperCamelCase(StringUtils.filterPrefix(artist)) );
 			add.setString(3, StringUtils.ToUpperCamelCase(song) );

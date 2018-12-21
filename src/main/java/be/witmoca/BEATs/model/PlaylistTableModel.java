@@ -31,7 +31,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.utils.StringUtils;
 
 public class PlaylistTableModel extends AbstractTableModel implements DataChangedListener {
@@ -44,14 +44,14 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 		super();
 		this.setPlaylistName(playlistName);
 
-		Launch.getDB_CONN().addDataChangedListener(this, DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
+		ApplicationManager.getDB_CONN().addDataChangedListener(this, DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
 		tableChanged();
 	}
 
 	@Override
 	public void tableChanged() {
 		playlistList = new ArrayList<PlaylistEntry>();
-		try (PreparedStatement getValue = Launch.getDB_CONN()
+		try (PreparedStatement getValue = ApplicationManager.getDB_CONN()
 				.prepareStatement("SELECT rowid, Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = ? ORDER BY rowid")) {
 			getValue.setString(1, PlaylistName);
 			ResultSet value = getValue.executeQuery();
@@ -103,7 +103,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 	public void deleteRow(int rowIndex) {
 		if(rowIndex >= this.getRowCount()-1)
 			return;
-		try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement(
+		try (PreparedStatement updateVal = ApplicationManager.getDB_CONN().prepareStatement(
 				"DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ? AND rowid = ?")) {
 			for (int i = 0; i < 3; i++) {
 				updateVal.setString(2 + i, playlistList.get(rowIndex).getColumn(i)); // old values
@@ -111,7 +111,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 			updateVal.setString(1, PlaylistName);
 			updateVal.setInt(5, playlistList.get(rowIndex).getROWID());
 			updateVal.executeUpdate();
-			Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
+			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -147,7 +147,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 				if (String.join("", values).trim().isEmpty()) {
 					this.deleteRow(rowIndex);
 				} else {
-					try (PreparedStatement updateVal = Launch.getDB_CONN().prepareStatement(
+					try (PreparedStatement updateVal = ApplicationManager.getDB_CONN().prepareStatement(
 							"UPDATE SongsInPlaylist SET Artist = ?, Song = ?, Comment = ? WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ? AND rowid = ?")) {
 						for (int i = 0; i < values.length; i++) {
 							updateVal.setString(1 + i, values[i]); // new values
@@ -160,7 +160,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 				}
 
 			}
-			Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
+			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -33,7 +33,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.PlaylistTableModel;
 import be.witmoca.BEATs.utils.UiUtils;
 
@@ -57,7 +57,7 @@ public class DeleteAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		if(connectedTable.getSelectedRowCount() == 0)
 			return;
-		if (JOptionPane.showConfirmDialog(Launch.getAPP_WINDOW(),
+		if (JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(),
 				"Are you sure you want to delete " + connectedTable.getSelectedRowCount() + " row(s)?", "Delete?",
 				 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
 			return;

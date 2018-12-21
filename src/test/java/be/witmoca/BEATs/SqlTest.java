@@ -15,7 +15,7 @@ class SqlTest {
 	void createTestDb() {
 		SQLConnection Db = null;
 		try {
-			Db = new SQLConnection();
+			Db = new SQLConnection(null);
 		} catch (SQLException e1) {
 			fail("Db not created: " + e1.getLocalizedMessage());
 		}

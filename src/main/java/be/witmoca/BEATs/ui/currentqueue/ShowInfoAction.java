@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.CurrentQueueListModel;
 
 /*
@@ -71,7 +71,7 @@ public class ShowInfoAction extends AbstractAction {
 
 		try {
 			// Get song data
-			try (PreparedStatement getSongData = Launch.getDB_CONN().prepareStatement(
+			try (PreparedStatement getSongData = ApplicationManager.getDB_CONN().prepareStatement(
 					"SELECT ArtistName, Title, Comment FROM CurrentQueue, Song WHERE CurrentQueue.SongId = Song.SongId AND CurrentQueue.SongOrder = ?")) {
 				getSongData.setInt(1, songOrder);
 				ResultSet rs = getSongData.executeQuery();
@@ -83,7 +83,7 @@ public class ShowInfoAction extends AbstractAction {
 			}
 			
 			// get artist count
-			try (PreparedStatement selArtist = Launch.getDB_CONN().prepareStatement("SELECT count(*) FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId AND ArtistName = ?")){
+			try (PreparedStatement selArtist = ApplicationManager.getDB_CONN().prepareStatement("SELECT count(*) FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId AND ArtistName = ?")){
 				selArtist.setString(1, artist.getText());
 				ResultSet rs = selArtist.executeQuery();
 				if(!rs.next())
@@ -93,7 +93,7 @@ public class ShowInfoAction extends AbstractAction {
 			}
 			
 			// get song count
-			try (PreparedStatement selSong = Launch.getDB_CONN().prepareStatement("SELECT count(*) FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId AND ArtistName = ? AND Title = ?")){
+			try (PreparedStatement selSong = ApplicationManager.getDB_CONN().prepareStatement("SELECT count(*) FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId AND ArtistName = ? AND Title = ?")){
 				selSong.setString(1, artist.getText());
 				selSong.setString(2, song.getText());
 				ResultSet rs = selSong.executeQuery();
@@ -118,7 +118,7 @@ public class ShowInfoAction extends AbstractAction {
 		message.add(artistCount);
 		message.add(new JLabel("Times Song Was Played: "));
 		message.add(songCount);
-		JOptionPane.showMessageDialog(Launch.getAPP_WINDOW(), message, "Song Info", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(ApplicationManager.getAPP_WINDOW(), message, "Song Info", JOptionPane.PLAIN_MESSAGE);
 	}
 
 }

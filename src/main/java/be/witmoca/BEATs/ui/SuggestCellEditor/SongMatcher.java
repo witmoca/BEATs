@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.swing.JTable;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 
 /*
 *
@@ -64,7 +64,7 @@ public class SongMatcher implements IMatcher {
 		if (artist.isEmpty())
 			return null;
 
-		try (PreparedStatement selMatches = Launch.getDB_CONN()
+		try (PreparedStatement selMatches = ApplicationManager.getDB_CONN()
 				.prepareStatement("SELECT Title FROM Song WHERE ArtistName = ? AND Title LIKE ? ORDER BY Title ASC")) {
 			selMatches.setString(1, artist);
 			selMatches.setString(2, (forwardOnly ? "" : "%") + search + "%");

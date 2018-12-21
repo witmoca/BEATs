@@ -46,7 +46,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerListModel;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 
 public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private static final long serialVersionUID = 1L;
@@ -60,7 +60,7 @@ public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private boolean valid = false;
 	
 	public ArchivalDialog() {
-		super(Launch.getAPP_WINDOW(), "Archive", true);
+		super(ApplicationManager.getAPP_WINDOW(), "Archive", true);
 		
 		// create the entryPanel
 		GroupLayout gLayout = new GroupLayout(entryPanel);
@@ -127,7 +127,7 @@ public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	
 	private static List<String> loadSections(){
 		List<String> sections = new ArrayList<String>();
-		try (PreparedStatement sel = Launch.getDB_CONN().prepareStatement("SELECT SectionName FROM Section ORDER BY SectionName ASC")) {
+		try (PreparedStatement sel = ApplicationManager.getDB_CONN().prepareStatement("SELECT SectionName FROM Section ORDER BY SectionName ASC")) {
 
 			ResultSet rs = sel.executeQuery();
 			while (rs.next()) {
@@ -147,7 +147,7 @@ public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private static JTable constructSummary() {
 		try {
 			Vector<Vector<String>> tableData = new Vector<Vector<String>>();
-			try (PreparedStatement sel = Launch.getDB_CONN().prepareStatement(
+			try (PreparedStatement sel = ApplicationManager.getDB_CONN().prepareStatement(
 					"SELECT ArtistName, Title, Comment FROM CurrentQueue,Song WHERE CurrentQueue.songId = Song.SongId ORDER BY SongOrder ASC")) {
 
 				ResultSet rs = sel.executeQuery();
@@ -183,7 +183,7 @@ public class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		
 		protected void loadValues() {
 			episodeList = new ArrayList<Integer>();
-			try (PreparedStatement findExclusions = Launch.getDB_CONN().prepareStatement("SELECT EpisodeId FROM Episode ORDER BY EpisodeId ASC")) {
+			try (PreparedStatement findExclusions = ApplicationManager.getDB_CONN().prepareStatement("SELECT EpisodeId FROM Episode ORDER BY EpisodeId ASC")) {
 				ResultSet rs = findExclusions.executeQuery();
 				while (rs.next())
 					episodeList.add(rs.getInt(1));

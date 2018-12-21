@@ -29,7 +29,7 @@ import java.util.EnumSet;
 
 import javax.swing.JTabbedPane;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
@@ -41,12 +41,12 @@ public class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListe
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
 		
 		this.tableChanged();
-		Launch.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
 	}
 	
 	@Override
 	public void tableChanged() {
-		try (PreparedStatement getValue = Launch.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
+		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
 			ResultSet value = getValue.executeQuery();
 			this.removeAll();
 			while(value.next()) {

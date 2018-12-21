@@ -25,6 +25,7 @@ package be.witmoca.BEATs;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -32,30 +33,34 @@ import java.sql.SQLException;
 
 import javax.swing.SwingUtilities;
 
+import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
 import be.witmoca.BEATs.actions.ExitApplicationAction;
 import be.witmoca.BEATs.model.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 
-public class Launch {
-	public static final String APP_FOLDER = System.getProperty("user.home") + File.separator + "BEATs";
-	// Format : MMMmmmrrr with M = Major, m = minor & r = revision
-	public static final int APP_VERSION = 000001000;
+public class ApplicationManager {
+	// Format : MMMmmmrrr with M = Major, m = minor & r = revision (do not lead with zeros, as this is interpreted as octal)
+	public static final int APP_VERSION = 1000;
 
 	private static ApplicationWindow APP_WINDOW = null;
 	private static SQLConnection DB_CONN = null;
 
-	public static void main(String[] args) {
-		if (DB_CONN != null) {
-			fatalError(new Exception("DB_CONN already loaded! Duplicate instance?"));
+	// Start up
+	public static void main(String[] args) {		
+		// Initialise Files & folders (includes database recovery as well)
+		try {
+			FileManager.initFileSystem();
+		} catch (IOException e) {
+			fatalError(e);
 			return;
 		}
-
-		// Preset internal folders
-		(new File(APP_FOLDER)).mkdirs();
+		
+		
+		File loadFile = extractFileFromArgs(args);
 
 		// Setup Internal memory
 		try {
-			DB_CONN = new SQLConnection();
+			DB_CONN = new SQLConnection(null);
 		} catch (SQLException e) {
 			fatalError(e);
 			return;
@@ -109,13 +114,13 @@ public class Launch {
 	 *            an empty file.
 	 * @throws SQLException
 	 */
-	public static void changeModel(String fileToLoad) {
+	public static void changeModel(File load) {
 		if(!SwingUtilities.isEventDispatchThread())
 			throw new RuntimeException("Launch.changeModel called from outside the EDT!");
 		
 		// Do an 'exit'
 		ExitApplicationAction eaa = new ExitApplicationAction();
-		eaa.actionPerformed(new ActionEvent(Launch.class, ActionEvent.ACTION_PERFORMED, "changeModel"));
+		eaa.actionPerformed(new ActionEvent(ApplicationManager.class, ActionEvent.ACTION_PERFORMED, "changeModel"));
 		if(!eaa.hasSucceeded()) {
 			// Cancelled or Error
 			return;
@@ -123,19 +128,35 @@ public class Launch {
 
 		// Load new Database Connection
 		try {
-			if (fileToLoad == null) {
-				DB_CONN = new SQLConnection();
-			} else {
-				DB_CONN = new SQLConnection(fileToLoad);
-			}
+			DB_CONN = new SQLConnection(load);
 		} catch (SQLException e) {
 			fatalError(e);
+			return;
 		}
 
 		// Start GUI
 		APP_WINDOW = new ApplicationWindow();
 	}
 
+	private static File extractFileFromArgs(String[] args) {
+		for(String s : args) {
+			// Check if string is valid
+			s = s.trim();
+			if(s.isEmpty())
+				continue;
+			
+			File test = new File(s);
+			// check if the string denotes an existing file
+			if(!test.exists() || !test.isFile())
+				continue;
+			
+			// Check if the file filter accepts this as a valid file
+			if((new BEATsFileFilter()).accept(test))
+				return test;
+		}
+		return null;
+	}
+	
 	public static ApplicationWindow getAPP_WINDOW() {
 		return APP_WINDOW;
 	}

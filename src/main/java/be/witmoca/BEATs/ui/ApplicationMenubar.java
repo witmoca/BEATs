@@ -33,7 +33,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.actions.EpisodeIdContinuityCheckAction;
 import be.witmoca.BEATs.actions.ExitApplicationAction;
 import be.witmoca.BEATs.actions.ImportFileAction;
@@ -99,7 +99,7 @@ public class ApplicationMenubar extends JMenuBar {
 		refreshScreen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Launch.getDB_CONN().notifyDataChangedListeners(DataChangedListener.DataType.ALL_OPTS); // Notify all listeners that the data is 'changed' => reloads said data
+				ApplicationManager.getDB_CONN().notifyDataChangedListeners(DataChangedListener.DataType.ALL_OPTS); // Notify all listeners that the data is 'changed' => reloads said data
 			}
 		});
 		toolsMenu.add(refreshScreen);

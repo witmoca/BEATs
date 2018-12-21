@@ -34,7 +34,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.CurrentQueueListModel;
 import be.witmoca.BEATs.model.DataChangedListener;
 
@@ -65,7 +65,7 @@ public class RevertToPlaylistFromQueueAction extends AbstractAction {
 		List<String> playlists = new ArrayList<String>();
 
 		try {
-			try (PreparedStatement playlistsQ = Launch.getDB_CONN()
+			try (PreparedStatement playlistsQ = ApplicationManager.getDB_CONN()
 					.prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
 				ResultSet rs = playlistsQ.executeQuery();
 				while (rs.next())
@@ -73,7 +73,7 @@ public class RevertToPlaylistFromQueueAction extends AbstractAction {
 			}
 
 			String[] options = playlists.toArray(new String[0]);
-			String playlistName = (String) JOptionPane.showInputDialog(Launch.getAPP_WINDOW(), "Playlist to revert to:",
+			String playlistName = (String) JOptionPane.showInputDialog(ApplicationManager.getAPP_WINDOW(), "Playlist to revert to:",
 					"Revert played song", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if(playlistName == null)
 				return;
@@ -81,7 +81,7 @@ public class RevertToPlaylistFromQueueAction extends AbstractAction {
 			String artist;
 			String song;
 			String comment;
-			try (PreparedStatement sel = Launch.getDB_CONN().prepareStatement("SELECT ArtistName, Title, Comment FROM CurrentQueue,Song WHERE CurrentQueue.songId = Song.SongId AND SongOrder = ?")) {
+			try (PreparedStatement sel = ApplicationManager.getDB_CONN().prepareStatement("SELECT ArtistName, Title, Comment FROM CurrentQueue,Song WHERE CurrentQueue.songId = Song.SongId AND SongOrder = ?")) {
 				sel.setInt(1, songOrder);
 				ResultSet rs = sel.executeQuery();
 				if(!rs.next())
@@ -91,7 +91,7 @@ public class RevertToPlaylistFromQueueAction extends AbstractAction {
 				comment = rs.getString(3);
 			}
 
-			try (PreparedStatement add = Launch.getDB_CONN().prepareStatement("INSERT INTO SongsInPlaylist VALUES (?, ?, ?, ?)")) {
+			try (PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO SongsInPlaylist VALUES (?, ?, ?, ?)")) {
 				add.setString(1, playlistName);
 				add.setString(2, artist);
 				add.setString(3, song);
@@ -99,12 +99,12 @@ public class RevertToPlaylistFromQueueAction extends AbstractAction {
 				add.executeUpdate();
 			}
 			
-			try (PreparedStatement del = Launch.getDB_CONN().prepareStatement("DELETE FROM CurrentQueue WHERE SongOrder = ?")) {
+			try (PreparedStatement del = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM CurrentQueue WHERE SongOrder = ?")) {
 				del.setInt(1, songOrder);
 				del.executeUpdate();
 			}
 			
-			Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST, DataChangedListener.DataType.CURRENT_QUEUE));
+			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST, DataChangedListener.DataType.CURRENT_QUEUE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

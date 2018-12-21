@@ -29,7 +29,8 @@ import java.sql.SQLException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
 
 public class SaveFileAction implements ActionListener {
 	private boolean hasSucceeded = false;
@@ -48,7 +49,7 @@ public class SaveFileAction implements ActionListener {
 		final JFileChooser fc = new JFileChooser();
 		fc.setAcceptAllFileFilterUsed(false);
 		fc.setFileFilter(new BEATsFileFilter());
-		if (fc.showSaveDialog(Launch.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
+		if (fc.showSaveDialog(ApplicationManager.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
 			String pathToFile = fc.getSelectedFile().getAbsolutePath();
 			// Only 1 ".beats" extension!
 			while (pathToFile.endsWith(".beats")) {
@@ -56,10 +57,10 @@ public class SaveFileAction implements ActionListener {
 			}
 			pathToFile += ".beats";
 			try {
-				Launch.getDB_CONN().saveDatabase(pathToFile);
+				ApplicationManager.getDB_CONN().saveDatabase(pathToFile);
 				hasSucceeded = true;
 			} catch (SQLException e1) {
-				JOptionPane.showMessageDialog(Launch.getAPP_WINDOW(),
+				JOptionPane.showMessageDialog(ApplicationManager.getAPP_WINDOW(),
 						"Error during saving:\n" + e1.getLocalizedMessage(), "Oops!",
 						javax.swing.JOptionPane.ERROR_MESSAGE);
 			}

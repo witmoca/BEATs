@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.swing.JTable;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 
 /*
 *
@@ -46,7 +46,7 @@ public class ArtistMatcher implements IMatcher {
 		if(search.contains("%") || search.contains("_"))
 			return null;
 		
-		try (PreparedStatement selMatches = Launch.getDB_CONN().prepareStatement("SELECT ArtistName FROM Artist WHERE ArtistName LIKE ? ORDER BY ArtistName ASC")) {
+		try (PreparedStatement selMatches = ApplicationManager.getDB_CONN().prepareStatement("SELECT ArtistName FROM Artist WHERE ArtistName LIKE ? ORDER BY ArtistName ASC")) {
 			selMatches.setString(1, (forwardOnly ? "" : "%" )+search+"%");
 			List<String> result = new ArrayList<String>();	
 			ResultSet rs = selMatches.executeQuery();

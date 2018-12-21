@@ -48,7 +48,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.FileFilters.WWDB1FileFilter;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.model.SQLObjectTransformer;
 
@@ -76,7 +77,7 @@ public class ImportFileAction implements ActionListener {
 		fc.addChoosableFileFilter(new WWDB1FileFilter());
 
 		// Check for Cancel/Error
-		if (fc.showOpenDialog(Launch.getAPP_WINDOW()) != JFileChooser.APPROVE_OPTION) {
+		if (fc.showOpenDialog(ApplicationManager.getAPP_WINDOW()) != JFileChooser.APPROVE_OPTION) {
 			return;
 		}
 
@@ -85,7 +86,7 @@ public class ImportFileAction implements ActionListener {
 			try {
 				importV1WWDBFile(fc.getSelectedFile());
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(Launch.getAPP_WINDOW(),
+				JOptionPane.showMessageDialog(ApplicationManager.getAPP_WINDOW(),
 						"Could not open file:\n" + e1.getClass() + "\n" + e1.getLocalizedMessage(), "Import Error",
 						JOptionPane.ERROR_MESSAGE);
 				e1.printStackTrace();
@@ -213,6 +214,6 @@ public class ImportFileAction implements ActionListener {
 			}
 		}
 		
-		Launch.getDB_CONN().commit(DataChangedListener.DataType.ALL_OPTS);
+		ApplicationManager.getDB_CONN().commit(DataChangedListener.DataType.ALL_OPTS);
 	}
 }

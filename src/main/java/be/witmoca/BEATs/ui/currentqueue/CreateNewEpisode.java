@@ -40,7 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.model.SQLObjectTransformer;
 import be.witmoca.BEATs.ui.currentqueue.ArchivalDialog.SpinnerEpisodeModel;
@@ -92,7 +92,7 @@ public class CreateNewEpisode extends AbstractAction {
 			
 			try {
 				SQLObjectTransformer.addEpisode((int)episodeId.getValue(), episodeDate.getValue());
-				Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.EPISODE));
+				ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.EPISODE));
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(parent, e1.getLocalizedMessage(), e1.getClass().getName(), JOptionPane.ERROR_MESSAGE);
@@ -111,7 +111,7 @@ public class CreateNewEpisode extends AbstractAction {
 	* @return True if ldate is free, false if not or an error occurred
 	 */
 	private static boolean dateFree(LocalDate ldate) {
-		try (PreparedStatement checkDate = Launch.getDB_CONN().prepareStatement("SELECT Episodeid FROM Episode WHERE EpisodeDate = ?")) {
+		try (PreparedStatement checkDate = ApplicationManager.getDB_CONN().prepareStatement("SELECT Episodeid FROM Episode WHERE EpisodeDate = ?")) {
 			checkDate.setLong(1, ldate.toEpochDay());
 			ResultSet rs = checkDate.executeQuery();
 			if(!rs.next())
@@ -129,7 +129,7 @@ public class CreateNewEpisode extends AbstractAction {
 		private int index;
 
 		protected SpinnerNewEpisodeModel() {
-			try (PreparedStatement findExclusions = Launch.getDB_CONN()
+			try (PreparedStatement findExclusions = ApplicationManager.getDB_CONN()
 					.prepareStatement("SELECT EpisodeId FROM Episode ORDER BY EpisodeId ASC")) {
 				ResultSet rs = findExclusions.executeQuery();
 				while (rs.next())

@@ -14,7 +14,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.model.PlaylistEntry;
 import be.witmoca.BEATs.model.SQLObjectTransformer;
@@ -86,7 +86,7 @@ public class PlaylistTransferHandler extends TransferHandler {
 				PlaylistEntry pe = (PlaylistEntry) songO;
 				SQLObjectTransformer.addSongInPlaylist(pName, pe.getColumn(0), pe.getColumn(1), pe.getColumn(2));
 			}
-			Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));			
+			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));			
 		} catch (ClassNotFoundException | UnsupportedFlavorException | IOException | SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -122,7 +122,7 @@ public class PlaylistTransferHandler extends TransferHandler {
 				}
 				List<?> lpe = (List<?>) o;
 				
-				try (PreparedStatement delRow = Launch.getDB_CONN().prepareStatement("DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
+				try (PreparedStatement delRow = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
 				for(Object songO : lpe) {
 					PlaylistEntry pe = (PlaylistEntry) songO;
 						delRow.setString(1, pName);
@@ -133,7 +133,7 @@ public class PlaylistTransferHandler extends TransferHandler {
 					}
 				}
 				
-				Launch.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
+				ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 			} catch (SQLException | ClassNotFoundException | UnsupportedFlavorException | IOException e) {
 				e.printStackTrace();
 			}		

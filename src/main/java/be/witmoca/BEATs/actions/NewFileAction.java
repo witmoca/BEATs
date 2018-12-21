@@ -25,7 +25,7 @@ package be.witmoca.BEATs.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.ApplicationManager;
 
 public class NewFileAction implements ActionListener {
 
@@ -37,7 +37,7 @@ public class NewFileAction implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Launch.changeModel(null);
+		ApplicationManager.changeModel(null);
 	}
 
 }

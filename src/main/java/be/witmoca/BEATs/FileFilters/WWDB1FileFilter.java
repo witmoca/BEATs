@@ -20,7 +20,7 @@
 * File: WWDB1FileFilter.java
 * Created: 2018
 */
-package be.witmoca.BEATs.actions;
+package be.witmoca.BEATs.FileFilters;
 
 import java.io.File;
 
