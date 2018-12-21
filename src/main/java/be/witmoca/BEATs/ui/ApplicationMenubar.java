@@ -23,6 +23,7 @@
 package be.witmoca.BEATs.ui;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
@@ -32,11 +33,13 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
+import be.witmoca.BEATs.Launch;
 import be.witmoca.BEATs.actions.ExitApplicationAction;
 import be.witmoca.BEATs.actions.ImportFileAction;
 import be.witmoca.BEATs.actions.NewFileAction;
 import be.witmoca.BEATs.actions.OpenFileAction;
 import be.witmoca.BEATs.actions.SaveFileAction;
+import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
 
 public class ApplicationMenubar extends JMenuBar {
@@ -88,6 +91,15 @@ public class ApplicationMenubar extends JMenuBar {
 		playlistManager.setMnemonic(KeyEvent.VK_P);
 		playlistManager.addActionListener(new PlaylistManagerShowAction());
 		toolsMenu.add(playlistManager);
+		
+		JMenuItem refreshScreen = new JMenuItem("Refresh Screen");
+		refreshScreen.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Launch.getDB_CONN().notifyDataChangedListeners(DataChangedListener.DataType.ALL_OPTS); // Notify all listeners that the data is 'changed' => reloads said data
+			}
+		});
+		toolsMenu.add(refreshScreen);
 		
 		this.add(toolsMenu);
 	}

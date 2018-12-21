@@ -194,7 +194,10 @@ public class SQLConnection implements AutoCloseable {
 	public synchronized void commit(EnumSet<DataChangedListener.DataType> eSet) throws SQLException {
 		Db.commit();
 		this.setChanged();
-
+		this.notifyDataChangedListeners(eSet);
+	}
+	
+	public void notifyDataChangedListeners(EnumSet<DataChangedListener.DataType> eSet) {
 		ArrayList<DataChangedListener> clientsToNotify = new ArrayList<>();
 		// First compile a list of clients to notify
 		for (DataChangedListener dL : dataListeners.keySet()) {
