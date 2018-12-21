@@ -23,11 +23,16 @@
 package be.witmoca.BEATs.ui.currentqueue;
 
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
@@ -35,16 +40,17 @@ import be.witmoca.BEATs.model.CurrentQueueListModel;
 
 public class CurrentQueuePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private final JList<String> Queue = new JList<String>(new CurrentQueueListModel());
+	private final JList<String> Queue = new CurrentQueueList(new CurrentQueueListModel());
 	private final JButton title = new JButton("Played this session:");
-	
+
 	public CurrentQueuePanel() {
 		super(new BorderLayout());
 		title.setFont(title.getFont().deriveFont(22F));
 		title.setEnabled(false);
 		this.add(title, BorderLayout.NORTH);
-		this.add(new JScrollPane(Queue, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-		
+		this.add(new JScrollPane(Queue, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
+				BorderLayout.CENTER);
+
 		// Update the view if the contents should become to big to display
 		Queue.getModel().addListDataListener(new ListDataListener() {
 			@Override
@@ -63,6 +69,13 @@ public class CurrentQueuePanel extends JPanel {
 			}
 		});
 		
+		// Add the popupmenu
+		JPopupMenu popup = new JPopupMenu();
+		popup.add(new JMenuItem(new RevertToPlaylistFromQueueAction(Queue)));
+		popup.add(new JMenuItem(new ShowInfoAction(Queue)));		
+		Queue.setComponentPopupMenu(popup);
+
+		// Add the toolbar
 		this.add(new CurrentQueueToolbar(Queue), BorderLayout.SOUTH);
 	}
 }
