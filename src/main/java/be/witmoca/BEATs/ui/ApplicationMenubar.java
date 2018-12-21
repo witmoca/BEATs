@@ -23,7 +23,6 @@
 package be.witmoca.BEATs.ui;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
@@ -72,16 +71,6 @@ public class ApplicationMenubar extends JMenuBar {
 		importFile.setMnemonic(KeyEvent.VK_I);
 		importFile.addActionListener(new ImportFileAction());
 		fileMenu.add(importFile);
-
-		JMenuItem exportFile = new JMenuItem("Export",UIManager.getIcon("Table.descendingSortIcon"));
-		exportFile.setMnemonic(KeyEvent.VK_E);
-		exportFile.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Export!");
-			}
-		});
-		fileMenu.add(exportFile);
 
 		fileMenu.addSeparator();
 		JMenuItem exitApplication = new JMenuItem("Exit",UIManager.getIcon("InternalFrame.closeIcon"));
