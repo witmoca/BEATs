@@ -34,6 +34,7 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import be.witmoca.BEATs.Launch;
+import be.witmoca.BEATs.actions.EpisodeIdContinuityCheckAction;
 import be.witmoca.BEATs.actions.ExitApplicationAction;
 import be.witmoca.BEATs.actions.ImportFileAction;
 import be.witmoca.BEATs.actions.NewFileAction;
@@ -92,6 +93,8 @@ public class ApplicationMenubar extends JMenuBar {
 		playlistManager.addActionListener(new PlaylistManagerShowAction());
 		toolsMenu.add(playlistManager);
 		
+		toolsMenu.addSeparator();
+		
 		JMenuItem refreshScreen = new JMenuItem("Refresh Screen");
 		refreshScreen.addActionListener(new ActionListener() {
 			@Override
@@ -100,6 +103,10 @@ public class ApplicationMenubar extends JMenuBar {
 			}
 		});
 		toolsMenu.add(refreshScreen);
+		
+		JMenuItem episodeContinuityCheck = new JMenuItem("Episode Continuity Check");
+		episodeContinuityCheck.addActionListener(new EpisodeIdContinuityCheckAction());
+		toolsMenu.add(episodeContinuityCheck);
 		
 		this.add(toolsMenu);
 	}
