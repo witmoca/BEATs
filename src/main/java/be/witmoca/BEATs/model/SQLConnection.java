@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConnection;
 
@@ -44,48 +45,65 @@ public class SQLConnection implements AutoCloseable {
 	private static final int APPLICATION_ID = 0x77776462;
 	private boolean changedState = false;
 	private Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> dataListeners = new HashMap<>();
+	private boolean recovering = false;
 
 	/**
-	 *  Creates a new internal storage and sets up the content
-	 *  
-	 * @param loadFile the File to load the content from, {@code null} if an empty database is desired.
+	 * Creates a new internal storage and sets up the content
+	 * 
+	 * @param loadFile the File to load the content from, {@code null} if an empty
+	 *                 database is desired.
+	 * @param recovery set to {@code true} if the internal database is still present
+	 *                 (= recovery)
 	 * @throws SQLException if SQLConnection failed to instantiate
 	 */
-	public SQLConnection(File loadFile) throws SQLException {
-		Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + FileManager.DB_LOC,configSettings().toProperties());
-		Db.setAutoCommit(false);
-		createTables();
-		Db.commit();
-		if (loadFile != null) {
-			try (Statement load = Db.createStatement()) {
-				load.executeUpdate("restore from " + loadFile.getAbsolutePath());
+	public SQLConnection(File loadFile, boolean recovery) throws SQLException {
+		Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + FileManager.DB_LOC, configSettings().toProperties());
+
+		try {
+			Db.setAutoCommit(false);
+			createTables();
+			Db.commit();
+			if (loadFile != null) {
+				try (Statement load = Db.createStatement()) {
+					load.executeUpdate("restore from " + loadFile.getAbsolutePath());
+				}
 			}
+			this.contentCheck();
+			this.vacuum();
+
+			if (recovery)
+				this.setChanged();
+		} catch (SQLException e) {
+			this.close();
+			throw e;
 		}
-		this.contentCheck();
-		this.vacuum();
 	}
-	
+
 	/**
-	 *  Internal method only! Used to open a connection to a (possibly) recoverable database.
+	 * Internal method only! Used to open a connection to a (possibly) recoverable
+	 * database.
+	 * 
 	 * @throws SQLException if recovery failed.
 	 */
-	
 	private SQLConnection() throws SQLException {
-		Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + FileManager.DB_LOC,configSettings().toProperties());
+		recovering = true;
+		SQLiteConfig recoveryConfig = new SQLiteConfig();
+		recoveryConfig.enforceForeignKeys(true);
+	
+		Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + FileManager.DB_LOC, recoveryConfig.toProperties());
 		Db.setAutoCommit(false);
 		this.contentCheck();
 	}
-	
+
 	/**
-	 *  Opens a connection to a (possibly) recoverable database.
-	 *  
+	 * Opens a connection to a (possibly) recoverable database.
+	 * 
 	 * @return the recovered database.
 	 * @throws SQLException if recovery failed.
 	 */
 	public static SQLConnection recoverDatabase() throws SQLException {
 		return new SQLConnection();
 	}
-	
 
 	public void saveDatabase(String savePath) throws SQLException {
 		// Call optimize first
@@ -242,10 +260,12 @@ public class SQLConnection implements AutoCloseable {
 			return;
 		Db.commit();
 		Db.close();
-		try {
-			FileManager.deleteDb();
-		} catch (IOException e) {
-			throw new SQLException(e);
+		if (!recovering) {
+			try {
+				FileManager.deleteDb();
+			} catch (IOException e) {
+				throw new SQLException(e);
+			}
 		}
 	}
 

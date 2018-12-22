@@ -47,25 +47,32 @@ public class ApplicationManager {
 
 	// Start up
 	public static void main(String[] args) {		
-		// Initialise Files & folders (includes database recovery as well)
-		try {
-			FileManager.initFileSystem();
-		} catch (IOException e) {
-			fatalError(e);
-			return;
-		}
-		
-		
+		// Get the file to load from the arguments
 		File loadFile = extractFileFromArgs(args);
-
-		// Setup Internal memory
+		
+		
 		try {
-			DB_CONN = new SQLConnection(null);
-		} catch (SQLException e) {
+			// Initialise Files & folders
+			FileManager.initFileTree();
+			
+			
+			// Recover database if necessary
+			boolean recovery = false;
+			if(FileManager.databaseExists()) {
+				FileManager.recoverDatabase();
+				// if no exception is thrown, the database is recoverable => force a load of the internal db (same as new db)
+				loadFile = null;
+				recovery = true;
+			}
+			
+			// Setup Internal memory (new or load from file)
+			DB_CONN = new SQLConnection(loadFile, recovery);
+			
+		} catch (IOException | InvocationTargetException | InterruptedException | SQLException e) {
 			fatalError(e);
 			return;
 		}
-
+		
 		// Create the GUI on the EDT
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -128,7 +135,7 @@ public class ApplicationManager {
 
 		// Load new Database Connection
 		try {
-			DB_CONN = new SQLConnection(load);
+			DB_CONN = new SQLConnection(load, false);
 		} catch (SQLException e) {
 			fatalError(e);
 			return;
@@ -138,6 +145,12 @@ public class ApplicationManager {
 		APP_WINDOW = new ApplicationWindow();
 	}
 
+	/**
+	 * Searches for the first loadable database in the arguments
+	 * 
+	 * @param args the arguments passed to the application (usually the arguments of the main method)
+	 * @return the file to load, {@code null} if none was found
+	 */
 	private static File extractFileFromArgs(String[] args) {
 		for(String s : args) {
 			// Check if string is valid
