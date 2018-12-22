@@ -34,11 +34,8 @@ import be.witmoca.BEATs.ApplicationManager;
 
 public class ArchiveTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
-	private static final String COLUMN_NAME[] = {"Artist","Song","Episode - Section","Comment"};
-	private List<ArchiveEntry> archive = null;
-	
-	
-	// Layout: "Artist", "Song", "Episode + Section", "Comment" 
+	private static final String COLUMN_NAME[] = {"Artist","Song","Episode", "Section" ,"Comment"};
+	private List<ArchiveEntry> archive = new ArrayList<ArchiveEntry>();
 	
 	public ArchiveTableModel() {
 		super();
@@ -49,11 +46,11 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	
 	@Override
 	public void tableChanged() {
-		archive = new ArrayList<ArchiveEntry>();
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT ArtistName, Title, (EpisodeId || ' (' || SectionName || ')'), Comment FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId")) {
+		archive.clear(); // clear() is (probably) faster as the backing array doesn't get resized (just turned into null values), so reinserting goes fast
+		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT ArtistName, Title, EpisodeId, SectionName, Comment FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId")) {
 			ResultSet value = getValue.executeQuery();
 			while(value.next()) {
-				archive.add(new ArchiveEntry(value.getString(1), value.getString(2) ,value.getString(3) ,value.getString(4)));
+				archive.add(new ArchiveEntry(value.getString(1), value.getString(2) ,value.getInt(3) ,value.getString(4), value.getString(5)));
 			}
 		} catch (SQLException e) {
 		}
@@ -73,6 +70,13 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return archive.get(rowIndex).getColumn(columnIndex);
+	}
+	
+	
+
+	@Override
+	public Class<?> getColumnClass(int columnIndex) {
+		return ArchiveEntry.getColumnType(columnIndex);
 	}
 
 	@Override

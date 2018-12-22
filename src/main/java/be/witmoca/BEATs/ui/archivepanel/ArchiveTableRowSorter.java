@@ -22,8 +22,6 @@
 */
 package be.witmoca.BEATs.ui.archivepanel;
 
-import java.util.Comparator;
-
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -33,30 +31,5 @@ class ArchiveTableRowSorter<M extends TableModel> extends TableRowSorter<M>{
 		super(model);	
 		this.setSortsOnUpdates(true);
 		this.setMaxSortKeys(2);
-		this.setComparator(2, new EpisodeComparator());
 	}
-	
-    private static class EpisodeComparator implements Comparator<String> {
-		@Override
-		public int compare(String o1, String o2) {
-			char c1[] = o1.toCharArray();
-			char c2[] = o2.toCharArray();
-			
-			// Parse into numeric values
-			int i1 = 0;
-			for(int i = 0; Character.isDigit(c1[i]); i++) {
-				i1 = (i1*10) + Character.getNumericValue(c1[i]);
-			}
-			int i2 = 0;
-			for(int i = 0; Character.isDigit(c2[i]); i++) {
-				i2 = (i2*10) + Character.getNumericValue(c2[i]);
-			}
-			// compare numeric values
-			if(i1 != i2)
-				return i1 - i2;
-			
-			// if numeric values are the same => compare OLDSKEWL
-			return o1.compareTo(o2);		
-		}
-    }
 }
