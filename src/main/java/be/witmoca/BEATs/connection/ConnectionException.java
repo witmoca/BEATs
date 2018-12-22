@@ -1,10 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs;
-
-import java.io.File;
-import java.io.IOException;
+package be.witmoca.BEATs.connection;
 
 /*
 *
@@ -25,27 +22,39 @@ import java.io.IOException;
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: FileManager.java
+* File: ConnectionException.java
 * Created: 2018
 */
-final public class FileManager {
-	public static final String APP_FOLDER = System.getProperty("user.home") + File.separator + "BEATs";
-	public static final String DB_LOC = APP_FOLDER + File.separator + "currentDocument.beats";
-
-	/**
-	 * Initialises the File/Folder tree needed for operation.
-	 * 
-	 * @throws IOException if the necessary tree could not be created.
-	 */
-	public static void initFileTree() throws IOException {
-		try {
-			// create root
-			File root = new File(APP_FOLDER);
-			root.mkdirs();
-			if (!root.exists() || !root.isDirectory())
-				throw new IOException("Root folder " + APP_FOLDER + " doesn't exist or is not a directory");
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
+public class ConnectionException extends Exception {
+	private static final long serialVersionUID = 1L;
+	
+	private final ConnState state;
+	
+	public static enum ConnState {
+		DB_ALREADY_LOCKED, 			// Another instance has locked the db
+		DB_RECOVERY_FAILED, 		// Db could not be recovered
+		GENERAL_EXCEPTION, 			// General statement exception (usually sql syntax error)
+		APP_ID_INVALID, 			// Db Application id does not match application
+		APP_OUTDATED, 				// Db version is higher than the application version
+		DB_OUTDATED,				// Major version of the DB is lower then Major of the application (suggest import instead)
+		FOREIGN_KEYS_CONSTRAINTS,	// Foreign key constraints failed
+		INTEGRITY_FAILED,			// Db failed the integrity check
+		VACUUM_FAILED;				// Db VACUUM failed
 	}
+	
+	public ConnectionException(ConnState state, Throwable t) {
+		super(t);
+		this.state = state;
+	}
+
+	public ConnState getState() {
+		return state;
+	}
+
+	@Override
+	public String getLocalizedMessage() {
+		return super.getLocalizedMessage() +  "{" + this.getState().name() + "}";
+	}
+	
+	
 }

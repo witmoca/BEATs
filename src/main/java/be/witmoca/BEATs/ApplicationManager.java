@@ -35,7 +35,8 @@ import javax.swing.SwingUtilities;
 
 import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
 import be.witmoca.BEATs.actions.ExitApplicationAction;
-import be.witmoca.BEATs.model.SQLConnection;
+import be.witmoca.BEATs.connection.ConnectionException;
+import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 
 public class ApplicationManager {
@@ -55,22 +56,13 @@ public class ApplicationManager {
 			// Initialise Files & folders
 			FileManager.initFileTree();
 			
-			
-			// Recover database if necessary
-			boolean recovery = false;
-			if(FileManager.databaseExists()) {
-				FileManager.recoverDatabase();
-				// if no exception is thrown, the database is recoverable => force a load of the internal db (same as new db)
-				loadFile = null;
-				recovery = true;
-			}
-			
 			// Setup Internal memory (new or load from file)
-			DB_CONN = new SQLConnection(loadFile, recovery);
+			DB_CONN = new SQLConnection(loadFile);
 			
-		} catch (IOException | InvocationTargetException | InterruptedException | SQLException e) {
+		} catch (IOException | ConnectionException e) {
 			fatalError(e);
 			return;
+			// TODO: add in user dialogues for the different methods of failure (all ConnectionException.ConnState types included)
 		}
 		
 		// Create the GUI on the EDT
@@ -135,8 +127,11 @@ public class ApplicationManager {
 
 		// Load new Database Connection
 		try {
-			DB_CONN = new SQLConnection(load, false);
-		} catch (SQLException e) {
+			DB_CONN = new SQLConnection(load);
+			if(DB_CONN.isRecoveredDb()) {
+				// TODO: display recovered DB message
+			}
+		} catch (ConnectionException e) {
 			fatalError(e);
 			return;
 		}

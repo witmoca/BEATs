@@ -7,7 +7,8 @@ import java.sql.Statement;
 
 import org.junit.jupiter.api.Test;
 
-import be.witmoca.BEATs.model.SQLConnection;
+import be.witmoca.BEATs.connection.ConnectionException;
+import be.witmoca.BEATs.connection.SQLConnection;
 
 class SqlTest {
 
@@ -15,8 +16,8 @@ class SqlTest {
 	void createTestDb() {
 		SQLConnection Db = null;
 		try {
-			Db = new SQLConnection(null, false);
-		} catch (SQLException e1) {
+			Db = new SQLConnection(null);
+		} catch (ConnectionException e1) {
 			fail("Db not created: " + e1.getLocalizedMessage());
 		}
 		// TODO: TEST CONTENT
