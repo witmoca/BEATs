@@ -108,13 +108,9 @@ class PlaylistTransferHandler extends TransferHandler {
 	}
 
 	@Override
-	protected void exportDone(JComponent source, Transferable data, int action) {
-		if(!(source instanceof PlaylistTable))
-			return ;		
-		
-		if(action == TransferHandler.MOVE) {
-			String pName = ((PlaylistTable) source).getPlaylistName();		
-			
+	protected void exportDone(JComponent source, Transferable data, int action) {		
+		System.out.println("Move: " + (action == TransferHandler.MOVE));
+		if(action == TransferHandler.MOVE) {			
 			try {
 				Object o = data.getTransferData(new DataFlavor(TransferableSongs.MIME_TYPE));
 				if (!(o instanceof List<?>) ) {
@@ -122,13 +118,10 @@ class PlaylistTransferHandler extends TransferHandler {
 				}
 				List<?> lpe = (List<?>) o;
 				
-				try (PreparedStatement delRow = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ?")) {
+				try (PreparedStatement delRow = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM SongsInPlaylist WHERE rowid = ?")) {
 				for(Object songO : lpe) {
 					PlaylistEntry pe = (PlaylistEntry) songO;
-						delRow.setString(1, pName);
-						delRow.setString(2, pe.getColumn(0));
-						delRow.setString(3, pe.getColumn(1));
-						delRow.setString(4, pe.getColumn(2));
+						delRow.setInt(1, pe.getROWID());
 						delRow.executeUpdate();
 					}
 				}

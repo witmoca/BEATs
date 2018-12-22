@@ -37,6 +37,7 @@ import javax.swing.JOptionPane;
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.CurrentQueueListModel;
 import be.witmoca.BEATs.model.DataChangedListener;
+import be.witmoca.BEATs.model.SQLObjectTransformer;
 
 class RevertToPlaylistFromQueueAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
@@ -91,13 +92,7 @@ class RevertToPlaylistFromQueueAction extends AbstractAction {
 				comment = rs.getString(3);
 			}
 
-			try (PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO SongsInPlaylist VALUES (?, ?, ?, ?)")) {
-				add.setString(1, playlistName);
-				add.setString(2, artist);
-				add.setString(3, song);
-				add.setString(4, comment);
-				add.executeUpdate();
-			}
+			SQLObjectTransformer.addSongInPlaylist(playlistName, artist, song, comment);
 			
 			try (PreparedStatement del = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM CurrentQueue WHERE SongOrder = ?")) {
 				del.setInt(1, songOrder);

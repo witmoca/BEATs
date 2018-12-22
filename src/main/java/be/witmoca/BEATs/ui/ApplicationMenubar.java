@@ -78,7 +78,7 @@ class ApplicationMenubar extends JMenuBar {
 
 		fileMenu.addSeparator();
 		JMenuItem exitApplication = new JMenuItem("Exit",UIManager.getIcon("InternalFrame.closeIcon"));
-		saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
+		exitApplication.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
 		exitApplication.addActionListener(new ExitApplicationAction());
 		fileMenu.add(exitApplication);
 

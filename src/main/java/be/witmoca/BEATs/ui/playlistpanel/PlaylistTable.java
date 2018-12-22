@@ -79,7 +79,7 @@ class PlaylistTable extends SongTable {
 		
 		List<PlaylistEntry> tfs = new ArrayList<PlaylistEntry>();		
 		for(int i = 0; i < rowIndices.length; i++) {
-			PlaylistEntry pe = new PlaylistEntry(0, (String) model.getValueAt(rowIndices[i], 0), (String) model.getValueAt(rowIndices[i], 1), (String) model.getValueAt(rowIndices[i], 2) );
+			PlaylistEntry pe = new PlaylistEntry( ((PlaylistTableModel) model).getRowId(rowIndices[i]), (String) model.getValueAt(rowIndices[i], 0), (String) model.getValueAt(rowIndices[i], 1), (String) model.getValueAt(rowIndices[i], 2) );
 			if(!pe.isEmpty())
 				tfs.add(pe);
 		}

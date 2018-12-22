@@ -74,7 +74,7 @@ class CCPTransferHandler extends TransferHandler {
 				throw new ClassCastException("Cannot cast " + o.getClass() + " to List<?>");
 			}
 			List<?> lpe = (List<?>) o;
-			try (PreparedStatement insertCCP = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO ccp VALUES (?,?,?)")) {
+			try (PreparedStatement insertCCP = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO ccp (Artist, Song, Comment) VALUES (?,?,?)")) {
 				for (Object songO : lpe) {
 					PlaylistEntry pe = (PlaylistEntry) songO;
 					for (int i = 0; i < 3; i++)

@@ -77,7 +77,7 @@ public class SQLObjectTransformer {
 	}
 	
 	public static void addSongInArchive(int songId, int episodeId, String section, String comment) throws SQLException {
-		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO SongsInArchive VALUES (?, ?, ?, ?)")){
+		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO SongsInArchive (SongId, EpisodeId, SectionName, Comment) VALUES (?, ?, ?, ?)")){
 			add.setInt(1, songId);
 			add.setInt(2, episodeId);
 			add.setString(3, section);
@@ -111,7 +111,7 @@ public class SQLObjectTransformer {
 	}
 	
 	public static void addSongInPlaylist(String playlistName, String artist, String song, String comment) throws SQLException {
-		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO SongsInPlaylist VALUES (?, ?, ?, ?)")){
+		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO SongsInPlaylist (PlaylistName ,Artist , Song, Comment) VALUES (?, ?, ?, ?)")){
 			add.setString(1, playlistName);
 			add.setString(2, StringUtils.ToUpperCamelCase(StringUtils.filterPrefix(artist)) );
 			add.setString(3, StringUtils.ToUpperCamelCase(song) );

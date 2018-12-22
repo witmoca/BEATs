@@ -84,6 +84,11 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 			return "";
 		}
 	}
+	
+	public int getRowId(int row) {
+		return playlistList.get(row).getROWID();
+	}
+	
 
 	@Override
 	public String getColumnName(int column) {
@@ -104,12 +109,8 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 		if(rowIndex >= this.getRowCount()-1)
 			return;
 		try (PreparedStatement updateVal = ApplicationManager.getDB_CONN().prepareStatement(
-				"DELETE FROM SongsInPlaylist WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ? AND rowid = ?")) {
-			for (int i = 0; i < 3; i++) {
-				updateVal.setString(2 + i, playlistList.get(rowIndex).getColumn(i)); // old values
-			}
-			updateVal.setString(1, PlaylistName);
-			updateVal.setInt(5, playlistList.get(rowIndex).getROWID());
+				"DELETE FROM SongsInPlaylist WHERE rowid = ?")) {
+			updateVal.setInt(1, playlistList.get(rowIndex).getROWID());
 			updateVal.executeUpdate();
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
@@ -148,13 +149,11 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 					this.deleteRow(rowIndex);
 				} else {
 					try (PreparedStatement updateVal = ApplicationManager.getDB_CONN().prepareStatement(
-							"UPDATE SongsInPlaylist SET Artist = ?, Song = ?, Comment = ? WHERE PlaylistName = ? AND Artist = ? AND Song = ? AND Comment = ? AND rowid = ?")) {
+							"UPDATE SongsInPlaylist SET Artist = ?, Song = ?, Comment = ? WHERE rowid = ?")) {
 						for (int i = 0; i < values.length; i++) {
 							updateVal.setString(1 + i, values[i]); // new values
-							updateVal.setString(5 + i, playlistList.get(rowIndex).getColumn(i)); // old values
 						}
-						updateVal.setString(4, PlaylistName);
-						updateVal.setInt(8, playlistList.get(rowIndex).getROWID());
+						updateVal.setInt(4, playlistList.get(rowIndex).getROWID());
 						updateVal.executeUpdate();
 					}
 				}
