@@ -46,7 +46,7 @@ import be.witmoca.BEATs.model.SQLObjectTransformer;
 import be.witmoca.BEATs.ui.currentqueue.ArchivalDialog.SpinnerEpisodeModel;
 import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
 
-public class CreateNewEpisode extends AbstractAction {
+class CreateNewEpisode extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 
 	private final Component parent;
@@ -54,6 +54,7 @@ public class CreateNewEpisode extends AbstractAction {
 	private boolean valid = false;
 	private SpinnerEpisodeModel spinnerEpisodeModel;
 
+	
 	public CreateNewEpisode(Component parent, SpinnerEpisodeModel spinnerEpisodeModel) {
 		super("+");
 		this.parent = parent;
@@ -123,7 +124,8 @@ public class CreateNewEpisode extends AbstractAction {
 		return false;
 	}
 
-	class SpinnerNewEpisodeModel extends AbstractSpinnerModel {
+	
+	private class SpinnerNewEpisodeModel extends AbstractSpinnerModel {
 		private static final long serialVersionUID = 1L;
 		private List<Integer> exclusions = new ArrayList<Integer>();
 		private int index;

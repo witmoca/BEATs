@@ -23,7 +23,7 @@ import javax.swing.event.ChangeListener;
  * @see YearMonth
  *
  */
-public class YearMonthSpinner extends JPanel {
+class YearMonthSpinner extends JPanel {
 
 	/**
 	 * 
@@ -51,7 +51,7 @@ public class YearMonthSpinner extends JPanel {
 	 * @param value
 	 *            the initial value
 	 */
-	public YearMonthSpinner(YearMonth value) {
+	private YearMonthSpinner(YearMonth value) {
 		this(value, null, null);
 	}
 
@@ -66,6 +66,7 @@ public class YearMonthSpinner extends JPanel {
 	 * @param max
 	 *            the maximum (latest) value
 	 */
+	
 	public YearMonthSpinner(YearMonth value, YearMonth min, YearMonth max) {
 		super(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
@@ -133,19 +134,21 @@ public class YearMonthSpinner extends JPanel {
 	 *            the <code>ChangeListeners</code> to add
 	 * @see #removeChangeListener
 	 */
+	
 	public void addChangeListener(ChangeListener listener) {
 		monthSpinner.addChangeListener(listener);
 	}
 
-	/**
-	 * Removes a <code>ChangeListener</code>.
-	 *
-	 * @param listener
-	 *            the <code>ChangeListener</code> to remove
-	 */
-	public void removeChangeListener(ChangeListener listener) {
-		monthSpinner.removeChangeListener(listener);
-	}
+// UNUSED CODE
+// 	/**
+// 	 * Removes a <code>ChangeListener</code>.
+// 	 *
+// 	 * @param listener
+// 	 *            the <code>ChangeListener</code> to remove
+// 	 */
+// 	public void removeChangeListener(ChangeListener listener) {
+// 		monthSpinner.removeChangeListener(listener);
+// 	}
 
 	/**
 	 * {@inheritDoc }

@@ -32,18 +32,16 @@ import be.witmoca.BEATs.model.PlaylistEntry;
 import be.witmoca.BEATs.model.TransferableSongs;
 import be.witmoca.BEATs.ui.southpanel.SongTable;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
-import be.witmoca.BEATs.ui.t4j.TableColumnManager;
 import be.witmoca.BEATs.utils.UiUtils;
 
-public class ArchiveTable extends SongTable {
+class ArchiveTable extends SongTable {
 	private static final long serialVersionUID = 1L;
 
 	public ArchiveTable() {
 		super(new ArchiveTableModel());
 		this.getTableHeader().setReorderingAllowed(false);
-
-		// Table Column Manager (choose the available columns)
-		new TableColumnManager(this);
+		
+		
 
 		// Add a rowsorter and render icons at the top to indicate sorting order
 		this.setRowSorter(new ArchiveTableRowSorter<>(this.getModel()));

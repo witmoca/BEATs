@@ -30,13 +30,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
-public class ArchiveToolbar extends JToolBar {
+class ArchiveToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
 	private final JTextField searchTerm = new JTextField(20);
 	private final JButton searchSubmit = new JButton("Search");
 	private final JTable archiveTable;
 
+	
 	public ArchiveToolbar(JTable table) {
 		super("Archive Toolbar",JToolBar.HORIZONTAL);
 		archiveTable = table;
@@ -55,7 +56,8 @@ public class ArchiveToolbar extends JToolBar {
 		
 	}
 	
-	class SortAction implements ActionListener {
+	
+	private class SortAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String sTerm = searchTerm.getText().trim();

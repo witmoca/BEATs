@@ -297,7 +297,7 @@ public class SQLConnection implements AutoCloseable {
 		return changedState;
 	}
 
-	public void setSaved() {
+	private void setSaved() {
 		this.changedState = false;
 	}
 

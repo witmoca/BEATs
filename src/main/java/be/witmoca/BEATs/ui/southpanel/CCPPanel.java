@@ -39,7 +39,7 @@ import javax.swing.JScrollPane;
 /**
  *  UI representation of the Cut/Copy/Paste container for songs
  */
-public class CCPPanel extends JPanel {
+class CCPPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	public CCPPanel() {

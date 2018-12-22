@@ -40,7 +40,7 @@ import be.witmoca.BEATs.ui.southpanel.SongTable;
 * File: ArchiveTransferHandler.java
 * Created: 2018
  */
-public class ArchiveTransferHandler extends TransferHandler {
+class ArchiveTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
 
 	@Override

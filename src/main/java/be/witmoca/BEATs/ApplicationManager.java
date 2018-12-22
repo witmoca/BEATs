@@ -58,11 +58,12 @@ public class ApplicationManager {
 			
 			// Setup Internal memory (new or load from file)
 			DB_CONN = new SQLConnection(loadFile);
-			
+			// TODO: DB_CONN.isRecovered user dialogs
 		} catch (IOException | ConnectionException e) {
 			fatalError(e);
 			return;
 			// TODO: add in user dialogues for the different methods of failure (all ConnectionException.ConnState types included)
+			// TODO: DB_CONN.isRecovered && Exception => recovery failed dialogs
 		}
 		
 		// Create the GUI on the EDT
@@ -80,7 +81,7 @@ public class ApplicationManager {
 	 * 
 	 * @param e
 	 */
-	public static void fatalError(Exception e) {
+	private static void fatalError(Exception e) {
 		if (SwingUtilities.isEventDispatchThread()) {
 			final StringWriter stacktraceW = new StringWriter();
 			e.printStackTrace(new PrintWriter(stacktraceW, true));

@@ -26,10 +26,11 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JToolBar;
 
-public class CurrentQueueToolbar extends JToolBar {
+class CurrentQueueToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> queue;
 
+	
 	public CurrentQueueToolbar(JList<String> Queue) {
 		super("CurrentQueue Toolbar",JToolBar.HORIZONTAL);
 		this.setFloatable(false);

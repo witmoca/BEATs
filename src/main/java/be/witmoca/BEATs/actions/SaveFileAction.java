@@ -67,7 +67,8 @@ public class SaveFileAction implements ActionListener {
 		}
 	}
 
-	public boolean hasSucceeded() {
+	
+	boolean hasSucceeded() {
 		return hasSucceeded;
 	}
 }

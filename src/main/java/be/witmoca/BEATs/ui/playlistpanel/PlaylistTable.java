@@ -41,7 +41,7 @@ import be.witmoca.BEATs.ui.southpanel.SongTable;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
 import be.witmoca.BEATs.utils.UiUtils;
 
-public class PlaylistTable extends SongTable {
+class PlaylistTable extends SongTable {
 	private static final long serialVersionUID = 1L;
 	private final String playlistName;
 
@@ -70,10 +70,6 @@ public class PlaylistTable extends SongTable {
 		// Suggest support for artist and song column
 		this.getColumnModel().getColumn(0).setCellEditor(new AutoCompletingEditor(new ArtistMatcher()));
 		this.getColumnModel().getColumn(1).setCellEditor(new AutoCompletingEditor(new SongMatcher(0)));
-	}
-	
-	protected void setTabTitle(String tabTitle) {
-		((PlaylistTableModel) this.getModel()).setPlaylistName(tabTitle);
 	}
 
 	@Override

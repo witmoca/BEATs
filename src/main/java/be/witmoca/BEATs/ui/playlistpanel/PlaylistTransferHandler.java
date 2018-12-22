@@ -42,7 +42,7 @@ import be.witmoca.BEATs.model.TransferableSongs;
 * File: PlaylistTransferHandler.java
 * Created: 2018
 */
-public class PlaylistTransferHandler extends TransferHandler {
+class PlaylistTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
 	
 	@Override

@@ -26,7 +26,7 @@ import javax.swing.table.JTableHeader;
  * 
  * @author Darryl
  */
-public class DefaultTableHeaderCellRenderer extends DefaultTableCellRenderer {
+class DefaultTableHeaderCellRenderer extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -113,7 +113,7 @@ public class DefaultTableHeaderCellRenderer extends DefaultTableCellRenderer {
 	 *            the column index
 	 * @return the SortKey, or null if the column is unsorted
 	 */
-	protected SortKey getSortKey(JTable table, int column) {
+	private SortKey getSortKey(JTable table, int column) {
 		RowSorter<?> rowSorter = table.getRowSorter();
 		if (rowSorter == null) {
 			return null;

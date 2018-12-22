@@ -29,7 +29,7 @@ import javax.swing.JTable;
 * File: IMatcher.java
 * Created: 2018
 */
-public interface IMatcher {
+interface IMatcher {
 	/** 
 	 * The table, row and col parameter are used for determining extra information.
 	 * They should NEVER be used to edit the model of the jtable while an edit is in progress

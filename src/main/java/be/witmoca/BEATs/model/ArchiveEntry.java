@@ -22,20 +22,20 @@
 */
 package be.witmoca.BEATs.model;
 
-public class ArchiveEntry {
+class ArchiveEntry {
 	private final String ARTIST;
 	private final String SONG;
 	private final String EPISODESECTION;
 	private final String COMMENT;	
 
-	public ArchiveEntry(String artist, String song, String episodeSection, String comment) {
+	ArchiveEntry(String artist, String song, String episodeSection, String comment) {
 		this.ARTIST =  artist;
 		this.SONG = song;
 		this.EPISODESECTION = episodeSection;
 		this.COMMENT = comment;
 	}
 	
-	public String getColumn(int i) {
+	String getColumn(int i) {
 		switch(i) {
 		case 0: return this.ARTIST;
 		case 1: return this.SONG;

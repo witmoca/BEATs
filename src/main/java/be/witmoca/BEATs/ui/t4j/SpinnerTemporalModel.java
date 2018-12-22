@@ -23,7 +23,7 @@ import javax.swing.AbstractSpinnerModel;
  *            The type of value, usually one of LocalDate, LocalDateTime,
  *            LocalTime, MonthDay, Year and YearMonth.
  */
-public class SpinnerTemporalModel extends AbstractSpinnerModel {
+class SpinnerTemporalModel extends AbstractSpinnerModel {
 
 	/**
 	 * 
@@ -53,6 +53,7 @@ public class SpinnerTemporalModel extends AbstractSpinnerModel {
 	 *             UnsupportedTemporalTypeException if the unit of the step is not
 	 *             supported by the generic type T.
 	 */
+	
 	public SpinnerTemporalModel(YearMonth value, YearMonth min, YearMonth max, ChronoUnit step) {
 		if (value == null) {
 			throw new IllegalArgumentException("value is null");

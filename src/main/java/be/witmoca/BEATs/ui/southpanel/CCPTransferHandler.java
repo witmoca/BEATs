@@ -44,7 +44,7 @@ import be.witmoca.BEATs.model.TransferableSongs;
 * File: CCPTransferHandler.java
 * Created: 2018
 */
-public class CCPTransferHandler extends TransferHandler {
+class CCPTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
 
 	@Override

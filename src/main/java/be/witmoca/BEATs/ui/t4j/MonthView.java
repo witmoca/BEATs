@@ -62,7 +62,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author Darryl
  * @see LocalDate
  */
-public class MonthView extends JPanel {
+class MonthView extends JPanel {
 
 	/**
 	 * 
@@ -93,7 +93,7 @@ public class MonthView extends JPanel {
 	 * @param initialDate
 	 *            The date to set
 	 */
-	public MonthView(LocalDate initialDate) {
+	private MonthView(LocalDate initialDate) {
 		this(initialDate, null, null);
 	}
 
@@ -113,7 +113,7 @@ public class MonthView extends JPanel {
 	 * @param maxDate
 	 *            The maximum value (latest date); <CODE>null</CODE> for no limit.
 	 */
-	public MonthView(LocalDate initialDate, LocalDate minDate, LocalDate maxDate) {
+	private MonthView(LocalDate initialDate, LocalDate minDate, LocalDate maxDate) {
 		this(initialDate, minDate, maxDate, false);
 	}
 
@@ -136,6 +136,7 @@ public class MonthView extends JPanel {
 	 * @param showtoday
 	 *            true to show a link to the current date, false otherwise
 	 */
+	
 	public MonthView(LocalDate initialDate, LocalDate minDate, LocalDate maxDate, boolean showtoday) {
 		super(new BorderLayout());
 		min = minDate;

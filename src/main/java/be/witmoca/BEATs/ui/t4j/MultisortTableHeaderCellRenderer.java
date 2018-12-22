@@ -35,7 +35,7 @@ public class MultisortTableHeaderCellRenderer extends DefaultTableHeaderCellRend
 	 *            the opacity, in the range 0.0F to 1.0F. Recommended range: 0.5F to
 	 *            0.7F.
 	 */
-	public MultisortTableHeaderCellRenderer(float alpha) {
+	private MultisortTableHeaderCellRenderer(float alpha) {
 		this.alpha = alpha;
 	}
 

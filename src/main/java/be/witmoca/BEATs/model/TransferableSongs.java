@@ -33,7 +33,8 @@ import java.util.List;
 */
 public class TransferableSongs implements Transferable {
 	public static final String MIME_TYPE = "application/x.transferable-song-list";
-	List<PlaylistEntry> data;
+	
+	private List<PlaylistEntry> data;
 	
 	public TransferableSongs(List<PlaylistEntry> entries) {
 		super();

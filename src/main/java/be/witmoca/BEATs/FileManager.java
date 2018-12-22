@@ -29,15 +29,16 @@ import java.io.IOException;
 * Created: 2018
 */
 final public class FileManager {
-	public static final String APP_FOLDER = System.getProperty("user.home") + File.separator + "BEATs";
+	private static final String APP_FOLDER = System.getProperty("user.home") + File.separator + "BEATs";
 	public static final String DB_LOC = APP_FOLDER + File.separator + "currentDocument.beats";
 
 	/**
 	 * Initialises the File/Folder tree needed for operation.
 	 * 
+	 
 	 * @throws IOException if the necessary tree could not be created.
 	 */
-	public static void initFileTree() throws IOException {
+	static void initFileTree() throws IOException {
 		try {
 			// create root
 			File root = new File(APP_FOLDER);

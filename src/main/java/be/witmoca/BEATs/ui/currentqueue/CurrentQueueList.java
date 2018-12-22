@@ -34,9 +34,10 @@ import javax.swing.SwingUtilities;
 * File: CurrentQueueList.java
 * Created: 2018
 */
-public class CurrentQueueList extends JList<String> {
+class CurrentQueueList extends JList<String> {
 	private static final long serialVersionUID = 1L;
 
+	
 	public CurrentQueueList(ListModel<String> dataModel) {
 		super(dataModel);
 		

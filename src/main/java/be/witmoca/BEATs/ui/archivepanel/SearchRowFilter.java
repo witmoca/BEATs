@@ -27,8 +27,9 @@ import javax.swing.table.TableModel;
 
 import be.witmoca.BEATs.utils.StringUtils;
 
-public class SearchRowFilter extends RowFilter<TableModel, Integer> {
+class SearchRowFilter extends RowFilter<TableModel, Integer> {
 	private final String searchString;
+	
 	
 	public SearchRowFilter(String searchString) {
 		this.searchString = StringUtils.filterPrefix(searchString).toLowerCase();

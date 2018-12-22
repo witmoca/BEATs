@@ -43,7 +43,7 @@ import be.witmoca.BEATs.actions.SaveFileAction;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
 
-public class ApplicationMenubar extends JMenuBar {
+class ApplicationMenubar extends JMenuBar {
 	private static final long serialVersionUID = 1L;
 
 	public ApplicationMenubar() {

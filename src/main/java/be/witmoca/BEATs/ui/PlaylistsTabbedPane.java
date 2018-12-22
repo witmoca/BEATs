@@ -33,9 +33,9 @@ import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
-public class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
+class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
 	private static final long serialVersionUID = 1L;
-	public static final String TITLE = "Playlists"; 
+	static final String TITLE = "Playlists"; 
 
 	public PlaylistsTabbedPane() {
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);

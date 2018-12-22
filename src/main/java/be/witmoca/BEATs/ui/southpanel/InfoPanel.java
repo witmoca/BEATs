@@ -44,7 +44,7 @@ import be.witmoca.BEATs.ApplicationManager;
 * File: InfoPanel.java
 * Created: 2018
 */
-public class InfoPanel extends JPanel implements ListSelectionListener {
+class InfoPanel extends JPanel implements ListSelectionListener {
 	private static final long serialVersionUID = 1L;
 	private final JLabel songLabel = new JLabel("");
 	private final JLabel artistLabel = new JLabel("");
@@ -65,6 +65,7 @@ public class InfoPanel extends JPanel implements ListSelectionListener {
 	 * @param songColumn    The column (of trackingTable) that contains a String
 	 *                      representing a song title
 	 */
+	
 	public InfoPanel(JTable trackingTable, int artistColumn, int songColumn) {
 		super(new GridBagLayout());
 		this.artistColumn = artistColumn;

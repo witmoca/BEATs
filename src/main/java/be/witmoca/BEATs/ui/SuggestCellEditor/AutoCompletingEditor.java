@@ -46,55 +46,53 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 	public AutoCompletingEditor(IMatcher matcher) {
 		super(new CompletingTextField(matcher));
 	}
-	
-	
-	
+
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		if(table == null)
+		if (table == null)
 			return null;
-		CompletingTextField editor = (CompletingTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);
+		CompletingTextField editor = (CompletingTextField) super.getTableCellEditorComponent(table, value, isSelected,
+				row, column);
 		editor.setFocusOn(table, row, column);
 		return editor;
 	}
 
-
-
-	static class CompletingTextField extends JTextField{
+	private static class CompletingTextField extends JTextField {
 		private static final long serialVersionUID = 1L;
-		
+
 		private final IMatcher matcher;
-		
+
 		private UpdateMatch currentUpdater;
-		
-		public CompletingTextField(IMatcher matcher) {
+
+		private CompletingTextField(IMatcher matcher) {
 			this.setBorder(new LineBorder(Color.black));
 			this.matcher = matcher;
 		}
-		
-		public void setFocusOn(JTable table, int row, int col) {
+
+		private void setFocusOn(JTable table, int row, int col) {
 			// Remove old updater
-			if(currentUpdater != null)
+			if (currentUpdater != null)
 				this.getDocument().removeDocumentListener(currentUpdater);
-			
+
 			// register new updater
 			currentUpdater = new UpdateMatch(matcher, this.getDocument(), this, table, row, col);
 			this.getDocument().addDocumentListener(currentUpdater);
 		}
 	}
-	
+
 	/**
-	 * Listens to the document and when necessary adds itself to the EDT for execution
+	 * Listens to the document and when necessary adds itself to the EDT for
+	 * execution
 	 */
-	static class UpdateMatch implements Runnable, DocumentListener{
+	private static class UpdateMatch implements Runnable, DocumentListener {
 		private final IMatcher matcher;
 		private final Document source;
 		private final JTextComponent parent;
 		private final JTable table;
 		private final int row;
 		private final int col;
-		
-		public UpdateMatch(IMatcher match, Document doc, JTextComponent parent, JTable table, int row, int col) {
+
+		private UpdateMatch(IMatcher match, Document doc, JTextComponent parent, JTable table, int row, int col) {
 			this.matcher = match;
 			this.source = doc;
 			this.parent = parent;
@@ -102,42 +100,44 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 			this.row = row;
 			this.col = col;
 		}
+
 		@Override
 		public void run() {
 			try {
 				String original = source.getText(0, source.getLength());
-				
-				// empty string => do nothing | SQL Query does not respect leading spaces => no query
-				if(original.isEmpty() || original.startsWith(" ") )
+
+				// empty string => do nothing | SQL Query does not respect leading spaces => no
+				// query
+				if (original.isEmpty() || original.startsWith(" "))
 					return;
-				
+
 				List<String> matches = matcher.match(original.toLowerCase(), true, table, row, col);
-				if(matches == null || matches.isEmpty())
+				if (matches == null || matches.isEmpty())
 					return;
-				
+
 				String topSuggestion = matches.get(0).toLowerCase();
-				
-				if(topSuggestion == null  || original.length() >= topSuggestion.length())
+
+				if (topSuggestion == null || original.length() >= topSuggestion.length())
 					return;
-						
+
 				source.insertString(original.length(), topSuggestion.substring(original.length()), null);
 				parent.select(original.length(), topSuggestion.length());
-				
+
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		@Override
 		public void insertUpdate(DocumentEvent e) {
-			if(e.getLength() > 0)
+			if (e.getLength() > 0)
 				SwingUtilities.invokeLater(this);
 		}
-		
+
 		@Override
 		public void removeUpdate(DocumentEvent e) {
 		}
-		
+
 		@Override
 		public void changedUpdate(DocumentEvent e) {
 		}

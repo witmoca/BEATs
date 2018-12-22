@@ -30,9 +30,8 @@ public class ConnectionException extends Exception {
 	
 	private final ConnState state;
 	
-	public static enum ConnState {
+	static enum ConnState {
 		DB_ALREADY_LOCKED, 			// Another instance has locked the db
-		DB_RECOVERY_FAILED, 		// Db could not be recovered
 		GENERAL_EXCEPTION, 			// General statement exception (usually sql syntax error)
 		APP_ID_INVALID, 			// Db Application id does not match application
 		APP_OUTDATED, 				// Db version is higher than the application version
@@ -42,7 +41,8 @@ public class ConnectionException extends Exception {
 		VACUUM_FAILED;				// Db VACUUM failed
 	}
 	
-	public ConnectionException(ConnState state, Throwable t) {
+	
+	ConnectionException(ConnState state, Throwable t) {
 		super(t);
 		this.state = state;
 	}

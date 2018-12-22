@@ -27,7 +27,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 
 
-public class PlaylistPopupMenu extends JPopupMenu {
+class PlaylistPopupMenu extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
 	private final JTable connectedTable;
 	

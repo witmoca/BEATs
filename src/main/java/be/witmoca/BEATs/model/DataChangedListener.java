@@ -28,7 +28,7 @@ public interface DataChangedListener {
 	public static enum DataType {
 	    ARTIST, SONG, PLAYLIST, EPISODE, SECTION, SONGS_IN_PLAYLIST, CURRENT_QUEUE, SONGS_IN_ARCHIVE, CCP;
 	    public static final EnumSet<DataType> ALL_OPTS = EnumSet.allOf(DataType.class);
-	    public static final EnumSet<DataType> ARCHIVE_DATA_OPTS = EnumSet.of(ARTIST, SONG, EPISODE, SECTION, SONGS_IN_ARCHIVE);
+	    static final EnumSet<DataType> ARCHIVE_DATA_OPTS = EnumSet.of(ARTIST, SONG, EPISODE, SECTION, SONGS_IN_ARCHIVE);
 	    public static final EnumSet<DataType> PLAYLIST_DATA_OPTS = EnumSet.of(PLAYLIST, SONGS_IN_PLAYLIST);
 	}
 	

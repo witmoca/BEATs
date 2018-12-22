@@ -38,7 +38,7 @@ import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.CurrentQueueListModel;
 import be.witmoca.BEATs.model.DataChangedListener;
 
-public class RevertToPlaylistFromQueueAction extends AbstractAction {
+class RevertToPlaylistFromQueueAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> queue;
 

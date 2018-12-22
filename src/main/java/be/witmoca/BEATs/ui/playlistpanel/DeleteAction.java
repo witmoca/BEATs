@@ -37,7 +37,7 @@ import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.PlaylistTableModel;
 import be.witmoca.BEATs.utils.UiUtils;
 
-public class DeleteAction extends AbstractAction {
+class DeleteAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JTable connectedTable;
 

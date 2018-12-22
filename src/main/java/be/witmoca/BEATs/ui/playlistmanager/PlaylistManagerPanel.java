@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class PlaylistManagerPanel extends JPanel{
+class PlaylistManagerPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private static final String PlaylistManagerDescription = "You can change the order of the playlist by dragging them in the order of your choice below.";
 	private final ReorderingListModel listModel;

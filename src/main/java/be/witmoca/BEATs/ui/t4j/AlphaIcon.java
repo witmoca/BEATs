@@ -19,7 +19,7 @@ import javax.swing.Icon;
  * @version 1.0 08/16/10
  * @author Darryl
  */
-public class AlphaIcon implements Icon {
+class AlphaIcon implements Icon {
 
   private Icon icon;
   private float alpha;
@@ -32,7 +32,7 @@ public class AlphaIcon implements Icon {
    * @param icon the Icon to wrap
    * @param alpha the opacity
    */
-  public AlphaIcon(Icon icon, float alpha) {
+  AlphaIcon(Icon icon, float alpha) {
     this.icon = icon;
     this.alpha = alpha;
   }

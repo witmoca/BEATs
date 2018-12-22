@@ -34,7 +34,7 @@ import javax.swing.AbstractListModel;
 
 import be.witmoca.BEATs.ApplicationManager;
 
-public class ReorderingListModel extends AbstractListModel<String> {
+class ReorderingListModel extends AbstractListModel<String> {
 	private static final long serialVersionUID = 1L;
 	private final Map<Integer, String> contents = new HashMap<Integer, String>();
 	
@@ -62,12 +62,14 @@ public class ReorderingListModel extends AbstractListModel<String> {
 		return contents.get(index);
 	}
 
+	
 	public void addElement(String name) {
 		name = name.trim();
 		if(name.isEmpty())
 			return;
 		this.insertElement(name, this.getSize());
 	}
+	
 	
 	public void insertElement(String name, int index) {
 		if(index < 0)
@@ -92,6 +94,7 @@ public class ReorderingListModel extends AbstractListModel<String> {
 		this.fireContentsChanged(this, index, contents.size()-1);
 	}
 	
+	
 	public void removeElement(int index) {
 		if(index < 0 || index >= this.getSize())
 			return;
@@ -109,6 +112,7 @@ public class ReorderingListModel extends AbstractListModel<String> {
 	* @param item String to find index of
 	* @return index of String (or -1 if none found)
 	 */
+	
 	public int findKey(String item) {
 		for(int i = 0; i < this.getSize(); i++) {
 			if(item.equals(contents.get(i))) {

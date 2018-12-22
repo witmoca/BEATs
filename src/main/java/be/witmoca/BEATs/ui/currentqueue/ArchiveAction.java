@@ -35,11 +35,11 @@ import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.model.SQLObjectTransformer;
 
-public class ArchiveAction extends AbstractAction {
+class ArchiveAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> queue;
 	
-	public ArchiveAction(JList<String> Queue) {
+	ArchiveAction(JList<String> Queue) {
 		super("Archive");
 		queue = Queue;
 	}

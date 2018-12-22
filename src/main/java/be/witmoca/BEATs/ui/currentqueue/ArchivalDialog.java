@@ -48,7 +48,7 @@ import javax.swing.SpinnerListModel;
 
 import be.witmoca.BEATs.ApplicationManager;
 
-public class ArchivalDialog extends JDialog implements PropertyChangeListener{
+class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private static final long serialVersionUID = 1L;
 	private static final String[] summeryColumnNames = { "Artist", "Song", "Comment" };
 	

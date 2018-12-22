@@ -26,7 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 
-public class PlaylistToolbar extends JToolBar {
+class PlaylistToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
 	private final JButton deleteButton;

@@ -40,7 +40,7 @@ import be.witmoca.BEATs.model.PlaylistEntry;
 * File: CCPListModel.java
 * Created: 2018
 */
-public class CCPListModel implements ListModel<String>, DataChangedListener{
+class CCPListModel implements ListModel<String>, DataChangedListener{
 	private final List<PlaylistEntry> content = new ArrayList<PlaylistEntry>();
 	private final List<ListDataListener> ldlList = new ArrayList<ListDataListener>();
 	
@@ -57,6 +57,7 @@ public class CCPListModel implements ListModel<String>, DataChangedListener{
 	public String getElementAt(int index) {
 		return content.get(index).toString();
 	}
+	
 	
 	public PlaylistEntry getEntry(int index) {
 		return content.get(index);

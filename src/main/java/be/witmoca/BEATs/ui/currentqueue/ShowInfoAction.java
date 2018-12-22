@@ -39,9 +39,10 @@ import be.witmoca.BEATs.model.CurrentQueueListModel;
 * File: ShowInfoAction.java
 * Created: 2018
 */
-public class ShowInfoAction extends AbstractAction {
+class ShowInfoAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> queue;
+	
 	
 	public ShowInfoAction(JList<String> queue) {
 		super("<html>&#128712; Song Info</html>");

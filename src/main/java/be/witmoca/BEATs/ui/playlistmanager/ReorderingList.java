@@ -33,7 +33,7 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.TransferHandler;
 
-public class ReorderingList extends JList<String> {
+class ReorderingList extends JList<String> {
 	private static final long serialVersionUID = 1L;
 	private final ReorderingListModel model;
 
@@ -55,11 +55,11 @@ public class ReorderingList extends JList<String> {
 		return model;
 	}
 
-	class ReorderTransfer extends TransferHandler {
+	private class ReorderTransfer extends TransferHandler {
 		private static final long serialVersionUID = 1L;
 		private final JList<String> src;
 
-		public ReorderTransfer(JList<String> source) {
+		private ReorderTransfer(JList<String> source) {
 			src = source;
 		}
 

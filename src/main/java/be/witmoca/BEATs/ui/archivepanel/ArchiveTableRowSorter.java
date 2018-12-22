@@ -27,7 +27,8 @@ import java.util.Comparator;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-public class ArchiveTableRowSorter<M extends TableModel> extends TableRowSorter<M>{
+class ArchiveTableRowSorter<M extends TableModel> extends TableRowSorter<M>{
+	
 	public ArchiveTableRowSorter(M model) {
 		super(model);	
 		this.setSortsOnUpdates(true);
