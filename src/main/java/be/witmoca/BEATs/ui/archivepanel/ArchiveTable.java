@@ -25,6 +25,7 @@ package be.witmoca.BEATs.ui.archivepanel;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 
 import be.witmoca.BEATs.model.ArchiveTableModel;
@@ -41,7 +42,8 @@ class ArchiveTable extends SongTable {
 		super(new ArchiveTableModel());
 		this.getTableHeader().setReorderingAllowed(false);
 		
-		
+		// Only a single line is allowed (some tools depend on this being true)
+		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		// Add a rowsorter and render icons at the top to indicate sorting order
 		this.setRowSorter(new ArchiveTableRowSorter<>(this.getModel()));

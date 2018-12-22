@@ -47,10 +47,10 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	@Override
 	public void tableChanged() {
 		archive.clear(); // clear() is (probably) faster as the backing array doesn't get resized (just turned into null values), so reinserting goes fast
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT ArtistName, Title, EpisodeId, SectionName, Comment FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId")) {
+		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT SongsInArchive.rowid, ArtistName, Title, EpisodeId, SectionName, Comment FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId")) {
 			ResultSet value = getValue.executeQuery();
 			while(value.next()) {
-				archive.add(new ArchiveEntry(value.getString(1), value.getString(2) ,value.getInt(3) ,value.getString(4), value.getString(5)));
+				archive.add(new ArchiveEntry(value.getInt(1), value.getString(2), value.getString(3) ,value.getInt(4) ,value.getString(5), value.getString(6)));
 			}
 		} catch (SQLException e) {
 		}
@@ -72,6 +72,9 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 		return archive.get(rowIndex).getColumn(columnIndex);
 	}
 	
+	public int getRowId(int row) {
+		return archive.get(row).getROWID();
+	}
 	
 
 	@Override

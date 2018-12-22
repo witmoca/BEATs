@@ -42,6 +42,9 @@ class ArchiveToolbar extends JToolBar {
 		super("Archive Toolbar",JToolBar.HORIZONTAL);
 		archiveTable = table;
 		
+		add(new DeleteEntryAction(table));
+		this.addSeparator();
+		
 		// Adhere to the given column count in the text fields constructor
 		searchTerm.setMaximumSize(searchTerm.getPreferredSize());
 		this.add(searchTerm);

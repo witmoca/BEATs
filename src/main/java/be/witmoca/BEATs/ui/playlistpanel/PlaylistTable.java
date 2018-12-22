@@ -53,7 +53,7 @@ class PlaylistTable extends SongTable {
 		
 		// Add standard single column rowsorter
 		TableRowSorter<PlaylistTableModel> srt = new TableRowSorter<PlaylistTableModel>((PlaylistTableModel) this.getModel());
-		srt.setSortable(3, true);
+		srt.setSortable(3, false);
 		srt.setMaxSortKeys(1);
 		this.setRowSorter(srt);
 		

@@ -23,13 +23,15 @@
 package be.witmoca.BEATs.model;
 
 class ArchiveEntry {
+	private final int ROWID;
 	private final String ARTIST;
 	private final String SONG;
 	private final int EPISODE;
 	private final String SECTION;
 	private final String COMMENT;	
 
-	ArchiveEntry(String artist, String song, int episode, String section, String comment) {
+	ArchiveEntry(int rowid, String artist, String song, int episode, String section, String comment) {
+		this.ROWID = rowid;
 		this.ARTIST =  artist;
 		this.SONG = song;
 		this.EPISODE = episode;
@@ -53,5 +55,9 @@ class ArchiveEntry {
 		case 2: return Integer.class;
 		default: return String.class;		
 		}
+	}
+
+	public int getROWID() {
+		return ROWID;
 	}
 }
