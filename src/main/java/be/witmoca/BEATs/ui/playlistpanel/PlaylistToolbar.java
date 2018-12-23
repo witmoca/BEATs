@@ -22,26 +22,16 @@
 */
 package be.witmoca.BEATs.ui.playlistpanel;
 
-import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 
 class PlaylistToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
-
-	private final JButton deleteButton;
-
-	private final JTable playlistTable;
-
+	
 	protected PlaylistToolbar(JTable table) {
 		super("Playlist Toolbar", JToolBar.HORIZONTAL);
-		playlistTable = table;
 
 		this.setFloatable(false);
-
-		// Add delete button
-		deleteButton = new JButton(new DeleteAction(playlistTable));
-
-		this.add(deleteButton);
+		this.add(new DeleteAction(table));
 	}
 }

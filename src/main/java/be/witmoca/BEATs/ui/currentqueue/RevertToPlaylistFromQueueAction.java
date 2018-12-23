@@ -31,6 +31,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
@@ -38,6 +39,7 @@ import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.CurrentQueueListModel;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.model.SQLObjectTransformer;
+import be.witmoca.BEATs.ui.UiIcon;
 
 class RevertToPlaylistFromQueueAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
@@ -45,6 +47,7 @@ class RevertToPlaylistFromQueueAction extends AbstractAction {
 
 	protected RevertToPlaylistFromQueueAction(JList<String> Queue) {
 		super("Revert To Playlist");
+		this.putValue(Action.SMALL_ICON, UiIcon.REVERT.getIcon());
 		queue = Queue;
 	}
 

@@ -28,13 +28,13 @@ import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.PlaylistTableModel;
+import be.witmoca.BEATs.ui.UiIcon;
 import be.witmoca.BEATs.utils.UiUtils;
 
 class DeleteAction extends AbstractAction {
@@ -44,7 +44,7 @@ class DeleteAction extends AbstractAction {
 	protected DeleteAction(JTable table) {
 		super("Delete");
 		this.putValue(Action.ACTION_COMMAND_KEY, "Playlist: Delete Song Selection");
-		this.putValue(Action.SMALL_ICON, new ImageIcon(getClass().getClassLoader().getResource("Icons/recyclebin.png")));
+		this.putValue(Action.SMALL_ICON, UiIcon.DELETE.getIcon());
 		connectedTable = table;
 		
 		// Attach global hotkey

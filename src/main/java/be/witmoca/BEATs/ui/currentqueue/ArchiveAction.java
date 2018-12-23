@@ -29,11 +29,13 @@ import java.sql.SQLException;
 import java.util.EnumSet;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JList;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.model.SQLObjectTransformer;
+import be.witmoca.BEATs.ui.UiIcon;
 
 class ArchiveAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
@@ -41,6 +43,7 @@ class ArchiveAction extends AbstractAction {
 	
 	ArchiveAction(JList<String> Queue) {
 		super("Archive");
+		this.putValue(Action.SMALL_ICON, UiIcon.PROCEED.getIcon());
 		queue = Queue;
 	}
 

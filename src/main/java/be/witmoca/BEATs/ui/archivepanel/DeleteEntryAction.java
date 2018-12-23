@@ -9,12 +9,14 @@ import java.sql.SQLException;
 import java.util.EnumSet;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.ArchiveTableModel;
 import be.witmoca.BEATs.model.DataChangedListener;
+import be.witmoca.BEATs.ui.UiIcon;
 
 /*
 *
@@ -38,12 +40,13 @@ import be.witmoca.BEATs.model.DataChangedListener;
 * File: DeleteEntryAction.java
 * Created: 2018
 */
-public class DeleteEntryAction extends AbstractAction {
+class DeleteEntryAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JTable archive;
 	
-	public DeleteEntryAction(JTable table) {
+	DeleteEntryAction(JTable table) {
 		super("Delete");
+		this.putValue(Action.SMALL_ICON, UiIcon.DELETE.getIcon());
 		archive = table;
 	}
 

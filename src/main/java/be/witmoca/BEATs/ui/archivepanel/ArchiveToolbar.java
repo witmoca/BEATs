@@ -25,16 +25,19 @@ package be.witmoca.BEATs.ui.archivepanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import be.witmoca.BEATs.ui.UiIcon;
+
 class ArchiveToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
 	private final JTextField searchTerm = new JTextField(20);
-	private final JButton searchSubmit = new JButton("Search");
+	private final JButton searchSubmit = new JButton("Search", UiIcon.SEARCH.getIcon());
 	private final JTable archiveTable;
 
 	
@@ -43,11 +46,14 @@ class ArchiveToolbar extends JToolBar {
 		archiveTable = table;
 		
 		add(new DeleteEntryAction(table));
-		this.addSeparator();
+		
+		// Beyond this point all goes on the right
+		add(Box.createHorizontalGlue());
 		
 		// Adhere to the given column count in the text fields constructor
 		searchTerm.setMaximumSize(searchTerm.getPreferredSize());
 		this.add(searchTerm);
+		this.addSeparator();
 		this.add(searchSubmit);
 		this.setFloatable(false);
 		

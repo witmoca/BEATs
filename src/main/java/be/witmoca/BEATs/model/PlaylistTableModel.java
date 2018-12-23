@@ -32,12 +32,13 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.ui.UiIcon;
 import be.witmoca.BEATs.utils.StringUtils;
 
 public class PlaylistTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
 	private String PlaylistName;
-	private static final String COLUMN_NAME[] = { "Artist", "Song", "Comment", "Move to Queue"};
+	private static final String COLUMN_NAME[] = { "Artist", "Song", "Comment", "To Queue"};
 	private List<PlaylistEntry> playlistList = null;
 
 	public PlaylistTableModel(String playlistName) {
@@ -77,7 +78,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		if(columnIndex == 3)
-			return "Played";
+			return UiIcon.PLAY.getIcon();
 		try {
 			return playlistList.get(rowIndex).getColumn(columnIndex);
 		} catch (IndexOutOfBoundsException e) {
@@ -120,7 +121,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		if(aValue == null)
+		if(aValue == null || !(aValue instanceof String))
 			return;
 		String sValue = StringUtils.ToUpperCamelCase( (String) aValue);
 		if(columnIndex == 0)

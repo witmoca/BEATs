@@ -10,12 +10,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.CurrentQueueListModel;
+import be.witmoca.BEATs.ui.UiIcon;
 
 /*
 *
@@ -45,7 +47,8 @@ class ShowInfoAction extends AbstractAction {
 	
 	
 	public ShowInfoAction(JList<String> queue) {
-		super("<html>&#128712; Song Info</html>");
+		super("Song Info");
+		this.putValue(Action.SMALL_ICON, UiIcon.INFO.getIcon());
 		this.queue = queue;
 	}
 

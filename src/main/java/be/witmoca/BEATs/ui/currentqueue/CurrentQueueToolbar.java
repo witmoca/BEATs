@@ -37,7 +37,7 @@ class CurrentQueueToolbar extends JToolBar {
 		queue = Queue;
 		
 		this.add(new JButton(new RevertToPlaylistFromQueueAction(queue)));
-		this.add(new JButton(new ArchiveAction(queue)));
 		this.add(new JButton(new ShowInfoAction(queue)));
+		this.add(new JButton(new ArchiveAction(queue)));
 	}
 }

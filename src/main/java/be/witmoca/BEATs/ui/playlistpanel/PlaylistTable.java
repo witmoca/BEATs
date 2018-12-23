@@ -61,6 +61,8 @@ class PlaylistTable extends SongTable {
 		this.setComponentPopupMenu(new PlaylistPopupMenu(this));
 		// Translate the cells from the last column into buttons
 		new ButtonColumn(this, new MoveToQueueAction(), 3);
+		this.getColumnModel().getColumn(3).setMaxWidth(100);
+		this.getColumnModel().getColumn(3).setResizable(false);
 		
 		// Drag and drop logic
 		this.setDragEnabled(true);
