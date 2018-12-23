@@ -48,6 +48,7 @@ class ArchiveToolbar extends JToolBar {
 		add(new DeleteEntryAction(table));
 		add(new ChangeDateAction(table));
 		add(new JButton(new RenameArtistAction(table)));
+		add(new JButton(new RenameSongAction(table)));
 		
 		// Beyond this point all goes on the right
 		add(Box.createHorizontalGlue());
