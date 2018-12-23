@@ -47,12 +47,13 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	@Override
 	public void tableChanged() {
 		archive.clear(); // clear() is (probably) faster as the backing array doesn't get resized (just turned into null values), so reinserting goes fast
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT SongsInArchive.rowid, ArtistName, Title, EpisodeId, SectionName, Comment FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId")) {
+		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT SongsInArchive.rowid, ArtistName, Title, SongsInArchive.EpisodeId, EpisodeDate, SectionName, Comment FROM SongsInArchive,Song, Episode WHERE SongsInArchive.SongId = Song.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeId")) {
 			ResultSet value = getValue.executeQuery();
 			while(value.next()) {
-				archive.add(new ArchiveEntry(value.getInt(1), value.getString(2), value.getString(3) ,value.getInt(4) ,value.getString(5), value.getString(6)));
+				archive.add(new ArchiveEntry(value.getInt(1), value.getString(2), value.getString(3) ,value.getInt(4) , value.getInt(5), value.getString(6), value.getString(7)));
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		this.fireTableDataChanged();
 	}
@@ -74,6 +75,10 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	
 	public int getRowId(int row) {
 		return archive.get(row).getROWID();
+	}
+	
+	public String getEpisodeDate(int row) {
+		return archive.get(row).getDate();
 	}
 	
 

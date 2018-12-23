@@ -22,19 +22,24 @@
 */
 package be.witmoca.BEATs.model;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 class ArchiveEntry {
 	private final int ROWID;
 	private final String ARTIST;
 	private final String SONG;
 	private final int EPISODE;
+	private final String EPISODE_DATE;
 	private final String SECTION;
 	private final String COMMENT;	
 
-	ArchiveEntry(int rowid, String artist, String song, int episode, String section, String comment) {
+	ArchiveEntry(int rowid, String artist, String song, int episode, int epDate, String section, String comment) {
 		this.ROWID = rowid;
 		this.ARTIST =  artist;
 		this.SONG = song;
 		this.EPISODE = episode;
+		this.EPISODE_DATE =  DateTimeFormatter.ofPattern("dd/MM/uu").format(LocalDate.ofEpochDay(epDate));
 		this.SECTION = section;
 		this.COMMENT = comment;
 	}
@@ -59,5 +64,9 @@ class ArchiveEntry {
 
 	public int getROWID() {
 		return ROWID;
+	}
+	
+	public String getDate() {
+		return EPISODE_DATE;
 	}
 }

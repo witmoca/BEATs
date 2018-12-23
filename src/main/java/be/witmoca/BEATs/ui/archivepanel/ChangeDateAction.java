@@ -45,12 +45,12 @@ import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
 * File: ChangeDateAction.java
 * Created: 2018
 */
-public class ChangeDateAction extends AbstractAction {
+class ChangeDateAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	
 	private final JTable archive;
 	
-	public ChangeDateAction(JTable table) {
+	ChangeDateAction(JTable table) {
 		super("Change Date");
 		this.putValue(Action.SMALL_ICON, UiIcon.CALENDAR.getIcon());
 		archive = table;

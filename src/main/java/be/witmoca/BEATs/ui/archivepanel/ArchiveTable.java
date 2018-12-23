@@ -22,10 +22,13 @@
 */
 package be.witmoca.BEATs.ui.archivepanel;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
 import be.witmoca.BEATs.model.ArchiveTableModel;
@@ -44,11 +47,15 @@ class ArchiveTable extends SongTable {
 		
 		// Only a single line is allowed (some tools depend on this being true)
 		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		// Set custom renderer for the episode column
+		this.getColumnModel().getColumn(2).setCellRenderer(new EpisodeRenderer());
 
 		// Add a rowsorter and render icons at the top to indicate sorting order
 		this.setRowSorter(new ArchiveTableRowSorter<>(this.getModel()));
 		this.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
 		
+		// Drag n drop logic
 		this.setDragEnabled(true);
 		this.setTransferHandler(new ArchiveTransferHandler());
 	}
@@ -63,5 +70,20 @@ class ArchiveTable extends SongTable {
 			tfs.add(new PlaylistEntry(0, (String) model.getValueAt(rowIndices[i], 0), (String) model.getValueAt(rowIndices[i], 1), "" ) );
 		}
 		return new TransferableSongs(tfs);
+	}
+	
+	private static class EpisodeRenderer extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			if(table == null || !(table.getModel() instanceof ArchiveTableModel) )
+				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			
+			if(table.getRowSorter() != null)
+				row = table.getRowSorter().convertRowIndexToModel(row);
+			
+			return super.getTableCellRendererComponent(table, value + " (" +  ((ArchiveTableModel) table.getModel()).getEpisodeDate(row) + ")", isSelected, hasFocus, row, column);
+		}
 	}
 }
