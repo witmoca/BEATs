@@ -5,10 +5,7 @@ package be.witmoca.BEATs.ui.archivepanel;
 
 import java.awt.event.ActionEvent;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 
 import javax.swing.AbstractAction;
@@ -17,11 +14,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.ui.UiIcon;
-import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
+import be.witmoca.BEATs.utils.StringUtils;
 
 /*
 *
@@ -45,14 +43,14 @@ import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
 * File: ChangeDateAction.java
 * Created: 2018
 */
-class ChangeDateAction extends AbstractAction {
+class RenameArtistAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
-	
+
 	private final JTable archive;
-	
-	ChangeDateAction(JTable table) {
-		super("Change Date");
-		this.putValue(Action.SMALL_ICON, UiIcon.CALENDAR.getIcon());
+
+	RenameArtistAction(JTable table) {
+		super("Artist");
+		this.putValue(Action.SMALL_ICON, UiIcon.EDIT_W.getIcon());
 		archive = table;
 	}
 
@@ -60,51 +58,64 @@ class ChangeDateAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		int index = archive.getSelectedRow();
 		int originalIndex = index;
-		if(index < 0)
+		if (index < 0)
 			return;
-		if(archive.getRowSorter() != null)
+		if (archive.getRowSorter() != null)
 			index = archive.getRowSorter().convertRowIndexToModel(index);
-		
-		// PREPARE veriables for user
-		int episode = (int) archive.getModel().getValueAt(index, 2);
-		LocalDate date;
-		
-		try (PreparedStatement selDate = ApplicationManager.getDB_CONN().prepareStatement("SELECT episodeDate FROM episode WHERE episodeId = ?")) {
-			selDate.setInt(1, episode);
-			ResultSet rs = selDate.executeQuery();
-			if(!rs.next())
-				return;
-			date = LocalDate.ofEpochDay(rs.getInt(1));
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-			return;
-		}
-		
+
+		// PREPARE variables for user
+		String artist = (String) archive.getModel().getValueAt(index, 0);
+
 		// USER UI interaction
 		JPanel userPanel = new JPanel();
-		userPanel.add(new JLabel("Change the date for episode: " + episode));
-		LocalDateCombo episodeDate = new LocalDateCombo(date, DateTimeFormatter.ofPattern("E d-MMM-uuuu"));
-		userPanel.add(episodeDate);
-				
-		
-		if(JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(), userPanel,"Change Date", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
+		userPanel.add(new JLabel("Change the spelling of the artist: "));
+		JTextField newName = new JTextField(artist);
+		newName.setColumns(30);
+		userPanel.add(newName);
+
+		if (JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(), userPanel, "Rename",
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
 			return; // cancelled
 		}
-		
+
 		// MAKE CHANGES
-		date = episodeDate.getValue();
-		
-		// update Date = upDate! Get it? Ugh I'm disgusted with myself for that one.
-		try (PreparedStatement upDate = ApplicationManager.getDB_CONN().prepareStatement("UPDATE episode SET episodeDate = ? WHERE episodeId = ?")) {
-			upDate.setLong(1, date.toEpochDay());
-			upDate.setInt(2, episode);
-			upDate.executeUpdate();
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.EPISODE));
+
+		String renamed = StringUtils.filterPrefix(StringUtils.ToUpperCamelCase(newName.getText()));
+		if(artist.equals(renamed))
+			return;
+
+		//
+		// Update the PK is not possible (or a good idea)
+		// So insert new artist, change all former references to the new one & delete
+		// the old reference
+		try {
+			// First: insert (with original value of local)
+			try (PreparedStatement insertArtist = ApplicationManager.getDB_CONN()
+					.prepareStatement("INSERT INTO Artist SELECT ?, local FROM Artist WHERE ArtistName = ?")) {
+				insertArtist.setString(1, renamed);
+				insertArtist.setString(2, artist);
+				insertArtist.executeUpdate();
+			}
+			
+			// Change former references
+			try (PreparedStatement updateArtist = ApplicationManager.getDB_CONN().prepareStatement("UPDATE Song Set ArtistName = ? WHERE ArtistName = ?")) {
+				updateArtist.setString(1, renamed);
+				updateArtist.setString(2, artist);
+				updateArtist.executeUpdate();
+			}
+			
+			// delete old artist
+			try (PreparedStatement delArtist = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM Artist WHERE ArtistName = ?")) {
+				delArtist.setString(1, artist);	
+				delArtist.executeUpdate();
+			}
+			
+			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.ARTIST));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;
 		}
-		
+
 		// Reselect the selection that now changed
 		archive.setRowSelectionInterval(originalIndex, originalIndex);
 	}

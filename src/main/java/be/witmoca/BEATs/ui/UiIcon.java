@@ -43,6 +43,7 @@ public enum UiIcon {
 	CALENDAR("calendar"),
 	CHECKED("check-mark"),
 	SCREEN("desktop"),
+	EDIT_W("edit-write"),
 	
 	// Item operations
 	DELETE("garbage"),
@@ -65,7 +66,6 @@ public enum UiIcon {
 //	
 //	// item operations
 //	EDIT("edit"),
-//	EDIT_W("edit-write"),
 //	LOCKED("lock-locked"),
 //	UNLOCKED("lock-unlocked"),
 //	STICKY("pricker"),
