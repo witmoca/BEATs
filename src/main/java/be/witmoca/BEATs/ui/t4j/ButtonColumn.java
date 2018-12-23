@@ -105,8 +105,7 @@ public class ButtonColumn extends AbstractCellEditor
 	{
 		if (value == null)
 		{
-			editButton.setText( "" );
-			editButton.setIcon( null );
+			return null;
 		}
 		else if (value instanceof Icon)
 		{
@@ -147,8 +146,7 @@ public class ButtonColumn extends AbstractCellEditor
 //		renderButton.setText( (value == null) ? "" : value.toString() );
 		if (value == null)
 		{
-			renderButton.setText( "" );
-			renderButton.setIcon( null );
+			return null;
 		}
 		else if (value instanceof Icon)
 		{

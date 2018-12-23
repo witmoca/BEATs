@@ -108,8 +108,7 @@ class PlaylistTransferHandler extends TransferHandler {
 	}
 
 	@Override
-	protected void exportDone(JComponent source, Transferable data, int action) {		
-		System.out.println("Move: " + (action == TransferHandler.MOVE));
+	protected void exportDone(JComponent source, Transferable data, int action) {	
 		if(action == TransferHandler.MOVE) {			
 			try {
 				Object o = data.getTransferData(new DataFlavor(TransferableSongs.MIME_TYPE));

@@ -78,7 +78,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		if(columnIndex == 3)
-			return UiIcon.PLAY.getIcon();
+			return rowIndex == playlistList.size() ? null : UiIcon.PLAY.getIcon();
 		try {
 			return playlistList.get(rowIndex).getColumn(columnIndex);
 		} catch (IndexOutOfBoundsException e) {
