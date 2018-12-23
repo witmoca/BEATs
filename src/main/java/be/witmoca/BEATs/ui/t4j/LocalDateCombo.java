@@ -84,7 +84,7 @@ public class LocalDateCombo extends JComboBox<LocalDate> {
 	 * @param formatter
 	 *            Formats the date for display
 	 */
-	private LocalDateCombo(LocalDate value, DateTimeFormatter formatter) {
+	public LocalDateCombo(LocalDate value, DateTimeFormatter formatter) {
 		this(value, null, null, formatter);
 	}
 

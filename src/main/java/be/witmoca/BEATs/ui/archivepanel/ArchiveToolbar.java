@@ -46,6 +46,7 @@ class ArchiveToolbar extends JToolBar {
 		archiveTable = table;
 		
 		add(new DeleteEntryAction(table));
+		add(new ChangeDateAction(table));
 		
 		// Beyond this point all goes on the right
 		add(Box.createHorizontalGlue());

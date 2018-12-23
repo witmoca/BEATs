@@ -40,6 +40,7 @@ public enum UiIcon {
 	// Tool icons
 	PLAYLISTS("list-mark"),
 	SEARCH("search"),
+	CALENDAR("calendar"),
 	CHECKED("check-mark"),
 	SCREEN("desktop"),
 	
@@ -61,7 +62,6 @@ public enum UiIcon {
 //	SETTINGS("gear-setting"),
 //	CHART("fold-chart"),
 //	PRINT("printer"),
-//	CALENDAR("calendar"),
 //	
 //	// item operations
 //	EDIT("edit"),
