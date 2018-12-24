@@ -34,7 +34,7 @@ import javax.swing.table.TableModel;
 import be.witmoca.BEATs.model.ArchiveTableModel;
 import be.witmoca.BEATs.model.PlaylistEntry;
 import be.witmoca.BEATs.model.TransferableSongs;
-import be.witmoca.BEATs.ui.southpanel.SongTable;
+import be.witmoca.BEATs.ui.extendables.SongTable;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
 import be.witmoca.BEATs.utils.UiUtils;
 

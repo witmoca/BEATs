@@ -37,7 +37,7 @@ import be.witmoca.BEATs.ui.SuggestCellEditor.ArtistMatcher;
 import be.witmoca.BEATs.ui.SuggestCellEditor.AutoCompletingEditor;
 import be.witmoca.BEATs.ui.SuggestCellEditor.SongMatcher;
 import be.witmoca.BEATs.ui.currentqueue.MoveToQueueAction;
-import be.witmoca.BEATs.ui.southpanel.SongTable;
+import be.witmoca.BEATs.ui.extendables.SongTable;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
 import be.witmoca.BEATs.utils.UiUtils;
 

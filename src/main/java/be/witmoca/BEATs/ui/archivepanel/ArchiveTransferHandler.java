@@ -8,7 +8,7 @@ import java.awt.datatransfer.Transferable;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
-import be.witmoca.BEATs.ui.southpanel.SongTable;
+import be.witmoca.BEATs.ui.extendables.SongTable;
 
 /*
 *
