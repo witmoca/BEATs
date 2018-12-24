@@ -55,6 +55,8 @@ class ArchiveTable extends SongTable {
 		this.setRowSorter(new ArchiveTableRowSorter<>(this.getModel()));
 		this.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
 		
+		this.setComponentPopupMenu(new ArchivePopupMenu(this));
+		
 		// Drag n drop logic
 		this.setDragEnabled(true);
 		this.setTransferHandler(new ArchiveTransferHandler());

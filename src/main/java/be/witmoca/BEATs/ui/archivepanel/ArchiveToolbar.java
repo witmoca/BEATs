@@ -45,11 +45,11 @@ class ArchiveToolbar extends JToolBar {
 		super("Archive Toolbar",JToolBar.HORIZONTAL);
 		archiveTable = table;
 		
-		add(new DeleteEntryAction(table));
 		add(new ChangeDateAction(table));
 		add(new JButton(new RenameArtistAction(table)));
 		add(new JButton(new RenameSongAction(table)));
 		add(new JButton(new ChangeLocalAction(table)));
+		add(new DeleteEntryAction(table));
 		
 		// Beyond this point all goes on the right
 		add(Box.createHorizontalGlue());
