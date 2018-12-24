@@ -112,7 +112,7 @@ class RenameSongAction extends AbstractAction {
 				delSong.setInt(1, oldSongId);
 				delSong.executeUpdate();
 			}			
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONG));
+			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONG, DataChangedListener.DataType.CURRENT_QUEUE, DataChangedListener.DataType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

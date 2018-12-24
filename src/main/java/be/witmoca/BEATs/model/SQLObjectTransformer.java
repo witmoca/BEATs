@@ -48,11 +48,13 @@ public class SQLObjectTransformer {
 		}
 	}
 	
-	public static void addArtist(String artistName, boolean local) throws SQLException {
+	public static String addArtist(String artistName, boolean local) throws SQLException {
 		try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT OR IGNORE INTO artist VALUES (?, ?)")){
-			add.setString(1, StringUtils.ToUpperCamelCase(StringUtils.filterPrefix(artistName)));
+			String artist = StringUtils.ToUpperCamelCase(StringUtils.filterPrefix(artistName));
+			add.setString(1, artist);
 			add.setBoolean(2, local);
 			add.executeUpdate();
+			return artist;
 		}
 	}
 	

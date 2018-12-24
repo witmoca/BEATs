@@ -5,6 +5,7 @@ package be.witmoca.BEATs.ui.archivepanel;
 
 import java.awt.event.ActionEvent;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
 
@@ -18,8 +19,8 @@ import javax.swing.JTextField;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.DataChangedListener;
+import be.witmoca.BEATs.model.SQLObjectTransformer;
 import be.witmoca.BEATs.ui.UiIcon;
-import be.witmoca.BEATs.utils.StringUtils;
 
 /*
 *
@@ -40,7 +41,7 @@ import be.witmoca.BEATs.utils.StringUtils;
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: ChangeDateAction.java
+* File: RenameAristAction.java
 * Created: 2018
 */
 class RenameArtistAction extends AbstractAction {
@@ -79,38 +80,66 @@ class RenameArtistAction extends AbstractAction {
 		}
 
 		// MAKE CHANGES
-
-		String renamed = StringUtils.filterPrefix(StringUtils.ToUpperCamelCase(newName.getText()));
-		if(artist.equals(renamed))
-			return;
-
 		//
 		// Update the PK is not possible (or a good idea)
 		// So insert new artist, change all former references to the new one & delete
 		// the old reference
 		try {
 			// First: insert (with original value of local)
-			try (PreparedStatement insertArtist = ApplicationManager.getDB_CONN()
-					.prepareStatement("INSERT INTO Artist SELECT ?, local FROM Artist WHERE ArtistName = ?")) {
-				insertArtist.setString(1, renamed);
-				insertArtist.setString(2, artist);
-				insertArtist.executeUpdate();
+			String renamed;
+			try (PreparedStatement selLocal = ApplicationManager.getDB_CONN()
+					.prepareStatement("SELECT local FROM Artist WHERE ArtistName = ?")) {
+				selLocal.setString(1, artist);
+				ResultSet rs = selLocal.executeQuery();
+				if (!rs.next())
+					return;
+				renamed = SQLObjectTransformer.addArtist(newName.getText(), rs.getBoolean(1));
 			}
-			
-			// Change former references
-			try (PreparedStatement updateArtist = ApplicationManager.getDB_CONN().prepareStatement("UPDATE Song Set ArtistName = ? WHERE ArtistName = ?")) {
-				updateArtist.setString(1, renamed);
-				updateArtist.setString(2, artist);
-				updateArtist.executeUpdate();
+
+			if (artist.equals(renamed))
+				return;
+
+			// updating references might lead to uniqueness errors => recreate new songs (or return their id's if they already exist) & update the archive and queue
+			try (PreparedStatement selOldArtistSongs = ApplicationManager.getDB_CONN().prepareStatement("SELECT Title FROM Song WHERE ArtistName = ?")) {
+				selOldArtistSongs.setString(1, artist);
+				ResultSet rs1 = selOldArtistSongs.executeQuery();
+				
+				while(rs1.next()) {
+					// for every song
+					// create a new song with the new artistname (on conflict return existing songid)
+					int newSongId = SQLObjectTransformer.addSong(rs1.getString(1), renamed);
+					// get the id of the oldsong
+					int oldSongId = SQLObjectTransformer.addSong(rs1.getString(1), artist);
+					
+					// update archive references
+					try (PreparedStatement updateArchive = ApplicationManager.getDB_CONN().prepareStatement("UPDATE SongsInArchive SET SongId = ? WHERE SongId = ?")) {
+						updateArchive.setInt(1, newSongId);
+						updateArchive.setInt(2, oldSongId);
+						updateArchive.executeUpdate();
+					}
+					
+					// update currentQueue
+					try (PreparedStatement updateQueue = ApplicationManager.getDB_CONN().prepareStatement("UPDATE CurrentQueue SET SongId = ? WHERE SongId = ?")) {
+						updateQueue.setInt(1, newSongId);
+						updateQueue.setInt(2, oldSongId);
+						updateQueue.executeUpdate();
+					}
+					// delete old songId
+					try (PreparedStatement delSong = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM Song WHERE SongId = ?")) {
+						delSong.setInt(1, oldSongId);
+						delSong.executeUpdate();
+					}
+				}
 			}
-			
+
 			// delete old artist
-			try (PreparedStatement delArtist = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM Artist WHERE ArtistName = ?")) {
-				delArtist.setString(1, artist);	
+			try (PreparedStatement delArtist = ApplicationManager.getDB_CONN()
+					.prepareStatement("DELETE FROM Artist WHERE ArtistName = ?")) {
+				delArtist.setString(1, artist);
 				delArtist.executeUpdate();
 			}
-			
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.ARTIST));
+
+			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.ARTIST,DataChangedListener.DataType.SONG, DataChangedListener.DataType.CURRENT_QUEUE,DataChangedListener.DataType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

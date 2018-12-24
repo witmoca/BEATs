@@ -168,7 +168,7 @@ public class ImportFileAction implements ActionListener {
 			}
 			SQLObjectTransformer.addEpisode(aflNr, aflDatum);
 			SQLObjectTransformer.addSection(aflCode);
-			SQLObjectTransformer.addArtist(artiest, belgisch);
+			artiest = SQLObjectTransformer.addArtist(artiest, belgisch);
 			int songId = SQLObjectTransformer.addSong(titel, artiest);
 			SQLObjectTransformer.addSongInArchive(songId, aflNr, aflCode, commentaar);
 		}
