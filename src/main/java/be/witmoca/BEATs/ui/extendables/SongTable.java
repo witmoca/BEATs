@@ -54,13 +54,18 @@ public abstract class SongTable extends JTable {
 		// the ccp model depends on a single line selection
 		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
+		// always fill viewport even when empty
 		this.setFillsViewportHeight(true);
 		
 		// CatWalk seems cosmically perfect. A super model & a mouse listener. This is getting a bit cringy though.
 		this.addMouseListener(new CatWalk());
+		
+		// This stops the cells from editing without actually clicking the cells (just typing)
+		// Not a prefered method (especially the property), but no better one exists
+		this.setFocusable(false);
+		this.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 	}
 
-	
 	@Override
 	public Point getPopupLocation(MouseEvent event) {
 		// Popuplocation is always the bottomleft corner of the selected item
@@ -96,6 +101,4 @@ public abstract class SongTable extends JTable {
 			}
 		}
 	}
-	
-	
 }
