@@ -95,7 +95,8 @@ class ChangeDateAction extends AbstractAction {
 		date = episodeDate.getValue();
 		
 		// update Date = upDate! Get it? Ugh I'm disgusted with myself for that one.
-		try (PreparedStatement upDate = ApplicationManager.getDB_CONN().prepareStatement("UPDATE episode SET episodeDate = ? WHERE episodeId = ?")) {
+		// EpisodeDates are unique => Constraint Violation if the episode exists already. So Ignore in that case
+		try (PreparedStatement upDate = ApplicationManager.getDB_CONN().prepareStatement("UPDATE OR IGNORE episode SET episodeDate = ? WHERE episodeId = ?")) {
 			upDate.setLong(1, date.toEpochDay());
 			upDate.setInt(2, episode);
 			upDate.executeUpdate();
