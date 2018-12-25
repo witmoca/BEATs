@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.utils;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;

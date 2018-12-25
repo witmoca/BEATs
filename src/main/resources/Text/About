@@ -1,0 +1,26 @@
+Burning Ember (BEATs, Burning Ember Archival Tool suite)
+Copyright 2018 Jente Heremans
+
+Licensed under the Apache License, Version 2.0.
+(http://www.apache.org/licenses/LICENSE-2.0)
+
+We would also like to note and thank the following:
+
+Original Code:
+The Original WWDB project, the spiritual predecessor to BEATs. 
+Released under the MIT License.
+WWDB (Copyright 2015 Jente Heremans)
+
+Dependencies & libraries:
+The SQLite-jdbc driver (https://github.com/xerial/sqlite-jdbc). 
+Released under the Apache v2.0 License.
+(Copyright 2009 Taro L. Saito)
+
+Artwork:
+The basic-ui-2-line pack was created by Icon O' Foxy (https://www.iconfinder.com/iconofoxy).
+Released under the Creative Commons (Attribution 3.0 Unported) license.
+(https://creativecommons.org/licenses/by/3.0/)
+
+The Icon8 icons are created by http://icons8.com 
+Released under the Creative Commons Attribution-NoDerivs 3.0 Unported license
+(https://creativecommons.org/licenses/by-nd/3.0/)

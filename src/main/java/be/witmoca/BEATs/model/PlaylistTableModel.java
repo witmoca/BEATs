@@ -32,8 +32,8 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.ui.UiIcon;
 import be.witmoca.BEATs.utils.StringUtils;
+import be.witmoca.BEATs.utils.UiIcon;
 
 public class PlaylistTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;

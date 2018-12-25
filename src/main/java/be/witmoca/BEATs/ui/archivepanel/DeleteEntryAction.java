@@ -16,7 +16,7 @@ import javax.swing.JTable;
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.ArchiveTableModel;
 import be.witmoca.BEATs.model.DataChangedListener;
-import be.witmoca.BEATs.ui.UiIcon;
+import be.witmoca.BEATs.utils.UiIcon;
 
 /*
 *

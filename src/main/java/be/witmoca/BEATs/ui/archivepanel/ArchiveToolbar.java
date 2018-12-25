@@ -31,7 +31,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
-import be.witmoca.BEATs.ui.UiIcon;
+import be.witmoca.BEATs.utils.UiIcon;
 import be.witmoca.BEATs.utils.UiUtils;
 
 class ArchiveToolbar extends JToolBar {

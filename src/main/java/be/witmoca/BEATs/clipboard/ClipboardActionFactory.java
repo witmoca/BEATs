@@ -12,7 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 import javax.swing.TransferHandler.TransferSupport;
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.ui.UiIcon;
+import be.witmoca.BEATs.utils.UiIcon;
 
 /*
 *

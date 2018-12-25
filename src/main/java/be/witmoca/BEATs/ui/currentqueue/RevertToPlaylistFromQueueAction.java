@@ -39,7 +39,7 @@ import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.CurrentQueueListModel;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.model.SQLObjectTransformer;
-import be.witmoca.BEATs.ui.UiIcon;
+import be.witmoca.BEATs.utils.UiIcon;
 
 class RevertToPlaylistFromQueueAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;

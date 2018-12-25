@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.CurrentQueueListModel;
-import be.witmoca.BEATs.ui.UiIcon;
+import be.witmoca.BEATs.utils.UiIcon;
 
 /*
 *

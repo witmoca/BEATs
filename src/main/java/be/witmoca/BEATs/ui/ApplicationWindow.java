@@ -36,6 +36,7 @@ import javax.swing.WindowConstants;
 
 import be.witmoca.BEATs.actions.ExitApplicationAction;
 import be.witmoca.BEATs.ui.currentqueue.CurrentQueuePanel;
+import be.witmoca.BEATs.utils.UiIcon;
 
 public class ApplicationWindow extends JFrame implements WindowListener{
 	private static final long serialVersionUID = 1L;

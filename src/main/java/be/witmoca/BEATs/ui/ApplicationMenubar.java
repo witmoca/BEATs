@@ -37,8 +37,10 @@ import be.witmoca.BEATs.actions.ImportFileAction;
 import be.witmoca.BEATs.actions.NewFileAction;
 import be.witmoca.BEATs.actions.OpenFileAction;
 import be.witmoca.BEATs.actions.SaveFileAction;
+import be.witmoca.BEATs.actions.ShowAboutDialogAction;
 import be.witmoca.BEATs.model.DataChangedListener;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
+import be.witmoca.BEATs.utils.UiIcon;
 
 class ApplicationMenubar extends JMenuBar {
 	private static final long serialVersionUID = 1L;
@@ -106,6 +108,16 @@ class ApplicationMenubar extends JMenuBar {
 		toolsMenu.add(episodeContinuityCheck);
 		
 		this.add(toolsMenu);
+		
+		// HELP
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.setMnemonic(KeyEvent.VK_H);
+		
+		JMenuItem about = new JMenuItem("About", UiIcon.INFO.getIcon());
+		about.addActionListener(new ShowAboutDialogAction());
+		helpMenu.add(about);
+		
+		this.add(helpMenu);
 	}
 
 }

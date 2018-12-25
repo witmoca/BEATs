@@ -32,7 +32,7 @@ import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.PlaylistTableModel;
-import be.witmoca.BEATs.ui.UiIcon;
+import be.witmoca.BEATs.utils.UiIcon;
 
 class DeleteAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
