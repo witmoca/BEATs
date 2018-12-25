@@ -22,12 +22,20 @@
 */
 package be.witmoca.BEATs.utils;
 
+import java.awt.Dimension;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 public class UiUtils {
 
+public class UiUtils {
+	public static JSeparator SingleLineSeparator() {
+		JSeparator s = new JSeparator(SwingConstants.VERTICAL);
+		s.setMaximumSize(new Dimension(3, 50));
+		return s;
 	/**
 	 * General purpose selectionmodel converter
 	 * 

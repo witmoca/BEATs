@@ -24,8 +24,6 @@ package be.witmoca.BEATs.ui.playlistpanel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -35,7 +33,6 @@ import javax.swing.KeyStroke;
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.PlaylistTableModel;
 import be.witmoca.BEATs.ui.UiIcon;
-import be.witmoca.BEATs.utils.UiUtils;
 
 class DeleteAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
@@ -55,21 +52,17 @@ class DeleteAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(connectedTable.getSelectedRowCount() == 0)
+		int index = connectedTable.getSelectedRow();
+		if(index < 0)
 			return;
+		if(connectedTable.getRowSorter() != null)
+			index = connectedTable.getRowSorter().convertRowIndexToModel(index);
+		
 		if (JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(),
-				"Are you sure you want to delete " + connectedTable.getSelectedRowCount() + " row(s)?", "Delete?",
+				"Are you sure you want to delete row?", "Delete?",
 				 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
 			return;
 
-		int rowIndices[] = UiUtils.convertSelectionToModel(connectedTable.getSelectedRows(), connectedTable);
-		// Make sure that we start deleting at the end of the list
-		Arrays.sort(rowIndices);
-
-		// Clearing all cells removes the row
-		for (int i = rowIndices.length - 1; i >= 0; i--) {
-				((PlaylistTableModel) connectedTable.getModel()).deleteRow(rowIndices[i]);
-			
-		}
+		((PlaylistTableModel) connectedTable.getModel()).deleteRow(index);
 	}
 }
