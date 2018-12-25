@@ -34,9 +34,10 @@ class PlaylistPopupMenu extends JPopupMenu {
 	
 	protected PlaylistPopupMenu(JTable assocTable) {
 		super();
-		this.add(new JMenuItem(new DeleteAction(assocTable)));
 		this.add(new JMenuItem(ClipboardActionFactory.getCutAction(assocTable)));
 		this.add(new JMenuItem(ClipboardActionFactory.getCopyAction(assocTable)));
 		this.add(new JMenuItem(ClipboardActionFactory.getPasteAction(assocTable)));
+		this.addSeparator();
+		this.add(new JMenuItem(new DeleteAction(assocTable)));
 	}
 }

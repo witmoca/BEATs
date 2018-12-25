@@ -23,37 +23,14 @@
 package be.witmoca.BEATs.utils;
 
 import java.awt.Dimension;
-import javax.swing.JTable;
-import javax.swing.RowSorter;
-import javax.swing.table.TableModel;
 
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
-public class UiUtils {
 
 public class UiUtils {
 	public static JSeparator SingleLineSeparator() {
 		JSeparator s = new JSeparator(SwingConstants.VERTICAL);
 		s.setMaximumSize(new Dimension(3, 50));
 		return s;
-	/**
-	 * General purpose selectionmodel converter
-	 * 
-	 * @param viewSelection
-	 *            the {@code int[]} holding indices from the view
-	 * @return {@code int[]} holding corresponding indices from the model (returns
-	 *         viewSelection if no rowsorter present)
-	 */
-	public static int[] convertSelectionToModel(int[] viewSelection, JTable table) {
-		if (table.getRowSorter() == null)
-			return viewSelection;
-		else {
-			RowSorter<? extends TableModel> rs = table.getRowSorter();
-			int modelSel[] = new int[viewSelection.length];
-			for (int i = 0; i < viewSelection.length; i++) {
-				modelSel[i] = rs.convertRowIndexToModel(viewSelection[i]);
-			}
-			return modelSel;
-		}
 	}
 }

@@ -30,8 +30,9 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-
+import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
 import be.witmoca.BEATs.ui.UiIcon;
+import be.witmoca.BEATs.utils.UiUtils;
 
 class ArchiveToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
@@ -45,10 +46,15 @@ class ArchiveToolbar extends JToolBar {
 		super("Archive Toolbar",JToolBar.HORIZONTAL);
 		archiveTable = table;
 		
+		this.setFloatable(false);
+		
 		add(new ChangeDateAction(table));
 		add(new JButton(new RenameArtistAction(table)));
 		add(new JButton(new RenameSongAction(table)));
 		add(new JButton(new ChangeLocalAction(table)));
+		add(UiUtils.SingleLineSeparator());
+		add(ClipboardActionFactory.getCopyAction(table));
+		add(UiUtils.SingleLineSeparator());
 		add(new DeleteEntryAction(table));
 		
 		// Beyond this point all goes on the right

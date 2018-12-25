@@ -22,8 +22,12 @@
 */
 package be.witmoca.BEATs.ui.playlistpanel;
 
+import javax.swing.Box;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+
+import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
+import be.witmoca.BEATs.utils.UiUtils;
 
 class PlaylistToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
@@ -32,6 +36,13 @@ class PlaylistToolbar extends JToolBar {
 		super("Playlist Toolbar", JToolBar.HORIZONTAL);
 
 		this.setFloatable(false);
+		this.add(ClipboardActionFactory.getCutAction(table));
+		this.add(ClipboardActionFactory.getCopyAction(table));
+		this.add(ClipboardActionFactory.getPasteAction(table));
+		add(UiUtils.SingleLineSeparator());
 		this.add(new DeleteAction(table));
+		
+		// Beyond this point all goes on the right
+		add(Box.createHorizontalGlue());
 	}
 }
