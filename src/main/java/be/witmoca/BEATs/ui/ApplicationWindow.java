@@ -23,9 +23,12 @@
 package be.witmoca.BEATs.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -45,6 +48,7 @@ public class ApplicationWindow extends JFrame implements WindowListener{
 		// Initialise frame
 		super(mainTitleBase);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.setIconImages();
 		this.addWindowListener(this);
 		this.setLayout(new BorderLayout());
 		
@@ -61,6 +65,16 @@ public class ApplicationWindow extends JFrame implements WindowListener{
 		this.setVisible(true);
 	}
 
+	private void setIconImages() {
+		List<Image> icons = new ArrayList<Image>();
+		icons.add(UiIcon.LOGO_256.getIcon().getImage());
+		icons.add(UiIcon.LOGO_128.getIcon().getImage());
+		icons.add(UiIcon.LOGO_64.getIcon().getImage());
+		icons.add(UiIcon.LOGO_48.getIcon().getImage());
+		icons.add(UiIcon.LOGO_32.getIcon().getImage());
+		icons.add(UiIcon.LOGO_16.getIcon().getImage());
+		this.setIconImages(icons);
+	}
 	
 	@Override
 	public void windowOpened(WindowEvent e) {	

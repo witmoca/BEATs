@@ -53,7 +53,15 @@ public enum UiIcon {
 	PLAY("BasicUi/play"),
 	CUT("Icons8/cut"),
 	COPY("Icons8/copy"),
-	PASTE("Icons8/paste");
+	PASTE("Icons8/paste"),
+	
+	// Logo's
+	LOGO_256("Logo/logo-0"),
+	LOGO_128("Logo/logo-1"),
+	LOGO_64("Logo/logo-2"),
+	LOGO_48("Logo/logo-3"),
+	LOGO_32("Logo/logo-4"),
+	LOGO_16("Logo/logo-5");
 	
 	// Unused
 	// status
@@ -80,17 +88,21 @@ public enum UiIcon {
 	
 	private static final String FOLDER = "Icons/";
 	private static final String EXT = ".png";
-	private final Icon icon;
+	private final ImageIcon icon;
 	
 	private UiIcon(String name) {
 		icon = new ImageIcon(getClass().getClassLoader().getResource(FOLDER + name + EXT));
 	}
 	
 	private UiIcon(Icon icon) {
-		this.icon = icon;
+		if(icon instanceof ImageIcon) {
+			this.icon = (ImageIcon) icon;
+			return;
+		}
+		this.icon = null; // Icon not supported
 	}
 	
-	public final Icon getIcon() {
+	public final ImageIcon getIcon() {
 		return icon;
 	}
 }
