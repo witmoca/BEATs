@@ -22,24 +22,16 @@
 */
 package be.witmoca.BEATs.ui.playlistpanel;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.DropMode;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import be.witmoca.BEATs.model.PlaylistEntry;
+import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.model.PlaylistTableModel;
-import be.witmoca.BEATs.model.TransferableSongs;
 import be.witmoca.BEATs.ui.SuggestCellEditor.ArtistMatcher;
 import be.witmoca.BEATs.ui.SuggestCellEditor.AutoCompletingEditor;
 import be.witmoca.BEATs.ui.SuggestCellEditor.SongMatcher;
 import be.witmoca.BEATs.ui.currentqueue.MoveToQueueAction;
 import be.witmoca.BEATs.ui.extendables.SongTable;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
-import be.witmoca.BEATs.utils.UiUtils;
 
 class PlaylistTable extends SongTable {
 	private static final long serialVersionUID = 1L;
@@ -48,8 +40,6 @@ class PlaylistTable extends SongTable {
 	protected PlaylistTable(String PlaylistName) {
 		super(new PlaylistTableModel(PlaylistName));
 		this.playlistName = PlaylistName;
-		this.getTableHeader().setReorderingAllowed(false);
-		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		
 		// Add standard single column rowsorter
 		TableRowSorter<PlaylistTableModel> srt = new TableRowSorter<PlaylistTableModel>((PlaylistTableModel) this.getModel());
@@ -64,9 +54,7 @@ class PlaylistTable extends SongTable {
 		this.getColumnModel().getColumn(3).setMaxWidth(100);
 		this.getColumnModel().getColumn(3).setResizable(false);
 		
-		// Drag and drop logic
-		this.setDragEnabled(true);
-		this.setDropMode(DropMode.USE_SELECTION);
+		// Drag and drop logic (no drag and drop, just Cut/Cop/Paste)
 		this.setTransferHandler(new PlaylistTransferHandler());
 		
 		// Suggest support for artist and song column
@@ -75,17 +63,18 @@ class PlaylistTable extends SongTable {
 	}
 
 	@Override
-	public TransferableSongs getSelectedSongs() {			
-		int[] rowIndices = UiUtils.convertSelectionToModel(this.getSelectedRows(), this);
-		TableModel model = this.getModel();
+	public TransferableSong getSelectedSong() {			
+		int rowIndex = this.getSelectedRow();
+		if(rowIndex < 0)
+			return null;
+		if(this.getRowSorter() != null)
+			rowIndex = this.getRowSorter().convertRowIndexToModel(rowIndex);
 		
-		List<PlaylistEntry> tfs = new ArrayList<PlaylistEntry>();		
-		for(int i = 0; i < rowIndices.length; i++) {
-			PlaylistEntry pe = new PlaylistEntry( ((PlaylistTableModel) model).getRowId(rowIndices[i]), (String) model.getValueAt(rowIndices[i], 0), (String) model.getValueAt(rowIndices[i], 1), (String) model.getValueAt(rowIndices[i], 2) );
-			if(!pe.isEmpty())
-				tfs.add(pe);
-		}
-		return new TransferableSongs(tfs);
+		if(!(this.getModel() instanceof PlaylistTableModel) || rowIndex >= this.getRowCount())
+			return null;
+		PlaylistTableModel model = (PlaylistTableModel) this.getModel();
+
+		return new TransferableSong((String) model.getValueAt(rowIndex, 0),(String) model.getValueAt(rowIndex, 1), model.getRowId(rowIndex));
 	}
 
 	public String getPlaylistName() {

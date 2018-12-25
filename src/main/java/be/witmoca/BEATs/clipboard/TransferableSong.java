@@ -1,3 +1,13 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.clipboard;
+
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+
 /*
 *
 +===============================================================================+
@@ -17,46 +27,59 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistEntry.java
+* File: TransferableSong.java
 * Created: 2018
 */
-package be.witmoca.BEATs.model;
-
-class PlaylistEntry {
+public class TransferableSong implements Transferable {
+	public static final DataFlavor FLAVOR = new DataFlavor(TransferableSong.class, "Transferable Song");
+	
 	private final String ARTIST;
 	private final String SONG;
-	private final String COMMENT;	
 	private final int ROWID;
 	
-	PlaylistEntry(int rowid, String aRTIST, String sONG, String cOMMENT) {
-		super();
+	public TransferableSong(String aRTIST, String sONG, int rOWID) {
 		ARTIST = aRTIST;
 		SONG = sONG;
-		COMMENT = cOMMENT;
-		ROWID = rowid;
-	}
-	
-	
-	String getColumn(int i) {
-		switch(i) {
-		case 0: return this.ARTIST;
-		case 1: return this.SONG;
-		case 2: return this.COMMENT;
-		default: return null;
-		}
+		ROWID = rOWID;
 	}
 
-	@Override
-	public String toString() {
-		return ARTIST + " - " + SONG + (COMMENT.isEmpty() ? "" : " (" +  COMMENT + ")");
-	}
-	
-	public boolean isEmpty() {
-		return ARTIST.isEmpty() && SONG.isEmpty();
+	public String getARTIST() {
+		return ARTIST;
 	}
 
+	public String getSONG() {
+		return SONG;
+	}
 
 	public int getROWID() {
 		return ROWID;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
+	 */
+	@Override
+	public DataFlavor[] getTransferDataFlavors() {
+		DataFlavor[] df = new DataFlavor[1];
+		df[0] = FLAVOR;
+		return df;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
+	 */
+	@Override
+	public boolean isDataFlavorSupported(DataFlavor flavor) {
+		return flavor.equals(FLAVOR);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
+	 */
+	@Override
+	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+		if(!this.isDataFlavorSupported(flavor))
+			return null;		
+		return this;
 	}
 }

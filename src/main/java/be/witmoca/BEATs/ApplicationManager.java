@@ -35,6 +35,7 @@ import javax.swing.SwingUtilities;
 
 import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
 import be.witmoca.BEATs.actions.ExitApplicationAction;
+import be.witmoca.BEATs.clipboard.BEATsClipboard;
 import be.witmoca.BEATs.connection.ConnectionException;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
@@ -45,6 +46,7 @@ public class ApplicationManager {
 
 	private static ApplicationWindow APP_WINDOW = null;
 	private static SQLConnection DB_CONN = null;
+	private static final BEATsClipboard INT_CLIP = new BEATsClipboard("BEATs Internal Clipboard");
 
 	// Start up
 	public static void main(String[] args) {		
@@ -172,5 +174,9 @@ public class ApplicationManager {
 
 	public static SQLConnection getDB_CONN() {
 		return DB_CONN;
+	}
+
+	public static BEATsClipboard getINT_CLIP() {
+		return INT_CLIP;
 	}
 }

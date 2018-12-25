@@ -1,26 +1,21 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.southpanel;
+package be.witmoca.BEATs.clipboard;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
-
 import javax.swing.JComponent;
-import javax.swing.JList;
 import javax.swing.TransferHandler;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.model.DataChangedListener;
-import be.witmoca.BEATs.model.PlaylistEntry;
-import be.witmoca.BEATs.model.TransferableSongs;
 
 /*
 *
@@ -44,15 +39,16 @@ import be.witmoca.BEATs.model.TransferableSongs;
 * File: CCPTransferHandler.java
 * Created: 2018
 */
-class CCPTransferHandler extends TransferHandler {
+public class ClipboardTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
+	private static int selected = -1;
 
 	@Override
 	public boolean canImport(TransferSupport support) {
 		DataFlavor[] transferFlavors = support.getDataFlavors();
 
 		for (DataFlavor df : transferFlavors) {
-			if (df.isMimeTypeEqual(TransferableSongs.MIME_TYPE))
+			if (df.equals(TransferableSong.FLAVOR))
 				return true;
 		}
 		return false;
@@ -69,25 +65,21 @@ class CCPTransferHandler extends TransferHandler {
 			return false;
 
 		try {
-			Object o = support.getTransferable().getTransferData(new DataFlavor(TransferableSongs.MIME_TYPE));
-			if (!(o instanceof List<?>)) {
-				throw new ClassCastException("Cannot cast " + o.getClass() + " to List<?>");
+			Object o = support.getTransferable().getTransferData(TransferableSong.FLAVOR);
+			if (!(o instanceof TransferableSong)) {
+				throw new ClassCastException("TransferableSong");
 			}
-			List<?> lpe = (List<?>) o;
-			try (PreparedStatement insertCCP = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO ccp (Artist, Song, Comment) VALUES (?,?,?)")) {
-				for (Object songO : lpe) {
-					PlaylistEntry pe = (PlaylistEntry) songO;
-					for (int i = 0; i < 3; i++)
-						insertCCP.setString(i + 1, pe.getColumn(i));
-					insertCCP.executeUpdate();
-				}
+			TransferableSong ts = (TransferableSong) o;
+			try (PreparedStatement insertCCP = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO ccp (Artist, Song) VALUES (?,?)")) {
+				insertCCP.setString(1, ts.getARTIST());
+				insertCCP.setString(2, ts.getSONG());
+				insertCCP.executeUpdate();
 			}
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.CCP));
-		} catch (ClassNotFoundException | UnsupportedFlavorException | IOException | SQLException e) {
+		} catch (UnsupportedFlavorException | IOException | SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
-
 		return true;
 	}
 
@@ -103,48 +95,48 @@ class CCPTransferHandler extends TransferHandler {
 
 	@Override
 	protected Transferable createTransferable(JComponent c) {
-		if (!(c instanceof JList))
+		if(selected < 0)
 			return null;
-
-		JList<?> list = ((JList<?>) c);
-		if (!(list.getModel() instanceof CCPListModel))
+		try (PreparedStatement selRow = ApplicationManager.getDB_CONN().prepareStatement("SELECT rowid, artist, song FROM CCP ORDER BY rowid ASC")) {
+			ResultSet rs = selRow.executeQuery();
+			for(int i = 0; i <= selected; i++) {
+				if(!rs.next())
+					return null;
+			}
+			return new TransferableSong(rs.getString(2), rs.getString(3), rs.getInt(1));
+		} catch (SQLException e) {
+			e.printStackTrace();
 			return null;
-		CCPListModel model = (CCPListModel) list.getModel();
-
-		int indices[] = list.getSelectedIndices();
-		List<PlaylistEntry> peList = new ArrayList<PlaylistEntry>();
-		for (int i = 0; i < indices.length; i++) {
-			peList.add(model.getEntry(indices[i]));
 		}
-		
-		return new TransferableSongs(peList);
 	}
 
 	@Override
 	protected void exportDone(JComponent source, Transferable data, int action) {
+		System.out.println(source);
+		System.out.println(data);
+		System.out.println(action);
 		if (action != TransferHandler.MOVE)
 			return;
 
 		try {
-			Object o = data.getTransferData(new DataFlavor(TransferableSongs.MIME_TYPE));
-			if (!(o instanceof List<?>)) {
-				throw new ClassCastException("Cannot cast " + o.getClass() + " to List<?>");
+			Object o = data.getTransferData(TransferableSong.FLAVOR);
+			if (!(o instanceof TransferableSong)) {
+				throw new ClassCastException("TransferableSong");
 			}
-			List<?> lpe = (List<?>) o;
+			TransferableSong ts = (TransferableSong) o;
 
-			try (PreparedStatement delRow = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM CCP WHERE Artist = ? AND Song = ? AND Comment = ?")) {
-				for (Object songO : lpe) {
-					PlaylistEntry pe = (PlaylistEntry) songO;
-					delRow.setString(1, pe.getColumn(0));
-					delRow.setString(2, pe.getColumn(1));
-					delRow.setString(3, pe.getColumn(2));
-					delRow.executeUpdate();
-				}
+			try (PreparedStatement delRow = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM CCP WHERE rowid = ?")) {
+				delRow.setInt(1, ts.getROWID());
+				delRow.executeUpdate();
 			}
 
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.CCP));
-		} catch (SQLException | ClassNotFoundException | UnsupportedFlavorException | IOException e) {
+		} catch (SQLException | UnsupportedFlavorException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void setSelected(int selected) {
+		ClipboardTransferHandler.selected = selected;
 	}
 }

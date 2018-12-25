@@ -8,13 +8,12 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JList;
 import javax.swing.JTable;
-import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
 
-import be.witmoca.BEATs.model.TransferableSongs;
+import be.witmoca.BEATs.clipboard.TransferableSong;
 
 /*
 *
@@ -49,7 +48,14 @@ public abstract class SongTable extends JTable {
 
 	public SongTable(TableModel model) {
 		super(model); // Just fabulous, a supermodel!
-
+		
+		this.getTableHeader().setReorderingAllowed(false);
+		
+		// the ccp model depends on a single line selection
+		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		this.setFillsViewportHeight(true);
+		
 		// CatWalk seems cosmically perfect. A super model & a mouse listener. This is getting a bit cringy though.
 		this.addMouseListener(new CatWalk());
 	}
@@ -71,7 +77,7 @@ public abstract class SongTable extends JTable {
 		return new Point(cell.x, cell.y + cell.height);
 	}
 
-	abstract public TransferableSongs getSelectedSongs();
+	abstract public TransferableSong getSelectedSong();
 
 	private static class CatWalk extends MouseAdapter {
 		
@@ -90,4 +96,6 @@ public abstract class SongTable extends JTable {
 			}
 		}
 	}
+	
+	
 }

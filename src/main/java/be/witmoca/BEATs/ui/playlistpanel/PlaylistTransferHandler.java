@@ -10,15 +10,12 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.EnumSet;
-import java.util.List;
-
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.model.DataChangedListener;
-import be.witmoca.BEATs.model.PlaylistEntry;
 import be.witmoca.BEATs.model.SQLObjectTransformer;
-import be.witmoca.BEATs.model.TransferableSongs;
 
 /*
 *
@@ -58,7 +55,7 @@ class PlaylistTransferHandler extends TransferHandler {
 		DataFlavor[] transferFlavors = support.getDataFlavors();
 		
 		for(DataFlavor df : transferFlavors) {
-			if(df.isMimeTypeEqual(TransferableSongs.MIME_TYPE))
+			if(df.equals(TransferableSong.FLAVOR))
 				return true;
 		}
 		return false;
@@ -77,17 +74,16 @@ class PlaylistTransferHandler extends TransferHandler {
 		String pName = ((PlaylistTable) support.getComponent()).getPlaylistName();
 		
 		try {
-			Object o =  support.getTransferable().getTransferData(new DataFlavor(TransferableSongs.MIME_TYPE));
-			if (!(o instanceof List<?>) ) {
-				throw new ClassCastException("Cannot cast " + o.getClass() + " to List<?>");
+			Object o =  support.getTransferable().getTransferData(TransferableSong.FLAVOR);
+			if (!(o instanceof TransferableSong)) {
+				throw new ClassCastException("TransferableSong");
 			}
-			List<?> lpe = (List<?>) o;
-			for(Object songO : lpe) {
-				PlaylistEntry pe = (PlaylistEntry) songO;
-				SQLObjectTransformer.addSongInPlaylist(pName, pe.getColumn(0), pe.getColumn(1), pe.getColumn(2));
-			}
+			TransferableSong ts = (TransferableSong) o;
+			
+			SQLObjectTransformer.addSongInPlaylist(pName, ts.getARTIST(), ts.getSONG(),"");
+			
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));			
-		} catch (ClassNotFoundException | UnsupportedFlavorException | IOException | SQLException e) {
+		} catch (UnsupportedFlavorException | IOException | SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -104,29 +100,26 @@ class PlaylistTransferHandler extends TransferHandler {
 	protected Transferable createTransferable(JComponent c) {
 		if(!(c instanceof PlaylistTable))
 			return null;
-		return ((PlaylistTable) c).getSelectedSongs();
+		return ((PlaylistTable) c).getSelectedSong();
 	}
 
 	@Override
 	protected void exportDone(JComponent source, Transferable data, int action) {	
 		if(action == TransferHandler.MOVE) {			
 			try {
-				Object o = data.getTransferData(new DataFlavor(TransferableSongs.MIME_TYPE));
-				if (!(o instanceof List<?>) ) {
-					throw new ClassCastException("Cannot cast " + o.getClass() + " to List<?>");
+				Object o = data.getTransferData(TransferableSong.FLAVOR);
+				if (!(o instanceof TransferableSong)) {
+					throw new ClassCastException("TransferableSong");
 				}
-				List<?> lpe = (List<?>) o;
+				TransferableSong ts = (TransferableSong) o;
 				
 				try (PreparedStatement delRow = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM SongsInPlaylist WHERE rowid = ?")) {
-				for(Object songO : lpe) {
-					PlaylistEntry pe = (PlaylistEntry) songO;
-						delRow.setInt(1, pe.getROWID());
-						delRow.executeUpdate();
-					}
+					delRow.setInt(1, ts.getROWID());
+					delRow.executeUpdate();
 				}
 				
 				ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
-			} catch (SQLException | ClassNotFoundException | UnsupportedFlavorException | IOException e) {
+			} catch (SQLException | UnsupportedFlavorException | IOException e) {
 				e.printStackTrace();
 			}		
 		}

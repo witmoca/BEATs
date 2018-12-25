@@ -72,7 +72,7 @@ class ArchiveTransferHandler extends TransferHandler {
 	@Override
 	protected Transferable createTransferable(JComponent c) {
 		if(c instanceof SongTable)
-			return ((SongTable) c).getSelectedSongs();
+			return ((SongTable) c).getSelectedSong();
 		return null;
 	}
 

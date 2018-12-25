@@ -8,10 +8,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
-import javax.swing.DropMode;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import be.witmoca.BEATs.clipboard.ClipboardTransferHandler;
 
 /*
 *
@@ -49,11 +52,13 @@ class CCPPanel extends JPanel {
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		
-		
 		JList<String> ccpList = new JList<>(new CCPListModel());
-		ccpList.setDropMode(DropMode.USE_SELECTION);
-		ccpList.setDragEnabled(true);
-		ccpList.setTransferHandler(new CCPTransferHandler());
+		ccpList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				ClipboardTransferHandler.setSelected(e.getFirstIndex());
+			}
+		});
 		
 		add(new JScrollPane(ccpList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), gbc);
 		

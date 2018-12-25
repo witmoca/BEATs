@@ -156,7 +156,7 @@ public class SQLConnection implements AutoCloseable {
 					"CREATE TABLE IF NOT EXISTS Episode(EpisodeId INTEGER PRIMARY KEY, EpisodeDate INTEGER NOT NULL UNIQUE)");
 			createEmptyTables.executeUpdate("CREATE TABLE IF NOT EXISTS Section(SectionName TEXT PRIMARY KEY)");
 			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS ccp(rowid INTEGER PRIMARY KEY, Artist TEXT NOT NULL, Song TEXT NOT NULL, Comment TEXT)");
+					"CREATE TABLE IF NOT EXISTS ccp(rowid INTEGER PRIMARY KEY, Artist TEXT NOT NULL, Song TEXT NOT NULL)");
 			// Relation Tables
 			createEmptyTables.executeUpdate(
 					"CREATE TABLE IF NOT EXISTS SongsInPlaylist(rowid INTEGER PRIMARY KEY, PlaylistName REFERENCES Playlist NOT NULL,Artist TEXT NOT NULL, Song TEXT NOT NULL, Comment TEXT)");

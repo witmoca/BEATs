@@ -26,14 +26,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 
+import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
+
 
 class PlaylistPopupMenu extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
-	private final JTable connectedTable;
 	
 	protected PlaylistPopupMenu(JTable assocTable) {
 		super();
-		connectedTable = assocTable;
-		this.add(new JMenuItem(new DeleteAction(connectedTable)));
+		this.add(new JMenuItem(new DeleteAction(assocTable)));
+		this.add(new JMenuItem(ClipboardActionFactory.getCutAction(assocTable)));
+		this.add(new JMenuItem(ClipboardActionFactory.getCopyAction(assocTable)));
+		this.add(new JMenuItem(ClipboardActionFactory.getPasteAction(assocTable)));
 	}
 }

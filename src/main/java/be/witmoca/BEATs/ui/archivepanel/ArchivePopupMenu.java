@@ -7,6 +7,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 
+import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
+
 /**
 *
 +===============================================================================+
@@ -29,7 +31,7 @@ import javax.swing.JTable;
 * File: ArchivePopupMenu.java
 * Created: 2018
 */
-public class ArchivePopupMenu extends JPopupMenu {
+class ArchivePopupMenu extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
 
 	protected ArchivePopupMenu(JTable table) {
@@ -38,6 +40,7 @@ public class ArchivePopupMenu extends JPopupMenu {
 		add(new JMenuItem(new RenameArtistAction(table)));
 		add(new JMenuItem(new RenameSongAction(table)));
 		add(new JMenuItem(new ChangeLocalAction(table)));
+		add(new JMenuItem(ClipboardActionFactory.getCopyAction(table)));
 		add(new JMenuItem(new DeleteEntryAction(table)));
 	}
 }

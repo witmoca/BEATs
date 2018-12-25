@@ -23,30 +23,18 @@
 package be.witmoca.BEATs.ui.archivepanel;
 
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
-
+import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.model.ArchiveTableModel;
-import be.witmoca.BEATs.model.PlaylistEntry;
-import be.witmoca.BEATs.model.TransferableSongs;
 import be.witmoca.BEATs.ui.extendables.SongTable;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
-import be.witmoca.BEATs.utils.UiUtils;
 
 class ArchiveTable extends SongTable {
 	private static final long serialVersionUID = 1L;
 
 	public ArchiveTable() {
 		super(new ArchiveTableModel());
-		this.getTableHeader().setReorderingAllowed(false);
-		
-		// Only a single line is allowed (some tools depend on this being true)
-		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		// Set custom renderer for the episode column
 		this.getColumnModel().getColumn(2).setCellRenderer(new EpisodeRenderer());
@@ -57,21 +45,23 @@ class ArchiveTable extends SongTable {
 		
 		this.setComponentPopupMenu(new ArchivePopupMenu(this));
 		
-		// Drag n drop logic
-		this.setDragEnabled(true);
+		// Drag and drop logic (no drag and drop, just Cut/Cop/Paste)
 		this.setTransferHandler(new ArchiveTransferHandler());
 	}
 
 	@Override
-	public TransferableSongs getSelectedSongs() {
-		int[] rowIndices = UiUtils.convertSelectionToModel(this.getSelectedRows(), this);
-		TableModel model = this.getModel();
+	public TransferableSong getSelectedSong() {
+		int rowIndex = this.getSelectedRow();
+		if(rowIndex < 0)
+			return null;
+		if(this.getRowSorter() != null)
+			rowIndex = this.getRowSorter().convertRowIndexToModel(rowIndex);
 		
-		List<PlaylistEntry> tfs = new ArrayList<PlaylistEntry>();		
-		for(int i = 0; i < rowIndices.length; i++) {
-			tfs.add(new PlaylistEntry(0, (String) model.getValueAt(rowIndices[i], 0), (String) model.getValueAt(rowIndices[i], 1), "" ) );
-		}
-		return new TransferableSongs(tfs);
+		if(!(this.getModel() instanceof ArchiveTableModel))
+			return null;
+		ArchiveTableModel model = (ArchiveTableModel) this.getModel();
+
+		return new TransferableSong((String) model.getValueAt(rowIndex, 0),(String) model.getValueAt(rowIndex, 1), model.getRowId(rowIndex));
 	}
 	
 	private static class EpisodeRenderer extends DefaultTableCellRenderer {

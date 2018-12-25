@@ -1,15 +1,18 @@
 /**
  * 
  */
-package be.witmoca.BEATs.model;
+package be.witmoca.BEATs.clipboard;
 
-import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.util.List;
 
-/*
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.TransferHandler;
+import javax.swing.TransferHandler.TransferSupport;
+
+/**
 *
 +===============================================================================+
 |    BEATs (Burning Ember Archival Tool suite)                                  |
@@ -28,50 +31,34 @@ import java.util.List;
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: TransferableSong.java
+* File: BEATsClipboard.java
 * Created: 2018
 */
-public class TransferableSongs implements Transferable {
-	public static final String MIME_TYPE = "application/x.transferable-song-list";
+public class BEATsClipboard extends Clipboard {
+	private static final ClipboardTransferHandler handler = new ClipboardTransferHandler();
+	private static final JComponent COMPONENT_REPRESENTATION = new JLabel("Internal Clipboard");
 	
-	private List<PlaylistEntry> data;
-	
-	public TransferableSongs(List<PlaylistEntry> entries) {
-		super();
-		data = entries;
+	public BEATsClipboard(String name) {
+		super(name);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
-	 */
 	@Override
-	public DataFlavor[] getTransferDataFlavors() {
-		DataFlavor[] df = new DataFlavor[1];
-		try {
-			df[0] = new DataFlavor(MIME_TYPE);
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
-		return df;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
-	 */
-	@Override
-	public boolean isDataFlavorSupported(DataFlavor flavor) {
-		return flavor.isMimeTypeEqual(MIME_TYPE);
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
-	 */
-	@Override
-	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-		if(!this.isDataFlavorSupported(flavor))
-			throw new UnsupportedFlavorException(flavor);
+	public synchronized void setContents(Transferable contents, ClipboardOwner owner) {
+		if(!(contents.isDataFlavorSupported(TransferableSong.FLAVOR)))
+			throw new IllegalArgumentException("Dataflavor is not acceptable");	
 		
-		return data;
+		if (owner != null)
+			owner.lostOwnership(this, contents);
+		
+		handler.importData(new TransferSupport(COMPONENT_REPRESENTATION, contents));
+	}
+
+	@Override
+	public synchronized Transferable getContents(Object requestor) {
+		return handler.createTransferable(COMPONENT_REPRESENTATION);
+	}	
+	
+	synchronized void pasteDone(Transferable t) {
+		handler.exportDone(COMPONENT_REPRESENTATION, t, TransferHandler.MOVE);
 	}
 }
