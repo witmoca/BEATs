@@ -31,26 +31,29 @@ import javax.swing.UIManager;
 */
 public enum UiIcon {	
 	// File icons
-	NEW("document"),
-	OPEN("folder"),
-	SAVE("save"),
+	NEW("BasicUi/document"),
+	OPEN("BasicUi/folder"),
+	SAVE("BasicUi/save"),
 	IMPORT(UIManager.getIcon("Table.ascendingSortIcon")),
-	CLOSE_APP("home"),
+	CLOSE_APP("BasicUi/home"),
 	
 	// Tool icons
-	PLAYLISTS("list-mark"),
-	SEARCH("search"),
-	CALENDAR("calendar"),
-	CHECKED("check-mark"),
-	SCREEN("desktop"),
-	EDIT_W("edit-write"),
+	PLAYLISTS("BasicUi/list-mark"),
+	SEARCH("BasicUi/search"),
+	CALENDAR("BasicUi/calendar"),
+	CHECKED("BasicUi/check-mark"),
+	SCREEN("BasicUi/desktop"),
+	EDIT_W("BasicUi/edit-write"),
 	
 	// Item operations
-	DELETE("garbage"),
-	REVERT("arrow-backward"),
-	PROCEED("arrow-forward"),
-	INFO("information-mark"),
-	PLAY("play");
+	DELETE("BasicUi/garbage"),
+	REVERT("BasicUi/arrow-backward"),
+	PROCEED("BasicUi/arrow-forward"),
+	INFO("BasicUi/information-mark"),
+	PLAY("BasicUi/play"),
+	CUT("Icons8/cut"),
+	COPY("Icons8/copy"),
+	PASTE("Icons8/paste");
 	
 	// Unused
 	// status
