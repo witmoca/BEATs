@@ -82,7 +82,7 @@
 							<goal>java</goal>
 						</goals>
 						<configuration>
-							<mainClass>be.witmoca.BEATs.Launch</mainClass>
+							<mainClass>be.witmoca.BEATs.ApplicationManager</mainClass>
 						</configuration>
 					</execution>
 				</executions>
@@ -110,7 +110,7 @@
 						<configuration>
 							<archive>
 								<manifest>
-									<mainClass>be.witmoca.BEATs.Launch</mainClass>
+									<mainClass>be.witmoca.BEATs.ApplicationManager</mainClass>
 								</manifest>
 							</archive>
 							<descriptorRefs>
