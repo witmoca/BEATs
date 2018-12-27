@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.FileFilters.WWDB1FileFilter;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.connection.SQLObjectTransformer;
+import be.witmoca.BEATs.connection.CommonSQL;
 
 public class ImportFileAction implements ActionListener {
 
@@ -166,11 +166,11 @@ public class ImportFileAction implements ActionListener {
 			if (aflDatum == null) {
 				throw new IOException("Archive item is missing a date. See items with aflNr: " + aflNr);
 			}
-			SQLObjectTransformer.addEpisode(aflNr, aflDatum);
-			SQLObjectTransformer.addSection(aflCode);
-			artiest = SQLObjectTransformer.addArtist(artiest, belgisch);
-			int songId = SQLObjectTransformer.addSong(titel, artiest);
-			SQLObjectTransformer.addSongInArchive(songId, aflNr, aflCode, commentaar);
+			CommonSQL.addEpisode(aflNr, aflDatum);
+			CommonSQL.addSection(aflCode);
+			artiest = CommonSQL.addArtist(artiest, belgisch);
+			int songId = CommonSQL.addSong(titel, artiest);
+			CommonSQL.addSongInArchive(songId, aflNr, aflCode, commentaar);
 		}
 		
 		// Playlists
@@ -207,10 +207,10 @@ public class ImportFileAction implements ActionListener {
 
 			// Playlist item -should- be fully read by this point (assumed, check validity
 			// of XML beforehand)
-			SQLObjectTransformer.addPlaylist(playlistName, -1);
+			CommonSQL.addPlaylist(playlistName, -1);
 			// Don't add empty playlistSongs
 			if (!artist.trim().isEmpty() && !song.trim().isEmpty()) {
-				SQLObjectTransformer.addSongInPlaylist(playlistName, artist, song, comment);
+				CommonSQL.addSongInPlaylist(playlistName, artist, song, comment);
 			}
 		}
 		

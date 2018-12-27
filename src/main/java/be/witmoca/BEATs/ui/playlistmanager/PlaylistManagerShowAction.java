@@ -26,7 +26,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
 
 public class PlaylistManagerShowAction implements ActionListener {
@@ -51,7 +51,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 
 		PlaylistManagerPanel pmp = new PlaylistManagerPanel();
 		// show dialog
-		if (JOptionPane.showConfirmDialog((Component) e.getSource(), pmp, "Playlist Manager",
+		if (JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(), pmp, "Playlist Manager",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null) != JOptionPane.OK_OPTION)
 			return;
 
@@ -90,25 +90,13 @@ public class PlaylistManagerShowAction implements ActionListener {
 			// start by removing
 			for(String pName : delete) {
 				// first delete all the playlist entries
-				try (PreparedStatement delPS = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM SongsInPlaylist WHERE PlaylistName = ?")) {
-					delPS.setString(1, pName);
-					delPS.executeUpdate();
-				}
+				CommonSQL.clearSongsInPlaylist(pName);
 				// then delete the playlist
-				try (PreparedStatement delP = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM Playlist WHERE PlaylistName = ?")) {
-					delP.setString(1, pName);
-					delP.executeUpdate();
-				}
+				CommonSQL.removePlaylist(pName);
 			}
 			// Move all existing tabOrders upwards, so that we can guarantee unique tabOrders
 			// select max taborder
-			int maxTab = 0;
-			try (PreparedStatement selMaxTab = ApplicationManager.getDB_CONN()
-					.prepareStatement("SELECT max(TabOrder) FROM playlist")) {
-				ResultSet rs = selMaxTab.executeQuery();
-				if (rs.next())
-					maxTab = rs.getInt(1);
-			}
+			int maxTab = CommonSQL.getMaxTabOrderFromPlaylist();
 			
 			// move tabOrders up
 			try (PreparedStatement tabUp = ApplicationManager.getDB_CONN().prepareStatement("UPDATE Playlist SET TabOrder = TabOrder + ?")) {

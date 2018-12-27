@@ -112,9 +112,6 @@ public class ClipboardTransferHandler extends TransferHandler {
 
 	@Override
 	protected void exportDone(JComponent source, Transferable data, int action) {
-		System.out.println(source);
-		System.out.println(data);
-		System.out.println(action);
 		if (action != TransferHandler.MOVE)
 			return;
 

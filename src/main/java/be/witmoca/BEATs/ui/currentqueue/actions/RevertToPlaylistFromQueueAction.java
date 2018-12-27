@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -37,7 +36,7 @@ import javax.swing.JOptionPane;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.connection.SQLObjectTransformer;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.ui.currentqueue.CurrentQueueListModel;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -66,15 +65,10 @@ class RevertToPlaylistFromQueueAction extends AbstractAction {
 			return;
 		}
 
-		List<String> playlists = new ArrayList<String>();
+		
 
 		try {
-			try (PreparedStatement playlistsQ = ApplicationManager.getDB_CONN()
-					.prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-				ResultSet rs = playlistsQ.executeQuery();
-				while (rs.next())
-					playlists.add(rs.getString(1));
-			}
+			List<String> playlists = CommonSQL.getPlaylists();
 
 			String[] options = playlists.toArray(new String[0]);
 			String playlistName = (String) JOptionPane.showInputDialog(ApplicationManager.getAPP_WINDOW(), "Playlist to revert to:",
@@ -95,12 +89,8 @@ class RevertToPlaylistFromQueueAction extends AbstractAction {
 				comment = rs.getString(3);
 			}
 
-			SQLObjectTransformer.addSongInPlaylist(playlistName, artist, song, comment);
-			
-			try (PreparedStatement del = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM CurrentQueue WHERE SongOrder = ?")) {
-				del.setInt(1, songOrder);
-				del.executeUpdate();
-			}
+			CommonSQL.addSongInPlaylist(playlistName, artist, song, comment);
+			CommonSQL.removeFromCurrentQueue(songOrder);
 			
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST, DataChangedListener.DataType.CURRENT_QUEUE));
 		} catch (SQLException e1) {

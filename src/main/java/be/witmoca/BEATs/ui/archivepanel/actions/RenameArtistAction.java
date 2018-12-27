@@ -4,8 +4,6 @@
 package be.witmoca.BEATs.ui.archivepanel.actions;
 
 import java.awt.event.ActionEvent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
 
@@ -19,7 +17,7 @@ import javax.swing.JTextField;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.connection.SQLObjectTransformer;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.utils.UiIcon;
 
 /*
@@ -86,58 +84,29 @@ class RenameArtistAction extends AbstractAction {
 		// the old reference
 		try {
 			// First: insert (with original value of local)
-			String renamed;
-			try (PreparedStatement selLocal = ApplicationManager.getDB_CONN()
-					.prepareStatement("SELECT local FROM Artist WHERE ArtistName = ?")) {
-				selLocal.setString(1, artist);
-				ResultSet rs = selLocal.executeQuery();
-				if (!rs.next())
-					return;
-				renamed = SQLObjectTransformer.addArtist(newName.getText(), rs.getBoolean(1));
-			}
+			boolean isLocal = CommonSQL.isArtistLocal(artist);
+			String renamed = CommonSQL.addArtist(newName.getText(), isLocal);
 
 			if (artist.equals(renamed))
 				return;
 
 			// updating references might lead to uniqueness errors => recreate new songs (or return their id's if they already exist) & update the archive and queue
-			try (PreparedStatement selOldArtistSongs = ApplicationManager.getDB_CONN().prepareStatement("SELECT Title FROM Song WHERE ArtistName = ?")) {
-				selOldArtistSongs.setString(1, artist);
-				ResultSet rs1 = selOldArtistSongs.executeQuery();
+			for(String title : CommonSQL.getAllSongTitlesOfArtist(artist)){
+				// for every song
+				// create a new song with the new artistname (on conflict return existing songid)
+				int newSongId = CommonSQL.addSong(title, renamed);
+				// get the id of the oldsong
+				int oldSongId = CommonSQL.addSong(title, artist);
 				
-				while(rs1.next()) {
-					// for every song
-					// create a new song with the new artistname (on conflict return existing songid)
-					int newSongId = SQLObjectTransformer.addSong(rs1.getString(1), renamed);
-					// get the id of the oldsong
-					int oldSongId = SQLObjectTransformer.addSong(rs1.getString(1), artist);
-					
-					// update archive references
-					try (PreparedStatement updateArchive = ApplicationManager.getDB_CONN().prepareStatement("UPDATE SongsInArchive SET SongId = ? WHERE SongId = ?")) {
-						updateArchive.setInt(1, newSongId);
-						updateArchive.setInt(2, oldSongId);
-						updateArchive.executeUpdate();
-					}
-					
-					// update currentQueue
-					try (PreparedStatement updateQueue = ApplicationManager.getDB_CONN().prepareStatement("UPDATE CurrentQueue SET SongId = ? WHERE SongId = ?")) {
-						updateQueue.setInt(1, newSongId);
-						updateQueue.setInt(2, oldSongId);
-						updateQueue.executeUpdate();
-					}
-					// delete old songId
-					try (PreparedStatement delSong = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM Song WHERE SongId = ?")) {
-						delSong.setInt(1, oldSongId);
-						delSong.executeUpdate();
-					}
-				}
+				// update references
+				CommonSQL.updateAllSongIdReferences(oldSongId, newSongId);
+				
+				// delete old songId
+				CommonSQL.removeSong(oldSongId);
 			}
 
 			// delete old artist
-			try (PreparedStatement delArtist = ApplicationManager.getDB_CONN()
-					.prepareStatement("DELETE FROM Artist WHERE ArtistName = ?")) {
-				delArtist.setString(1, artist);
-				delArtist.executeUpdate();
-			}
+			CommonSQL.removeArtist(artist);
 
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.ARTIST,DataChangedListener.DataType.SONG, DataChangedListener.DataType.CURRENT_QUEUE,DataChangedListener.DataType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {

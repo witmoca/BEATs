@@ -4,7 +4,6 @@
 package be.witmoca.BEATs.ui.archivepanel.actions;
 
 import java.awt.event.ActionEvent;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.EnumSet;
 
@@ -14,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.ui.archivepanel.ArchiveTableModel;
 import be.witmoca.BEATs.utils.UiIcon;
@@ -68,10 +68,8 @@ class DeleteEntryAction extends AbstractAction {
 		
 		int rowid = ((ArchiveTableModel) archive.getModel()).getRowId(index);
 		
-		try (PreparedStatement delLine = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM SongsInArchive WHERE rowid = ?")) {
-			delLine.setInt(1, rowid);
-			delLine.executeUpdate();
-			
+		try {
+			CommonSQL.removeFromSongsInArchive(rowid);
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();

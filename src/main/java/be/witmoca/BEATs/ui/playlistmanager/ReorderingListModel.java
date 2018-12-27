@@ -22,8 +22,6 @@
 */
 package be.witmoca.BEATs.ui.playlistmanager;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,18 +30,18 @@ import java.util.Map;
 
 import javax.swing.AbstractListModel;
 
-import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.CommonSQL;
 
 class ReorderingListModel extends AbstractListModel<String> {
 	private static final long serialVersionUID = 1L;
 	private final Map<Integer, String> contents = new HashMap<Integer, String>();
 	
 	public ReorderingListModel() {
-		try (PreparedStatement selPlaylist = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM playlist ORDER BY TabOrder ASC")) {
-			ResultSet rs = selPlaylist.executeQuery();
+		try {
 			int i = 0;
-			while (rs.next())
-				contents.put(i++, rs.getString(1));
+			for(String playlist : CommonSQL.getPlaylists()) {
+				contents.put(i++, playlist);
+			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

@@ -69,7 +69,7 @@ class CCPListModel implements ListModel<String>, DataChangedListener{
 	
 	@Override
 	public void tableChanged() {
-		try (PreparedStatement selCCP = ApplicationManager.getDB_CONN().prepareStatement("SELECT Artist, Song FROM ccp")) {
+		try (PreparedStatement selCCP = ApplicationManager.getDB_CONN().prepareStatement("SELECT Artist, Song FROM ccp ORDER BY rowid")) {
 			ResultSet rs = selCCP.executeQuery();
 			
 			content.clear();

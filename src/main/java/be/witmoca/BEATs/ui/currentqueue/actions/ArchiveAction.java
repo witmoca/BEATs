@@ -34,7 +34,7 @@ import javax.swing.JList;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.connection.SQLObjectTransformer;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.utils.UiIcon;
 
 class ArchiveAction extends AbstractAction {
@@ -62,15 +62,15 @@ class ArchiveAction extends AbstractAction {
 		try (PreparedStatement listCQ = ApplicationManager.getDB_CONN().prepareStatement("SELECT SongId, Comment FROM CurrentQueue ORDER BY SongOrder ASC")) {
 			ResultSet rs = listCQ.executeQuery();
 			while (rs.next())
-				SQLObjectTransformer.addSongInArchive(rs.getInt(1), episodeId, section, rs.getString(2));
+				CommonSQL.addSongInArchive(rs.getInt(1), episodeId, section, rs.getString(2));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;
 		}
 		
 		
-		try (PreparedStatement listCQ = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM CurrentQueue")) {
-			listCQ.executeUpdate();
+		try {
+			CommonSQL.clearCurrentQueue();
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_ARCHIVE, DataChangedListener.DataType.CURRENT_QUEUE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();

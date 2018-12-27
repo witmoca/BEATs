@@ -34,7 +34,7 @@ import javax.swing.JTable;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.connection.SQLObjectTransformer;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistTableModel;
 
 public class MoveToQueueAction extends AbstractAction {
@@ -86,20 +86,16 @@ public class MoveToQueueAction extends AbstractAction {
 				if(answerLocal == JOptionPane.CANCEL_OPTION || answerLocal == JOptionPane.CLOSED_OPTION) {
 					return; // CANCEL
 				}
-				SQLObjectTransformer.addArtist(rawArtist, (answerLocal == 0));
+				CommonSQL.addArtist(rawArtist, (answerLocal == 0));
 			}
 			
 			// create song if it doesn't exist
 			if(songId < 0) {
-				songId = SQLObjectTransformer.addSong(rawSong, rawArtist);
+				songId = CommonSQL.addSong(rawSong, rawArtist);
 			}
 			
 			// Add the new set to the currentQueue
-			try(PreparedStatement add = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO CurrentQueue (SongId, Comment) VALUES (?, ?)")){
-				add.setInt(1, songId);
-				add.setString(2, rawComment);
-				add.executeUpdate();
-			}
+			CommonSQL.addCurrentQueue(songId, rawComment);
 			
 			// delete row
 			((PlaylistTableModel) source.getModel()).deleteRow(row);

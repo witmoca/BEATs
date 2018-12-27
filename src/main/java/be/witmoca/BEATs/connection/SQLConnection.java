@@ -53,7 +53,7 @@ public class SQLConnection implements AutoCloseable {
 	/**
 	 * Opens a connection to the internal database, performs a recovery if necessary
 	 * (overrides loadFile behaviour), loads an external db into the internal db,
-	 * perfoms sanity checks and optimisation
+	 * Performs sanity checks and optimisation
 	 * 
 	 * @param loadFile the file to load or {@code null} for an empty db
 	 * @throws ConnectionException thrown when the connection failed to establish
@@ -171,9 +171,8 @@ public class SQLConnection implements AutoCloseable {
 		try {
 			// Check application_id
 			try (Statement appIdCheck = Db.createStatement()) {
-				ResultSet appIdResult = appIdCheck.executeQuery("PRAGMA application_id"); // always returns a value! (0
-																							// as
-																							// default)
+				// always returns a value! (0 as default)
+				ResultSet appIdResult = appIdCheck.executeQuery("PRAGMA application_id");
 				if (appIdResult.getInt(1) != APPLICATION_ID)
 					throw new ConnectionException(ConnectionException.ConnState.APP_ID_INVALID, null);
 			}
@@ -259,7 +258,11 @@ public class SQLConnection implements AutoCloseable {
 		this.notifyDataChangedListeners(eSet);
 	}
 
-	public void notifyDataChangedListeners(EnumSet<DataChangedListener.DataType> eSet) {
+	public void announceDataRefresh() {
+		notifyDataChangedListeners(DataChangedListener.DataType.ALL_OPTS);
+	}
+
+	private void notifyDataChangedListeners(EnumSet<DataChangedListener.DataType> eSet) {
 		ArrayList<DataChangedListener> clientsToNotify = new ArrayList<>();
 		// First compile a list of clients to notify
 		for (DataChangedListener dL : dataListeners.keySet()) {
@@ -285,12 +288,7 @@ public class SQLConnection implements AutoCloseable {
 		Db.commit();
 		Db.close();
 		if (!(new File(DB_LOC)).delete())
-			throw new SQLException(
-					new IOException("Could not cleanup BEATS internal storage (" + DB_LOC + ")"));
-	}
-
-	public SQLiteConnection getDb() {
-		return Db;
+			throw new SQLException(new IOException("Could not cleanup BEATS internal storage (" + DB_LOC + ")"));
 	}
 
 	public boolean isChanged() {

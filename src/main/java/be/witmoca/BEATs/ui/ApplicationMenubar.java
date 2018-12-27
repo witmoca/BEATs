@@ -31,7 +31,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.ui.actions.*;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
 import be.witmoca.BEATs.utils.UiIcon;
@@ -92,7 +91,7 @@ class ApplicationMenubar extends JMenuBar {
 		refreshScreen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ApplicationManager.getDB_CONN().notifyDataChangedListeners(DataChangedListener.DataType.ALL_OPTS); // Notify all listeners that the data is 'changed' => reloads said data
+				ApplicationManager.getDB_CONN().announceDataRefresh(); // Notify all listeners that the data is 'changed' => reloads said data
 			}
 		});
 		toolsMenu.add(refreshScreen);

@@ -33,7 +33,7 @@ import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.connection.SQLObjectTransformer;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.utils.StringUtils;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -111,10 +111,8 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 	public void deleteRow(int rowIndex) {
 		if(rowIndex >= this.getRowCount()-1)
 			return;
-		try (PreparedStatement updateVal = ApplicationManager.getDB_CONN().prepareStatement(
-				"DELETE FROM SongsInPlaylist WHERE rowid = ?")) {
-			updateVal.setInt(1, playlistList.get(rowIndex).getROWID());
-			updateVal.executeUpdate();
+		try {
+			CommonSQL.removeFromSongsInPlaylist(playlistList.get(rowIndex).getROWID());
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -138,7 +136,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 
 				String ins[] = { "", "", "" };
 				ins[columnIndex] = sValue;
-				SQLObjectTransformer.addSongInPlaylist(PlaylistName, ins[0], ins[1], ins[2]);
+				CommonSQL.addSongInPlaylist(PlaylistName, ins[0], ins[1], ins[2]);
 			} else {
 				// Load with current values and update with new one (in array)
 				String values[] = new String[3];
@@ -151,14 +149,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 				if (String.join("", values).trim().isEmpty()) {
 					this.deleteRow(rowIndex);
 				} else {
-					try (PreparedStatement updateVal = ApplicationManager.getDB_CONN().prepareStatement(
-							"UPDATE SongsInPlaylist SET Artist = ?, Song = ?, Comment = ? WHERE rowid = ?")) {
-						for (int i = 0; i < values.length; i++) {
-							updateVal.setString(1 + i, values[i]); // new values
-						}
-						updateVal.setInt(4, playlistList.get(rowIndex).getROWID());
-						updateVal.executeUpdate();
-					}
+					CommonSQL.updateSongsInPlaylist(playlistList.get(rowIndex).getROWID(), values[0], values[1], values[2]);
 				}
 
 			}

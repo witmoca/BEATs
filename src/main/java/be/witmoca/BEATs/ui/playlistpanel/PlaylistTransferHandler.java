@@ -7,7 +7,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.EnumSet;
 import javax.swing.JComponent;
@@ -15,7 +14,7 @@ import javax.swing.TransferHandler;
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.connection.SQLObjectTransformer;
+import be.witmoca.BEATs.connection.CommonSQL;
 
 /*
 *
@@ -80,7 +79,7 @@ class PlaylistTransferHandler extends TransferHandler {
 			}
 			TransferableSong ts = (TransferableSong) o;
 			
-			SQLObjectTransformer.addSongInPlaylist(pName, ts.getARTIST(), ts.getSONG(),"");
+			CommonSQL.addSongInPlaylist(pName, ts.getARTIST(), ts.getSONG(),"");
 			
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));			
 		} catch (UnsupportedFlavorException | IOException | SQLException e) {
@@ -113,10 +112,7 @@ class PlaylistTransferHandler extends TransferHandler {
 				}
 				TransferableSong ts = (TransferableSong) o;
 				
-				try (PreparedStatement delRow = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM SongsInPlaylist WHERE rowid = ?")) {
-					delRow.setInt(1, ts.getROWID());
-					delRow.executeUpdate();
-				}
+				CommonSQL.removeFromSongsInPlaylist(ts.getROWID());
 				
 				ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 			} catch (SQLException | UnsupportedFlavorException | IOException e) {

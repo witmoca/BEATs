@@ -25,8 +25,6 @@ package be.witmoca.BEATs.ui.currentqueue.actions;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -42,7 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.connection.SQLObjectTransformer;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.ui.currentqueue.actions.ArchivalDialog.SpinnerEpisodeModel;
 import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
 
@@ -92,7 +90,7 @@ class CreateNewEpisode extends AbstractAction {
 			}
 			
 			try {
-				SQLObjectTransformer.addEpisode((int)episodeId.getValue(), episodeDate.getValue());
+				CommonSQL.addEpisode((int)episodeId.getValue(), episodeDate.getValue());
 				ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.EPISODE));
 			} catch (SQLException e1) {
 				e1.printStackTrace();
@@ -112,12 +110,8 @@ class CreateNewEpisode extends AbstractAction {
 	* @return True if ldate is free, false if not or an error occurred
 	 */
 	private static boolean dateFree(LocalDate ldate) {
-		try (PreparedStatement checkDate = ApplicationManager.getDB_CONN().prepareStatement("SELECT Episodeid FROM Episode WHERE EpisodeDate = ?")) {
-			checkDate.setLong(1, ldate.toEpochDay());
-			ResultSet rs = checkDate.executeQuery();
-			if(!rs.next())
-				return true;
-			return false;
+		try {
+			return CommonSQL.getEpisodeByDate(ldate) < 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -127,18 +121,17 @@ class CreateNewEpisode extends AbstractAction {
 	
 	private class SpinnerNewEpisodeModel extends AbstractSpinnerModel {
 		private static final long serialVersionUID = 1L;
-		private List<Integer> exclusions = new ArrayList<Integer>();
+		private final List<Integer> exclusions;
 		private int index;
 
 		protected SpinnerNewEpisodeModel() {
-			try (PreparedStatement findExclusions = ApplicationManager.getDB_CONN()
-					.prepareStatement("SELECT EpisodeId FROM Episode ORDER BY EpisodeId ASC")) {
-				ResultSet rs = findExclusions.executeQuery();
-				while (rs.next())
-					exclusions.add(rs.getInt(1));
+			List<Integer> l = new ArrayList<Integer>();
+			try {
+				l = CommonSQL.getEpisodes();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			exclusions = l;
 			
 			// find first available episodeID
 			index = 0;

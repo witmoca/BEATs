@@ -4,8 +4,6 @@
 package be.witmoca.BEATs.ui.archivepanel.actions;
 
 import java.awt.event.ActionEvent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
 
@@ -16,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -65,13 +64,8 @@ class ChangeLocalAction extends AbstractAction {
 		String artist = (String) archive.getModel().getValueAt(index, 0);
 		boolean local;
 
-		try (PreparedStatement selLocal = ApplicationManager.getDB_CONN()
-				.prepareStatement("SELECT local FROM Artist WHERE ArtistName = ?")) {
-			selLocal.setString(1, artist);
-			ResultSet rs = selLocal.executeQuery();
-			if (!rs.next())
-				return;
-			local = rs.getBoolean(1);
+		try {
+			local = CommonSQL.isArtistLocal(artist);
 		} catch (SQLException e2) {
 			e2.printStackTrace();
 			return;
@@ -92,11 +86,8 @@ class ChangeLocalAction extends AbstractAction {
 		
 		// MAKE CHANGES
 		// update artist
-		try (PreparedStatement updateLocal = ApplicationManager.getDB_CONN()
-				.prepareStatement("UPDATE Artist SET local = ? WHERE ArtistName = ?")) {
-			updateLocal.setBoolean(1, localBox.isSelected());
-			updateLocal.setString(2, artist);
-			updateLocal.executeUpdate();
+		try {
+			CommonSQL.updateLocalityOfArtist(localBox.isSelected(), artist);
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.ARTIST));
 		} catch (SQLException e1) {
 			e1.printStackTrace();

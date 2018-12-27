@@ -22,14 +22,13 @@
 */
 package be.witmoca.BEATs.ui;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
 
 import javax.swing.JTabbedPane;
 
 import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
@@ -46,16 +45,12 @@ class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
 	
 	@Override
 	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			this.removeAll();
-			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
+		try {
+			for(String playlist : CommonSQL.getPlaylists()) {
+				this.addTab(playlist, new PlaylistPanel(playlist));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
 }

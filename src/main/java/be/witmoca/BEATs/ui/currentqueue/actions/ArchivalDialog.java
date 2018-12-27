@@ -28,7 +28,6 @@ import java.beans.PropertyChangeListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -47,6 +46,7 @@ import javax.swing.JTable;
 import javax.swing.SpinnerListModel;
 
 import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.CommonSQL;
 
 class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private static final long serialVersionUID = 1L;
@@ -75,7 +75,13 @@ class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		
 		JLabel j3 = new JLabel("Section Code");
 		entryPanel.add(j3);
-		sectionId = new JSpinner(new SpinnerListModel(loadSections()));
+		List<String> sections = null;
+		try {
+			sections = CommonSQL.getSections();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		sectionId = new JSpinner(new SpinnerListModel(sections));
 		entryPanel.add(sectionId);
 		
 		gLayout.setHorizontalGroup(gLayout.createSequentialGroup().addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(j1).addComponent(j3))
@@ -123,22 +129,7 @@ class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		
 		valid = true;
 		this.dispose();
-	}
-	
-	private static List<String> loadSections(){
-		List<String> sections = new ArrayList<String>();
-		try (PreparedStatement sel = ApplicationManager.getDB_CONN().prepareStatement("SELECT SectionName FROM Section ORDER BY SectionName ASC")) {
-
-			ResultSet rs = sel.executeQuery();
-			while (rs.next()) {
-				sections.add(rs.getString(1));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return sections;
-	}
-	
+	}	
 
 	/***
 	 *  Constructs a JTable containing a summary of the items in the currentQueue
@@ -182,11 +173,8 @@ class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		}
 		
 		void loadValues() {
-			episodeList = new ArrayList<Integer>();
-			try (PreparedStatement findExclusions = ApplicationManager.getDB_CONN().prepareStatement("SELECT EpisodeId FROM Episode ORDER BY EpisodeId ASC")) {
-				ResultSet rs = findExclusions.executeQuery();
-				while (rs.next())
-					episodeList.add(rs.getInt(1));
+			try{
+				episodeList = CommonSQL.getEpisodes();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

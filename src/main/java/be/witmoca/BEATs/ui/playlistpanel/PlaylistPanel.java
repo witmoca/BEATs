@@ -25,7 +25,6 @@ package be.witmoca.BEATs.ui.playlistpanel;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 
 import be.witmoca.BEATs.ui.playlistpanel.actions.PlaylistToolbar;
@@ -38,7 +37,7 @@ public class PlaylistPanel extends JPanel {
 	private final JScrollPane playlistScrollPane;
 	private final JPanel southPanel;
 
-	public PlaylistPanel(JTabbedPane parent, String title) {
+	public PlaylistPanel( String title) {
 		super(new BorderLayout());
 
 		playlistTable = new PlaylistTable(title);

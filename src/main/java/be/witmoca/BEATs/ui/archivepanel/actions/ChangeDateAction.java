@@ -4,8 +4,6 @@
 package be.witmoca.BEATs.ui.archivepanel.actions;
 
 import java.awt.event.ActionEvent;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
 import be.witmoca.BEATs.utils.UiIcon;
@@ -69,16 +68,14 @@ class ChangeDateAction extends AbstractAction {
 		int episode = (int) archive.getModel().getValueAt(index, 2);
 		LocalDate date;
 		
-		try (PreparedStatement selDate = ApplicationManager.getDB_CONN().prepareStatement("SELECT episodeDate FROM episode WHERE episodeId = ?")) {
-			selDate.setInt(1, episode);
-			ResultSet rs = selDate.executeQuery();
-			if(!rs.next())
-				return;
-			date = LocalDate.ofEpochDay(rs.getInt(1));
+		try {
+			date = CommonSQL.getEpisodeDateById(episode);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;
 		}
+		if(date == null)
+			return;
 		
 		// USER UI interaction
 		JPanel userPanel = new JPanel();
@@ -91,15 +88,10 @@ class ChangeDateAction extends AbstractAction {
 			return; // cancelled
 		}
 		
-		// MAKE CHANGES
-		date = episodeDate.getValue();
-		
 		// update Date = upDate! Get it? Ugh I'm disgusted with myself for that one.
 		// EpisodeDates are unique => Constraint Violation if the episode exists already. So Ignore in that case
-		try (PreparedStatement upDate = ApplicationManager.getDB_CONN().prepareStatement("UPDATE OR IGNORE episode SET episodeDate = ? WHERE episodeId = ?")) {
-			upDate.setLong(1, date.toEpochDay());
-			upDate.setInt(2, episode);
-			upDate.executeUpdate();
+		try {
+			CommonSQL.updateEpisodeDate(episode, episodeDate.getValue());
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.EPISODE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();

@@ -4,7 +4,6 @@
 package be.witmoca.BEATs.ui.archivepanel.actions;
 
 import java.awt.event.ActionEvent;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.EnumSet;
 
@@ -18,7 +17,7 @@ import javax.swing.JTextField;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.connection.SQLObjectTransformer;
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.utils.StringUtils;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -90,28 +89,15 @@ class RenameSongAction extends AbstractAction {
 			// Updating is not enough (or a good idea) => PK errors when the new one already exists (eg joining 2 different spellings of the same word together)
 			
 			// create new song (old exists and new might exist => still returns the id)
-			int newSongId = SQLObjectTransformer.addSong(renamed, artist);
-			int oldSongId = SQLObjectTransformer.addSong(title, artist);
+			int newSongId = CommonSQL.addSong(renamed, artist);
+			int oldSongId = CommonSQL.addSong(title, artist);
 			
-			// update archive references
-			try (PreparedStatement updateArchive = ApplicationManager.getDB_CONN().prepareStatement("UPDATE SongsInArchive SET SongId = ? WHERE SongId = ?")) {
-				updateArchive.setInt(1, newSongId);
-				updateArchive.setInt(2, oldSongId);
-				updateArchive.executeUpdate();
-			}
-			
-			// update currentQueue
-			try (PreparedStatement updateQueue = ApplicationManager.getDB_CONN().prepareStatement("UPDATE CurrentQueue SET SongId = ? WHERE SongId = ?")) {
-				updateQueue.setInt(1, newSongId);
-				updateQueue.setInt(2, oldSongId);
-				updateQueue.executeUpdate();
-			}
-			
+			// update all occurrences of oldSongId (currently: archive & currentqueue)
+			CommonSQL.updateAllSongIdReferences(oldSongId, newSongId);
+	
 			// delete old songId
-			try (PreparedStatement delSong = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM Song WHERE SongId = ?")) {
-				delSong.setInt(1, oldSongId);
-				delSong.executeUpdate();
-			}			
+			CommonSQL.removeSong(oldSongId);		
+			
 			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONG, DataChangedListener.DataType.CURRENT_QUEUE, DataChangedListener.DataType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();

@@ -5,8 +5,6 @@ package be.witmoca.BEATs.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.CommonSQL;
 
 /*
 *
@@ -51,14 +50,10 @@ public class EpisodeIdContinuityCheckAction implements ActionListener {
 		result.setLineWrap(true);
 		result.setWrapStyleWord(true);
 		
-		try(PreparedStatement selCon = ApplicationManager.getDB_CONN().prepareStatement("SELECT EpisodeId FROM episode ORDER BY EpisodeId ASC")){
-			ResultSet rs = selCon.executeQuery();
-			
+		try {
 			List<Integer> missing = new ArrayList<Integer>();
 			Integer lastCorrectIndex = null;
-			while(rs.next()) {
-				int newIndex = rs.getInt(1);
-				
+			for(int newIndex : CommonSQL.getEpisodes()) {				
 				// lastCorrect null and we are not at the start of the episodeId List?
 				if(lastCorrectIndex == null && newIndex > 1) {
 					
