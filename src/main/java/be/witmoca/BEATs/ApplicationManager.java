@@ -34,11 +34,12 @@ import java.sql.SQLException;
 import javax.swing.SwingUtilities;
 
 import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
-import be.witmoca.BEATs.actions.ExitApplicationAction;
 import be.witmoca.BEATs.clipboard.BEATsClipboard;
 import be.witmoca.BEATs.connection.ConnectionException;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.ui.actions.ExitApplicationAction;
+import be.witmoca.BEATs.utils.ResourceLoader;
 
 public class ApplicationManager {
 	// Format : MMMmmmrrr with M = Major, m = minor & r = revision (do not lead with zeros, as this is interpreted as octal)
@@ -56,7 +57,7 @@ public class ApplicationManager {
 		
 		try {
 			// Initialise Files & folders
-			FileManager.initFileTree();
+			ResourceLoader.initFileTree();
 			
 			// Setup Internal memory (new or load from file)
 			DB_CONN = new SQLConnection(loadFile);

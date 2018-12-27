@@ -31,14 +31,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.actions.EpisodeIdContinuityCheckAction;
-import be.witmoca.BEATs.actions.ExitApplicationAction;
-import be.witmoca.BEATs.actions.ImportFileAction;
-import be.witmoca.BEATs.actions.NewFileAction;
-import be.witmoca.BEATs.actions.OpenFileAction;
-import be.witmoca.BEATs.actions.SaveFileAction;
-import be.witmoca.BEATs.actions.ShowAboutDialogAction;
-import be.witmoca.BEATs.model.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.ui.actions.*;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
 import be.witmoca.BEATs.utils.UiIcon;
 

@@ -17,45 +17,27 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: CurrentQueueToolbar.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.currentqueue.actions;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EnumSet;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JToolBar;
 
-import javax.swing.JTabbedPane;
-
-import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
-
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
+public class CurrentQueueToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
+	private final JList<String> queue;
 
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
+	
+	public CurrentQueueToolbar(JList<String> Queue) {
+		super("CurrentQueue Toolbar",JToolBar.HORIZONTAL);
+		this.setFloatable(false);
+		queue = Queue;
 		
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+		this.add(new JButton(new RevertToPlaylistFromQueueAction(queue)));
+		this.add(new JButton(new ShowInfoAction(queue)));
+		this.add(new JButton(new ArchiveAction(queue)));
 	}
-	
-	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			this.removeAll();
-			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
 }

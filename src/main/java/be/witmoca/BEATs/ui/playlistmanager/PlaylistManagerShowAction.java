@@ -34,7 +34,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.model.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedListener;
 
 public class PlaylistManagerShowAction implements ActionListener {
 	/*

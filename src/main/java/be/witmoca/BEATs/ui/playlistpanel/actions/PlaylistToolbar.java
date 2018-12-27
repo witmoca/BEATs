@@ -17,45 +17,32 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: PlaylistToolbar.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.playlistpanel.actions;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EnumSet;
+import javax.swing.Box;
+import javax.swing.JTable;
+import javax.swing.JToolBar;
 
-import javax.swing.JTabbedPane;
+import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
+import be.witmoca.BEATs.utils.UiUtils;
 
-import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
-
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
+public class PlaylistToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
+	
+	public PlaylistToolbar(JTable table) {
+		super("Playlist Toolbar", JToolBar.HORIZONTAL);
 
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
+		this.setFloatable(false);
+		this.add(ClipboardActionFactory.getCutAction(table));
+		this.add(ClipboardActionFactory.getCopyAction(table));
+		this.add(ClipboardActionFactory.getPasteAction(table));
+		add(UiUtils.SingleLineSeparator());
+		this.add(new DeleteAction(table));
 		
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+		// Beyond this point all goes on the right
+		add(Box.createHorizontalGlue());
 	}
-	
-	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			this.removeAll();
-			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
 }

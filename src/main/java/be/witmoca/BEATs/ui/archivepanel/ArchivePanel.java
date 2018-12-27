@@ -32,6 +32,7 @@ import javax.swing.JTable;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 
+import be.witmoca.BEATs.ui.archivepanel.actions.ArchiveToolbar;
 import be.witmoca.BEATs.ui.southpanel.SouthPanel;
 import be.witmoca.BEATs.ui.t4j.RowNumberTable;
 

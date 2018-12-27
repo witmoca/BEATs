@@ -34,7 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import be.witmoca.BEATs.actions.ExitApplicationAction;
+import be.witmoca.BEATs.ui.actions.ExitApplicationAction;
 import be.witmoca.BEATs.ui.currentqueue.CurrentQueuePanel;
 import be.witmoca.BEATs.utils.UiIcon;
 

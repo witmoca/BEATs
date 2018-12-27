@@ -6,7 +6,7 @@ package be.witmoca.BEATs.ui.southpanel;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
 
-import be.witmoca.BEATs.ui.extendables.SongTable;
+import be.witmoca.BEATs.ui.components.SongTable;
 
 /*
 *

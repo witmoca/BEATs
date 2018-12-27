@@ -1,22 +1,17 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.southpanel;
+package be.witmoca.BEATs.ui.components.SuggestCellEditor;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
-import javax.swing.ListModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import javax.swing.JTable;
 
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.clipboard.TransferableSong;
-import be.witmoca.BEATs.connection.DataChangedListener;
 
 /*
 *
@@ -37,54 +32,53 @@ import be.witmoca.BEATs.connection.DataChangedListener;
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: CCPListModel.java
+* File: SongMatcher.java
 * Created: 2018
 */
-class CCPListModel implements ListModel<String>, DataChangedListener{
-	private final List<TransferableSong> content = new ArrayList<TransferableSong>();
-	private final List<ListDataListener> ldlList = new ArrayList<ListDataListener>();
+
+class SongMatcher implements IMatcher {
+	private final int artistColumn;
 	
-	public CCPListModel() {
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.CCP));
+	/**
+	 * 
+	 * @param artistColumn The column containing the matching ArtistName values of the SongTitle being edited in String format. 
+	 */
+	SongMatcher(int artistColumn) {
+		this.artistColumn = artistColumn;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see be.witmoca.BEATs.ui.SuggestCellEditor.IMatcher#match(java.lang.String)
+	 */
 	@Override
-	public int getSize() {
-		return content.size();
-	}
-	@Override
-	public String getElementAt(int index) {
-		return content.get(index).toString();
-	}
-	
-	@Override
-	public void addListDataListener(ListDataListener l) {
-		ldlList.add(l);	
-	}
-	@Override
-	public void removeListDataListener(ListDataListener l) {
-		ldlList.remove(l);	
-	}
-	
-	@Override
-	public void tableChanged() {
-		try (PreparedStatement selCCP = ApplicationManager.getDB_CONN().prepareStatement("SELECT Artist, Song FROM ccp")) {
-			ResultSet rs = selCCP.executeQuery();
-			
-			content.clear();
-			while(rs.next()) {
-				content.add(new TransferableSong(rs.getString(1), rs.getString(2), 0));
+	public List<String> match(String search, boolean forwardOnly, JTable table, int row, int col) {
+		// Does not support % or _ characters (special characters from the SQLite LIKE
+		// function)
+		if (search.contains("%") || search.contains("_"))
+			return null;
+
+		// To find a song, we need to know the artist first
+		String artist = (String) table.getModel().getValueAt(row, this.artistColumn);
+		if (artist.isEmpty())
+			return null;
+
+		try (PreparedStatement selMatches = ApplicationManager.getDB_CONN()
+				.prepareStatement("SELECT Title FROM Song WHERE ArtistName = ? AND Title LIKE ? ORDER BY Title ASC")) {
+			selMatches.setString(1, artist);
+			selMatches.setString(2, (forwardOnly ? "" : "%") + search + "%");
+			List<String> result = new ArrayList<String>();
+			ResultSet rs = selMatches.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString(1));
 			}
+			return result;
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		
-		
-		// inform ListDataListeners
-		ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize());
-		for(ListDataListener ldl : ldlList) {
-			ldl.contentsChanged(e);
-		}
+		return null;
 	}
+
 }

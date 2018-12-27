@@ -1,3 +1,16 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.ui.actions;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import javax.swing.JOptionPane;
+
+import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.utils.ResourceLoader;
+
 /*
 *
 +===============================================================================+
@@ -17,45 +30,13 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: ShowAboutDialog.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EnumSet;
-
-import javax.swing.JTabbedPane;
-
-import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
-
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
-	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
-
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
-	}
-	
+public class ShowAboutDialogAction implements ActionListener {
 	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			this.removeAll();
-			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public void actionPerformed(ActionEvent e) {
+		List<String> lines = ResourceLoader.ReadResource("Text/About");
+		JOptionPane.showMessageDialog(ApplicationManager.getAPP_WINDOW(), String.join("\n", lines), "About", JOptionPane.PLAIN_MESSAGE);
 	}
-	
-	
 }

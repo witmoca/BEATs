@@ -15,7 +15,7 @@ import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.model.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedListener;
 
 /*
 *

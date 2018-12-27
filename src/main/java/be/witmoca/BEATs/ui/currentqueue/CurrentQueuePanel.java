@@ -25,14 +25,13 @@ package be.witmoca.BEATs.ui.currentqueue;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import be.witmoca.BEATs.model.CurrentQueueListModel;
+import be.witmoca.BEATs.ui.currentqueue.actions.CurrentQueuePopupMenu;
+import be.witmoca.BEATs.ui.currentqueue.actions.CurrentQueueToolbar;
 
 public class CurrentQueuePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -65,11 +64,8 @@ public class CurrentQueuePanel extends JPanel {
 			}
 		});
 		
-		// Add the popupmenu
-		JPopupMenu popup = new JPopupMenu();
-		popup.add(new JMenuItem(new RevertToPlaylistFromQueueAction(Queue)));
-		popup.add(new JMenuItem(new ShowInfoAction(Queue)));		
-		Queue.setComponentPopupMenu(popup);
+		// Add the popupmenu	
+		Queue.setComponentPopupMenu(new CurrentQueuePopupMenu(Queue));
 
 		// Add the toolbar
 		this.add(new CurrentQueueToolbar(Queue), BorderLayout.SOUTH);

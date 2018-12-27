@@ -1,3 +1,18 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.ui.components.SuggestCellEditor;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JTable;
+
+import be.witmoca.BEATs.ApplicationManager;
+
 /*
 *
 +===============================================================================+
@@ -17,45 +32,33 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: ArtistMatcher.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+class ArtistMatcher implements IMatcher {
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EnumSet;
-
-import javax.swing.JTabbedPane;
-
-import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
-
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
-	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
-
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
-	}
-	
+	/* (non-Javadoc)
+	 * @see be.witmoca.BEATs.ui.SuggestCellEditor.IMatcher#match(java.lang.String)
+	 */
 	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			this.removeAll();
-			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
+	public List<String> match(String search, boolean forwardOnly, JTable table, int row, int col) {
+		// Does not support % or _ characters (special characters from the SQLite LIKE function)
+		if(search.contains("%") || search.contains("_"))
+			return null;
+		
+		try (PreparedStatement selMatches = ApplicationManager.getDB_CONN().prepareStatement("SELECT ArtistName FROM Artist WHERE ArtistName LIKE ? ORDER BY ArtistName ASC")) {
+			selMatches.setString(1, (forwardOnly ? "" : "%" )+search+"%");
+			List<String> result = new ArrayList<String>();	
+			ResultSet rs = selMatches.executeQuery();
+			
+			while(rs.next()) {
+				result.add(rs.getString(1));
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			return result;
+		} catch (SQLException e1) {
+			e1.printStackTrace();
 		}
+		return null;
 	}
-	
-	
+
 }

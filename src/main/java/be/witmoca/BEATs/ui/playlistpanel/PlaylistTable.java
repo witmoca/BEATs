@@ -25,12 +25,10 @@ package be.witmoca.BEATs.ui.playlistpanel;
 import javax.swing.table.TableRowSorter;
 
 import be.witmoca.BEATs.clipboard.TransferableSong;
-import be.witmoca.BEATs.model.PlaylistTableModel;
-import be.witmoca.BEATs.ui.SuggestCellEditor.ArtistMatcher;
-import be.witmoca.BEATs.ui.SuggestCellEditor.AutoCompletingEditor;
-import be.witmoca.BEATs.ui.SuggestCellEditor.SongMatcher;
-import be.witmoca.BEATs.ui.currentqueue.MoveToQueueAction;
-import be.witmoca.BEATs.ui.extendables.SongTable;
+import be.witmoca.BEATs.ui.components.SongTable;
+import be.witmoca.BEATs.ui.components.SuggestCellEditor.AutoCompletingEditor;
+import be.witmoca.BEATs.ui.currentqueue.actions.MoveToQueueAction;
+import be.witmoca.BEATs.ui.playlistpanel.actions.PlaylistPopupMenu;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
 
 class PlaylistTable extends SongTable {
@@ -58,8 +56,8 @@ class PlaylistTable extends SongTable {
 		this.setTransferHandler(new PlaylistTransferHandler());
 		
 		// Suggest support for artist and song column
-		this.getColumnModel().getColumn(0).setCellEditor(new AutoCompletingEditor(new ArtistMatcher()));
-		this.getColumnModel().getColumn(1).setCellEditor(new AutoCompletingEditor(new SongMatcher(0)));
+		this.getColumnModel().getColumn(0).setCellEditor(AutoCompletingEditor.createArtistEditor());
+		this.getColumnModel().getColumn(1).setCellEditor(AutoCompletingEditor.createSongEditor(0));
 	}
 
 	@Override

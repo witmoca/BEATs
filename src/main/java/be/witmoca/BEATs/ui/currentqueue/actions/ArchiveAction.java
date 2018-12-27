@@ -17,45 +17,63 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: ArchiveAction.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.currentqueue.actions;
 
+import java.awt.event.ActionEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
 
-import javax.swing.JTabbedPane;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JList;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
+import be.witmoca.BEATs.connection.SQLObjectTransformer;
+import be.witmoca.BEATs.utils.UiIcon;
 
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
+class ArchiveAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
-
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
-	}
+	private final JList<String> queue;
 	
+	ArchiveAction(JList<String> Queue) {
+		super("Archive");
+		this.putValue(Action.SMALL_ICON, UiIcon.PROCEED.getIcon());
+		queue = Queue;
+	}
+
 	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			this.removeAll();
-			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+	public void actionPerformed(ActionEvent e) {
+		if(queue.getModel().getSize() == 0)
+			return;
+		ArchivalDialog ad = new ArchivalDialog();
+		// Archive action cancelled
+		if(!ad.isValid())
+			return;
+		
+		int episodeId = ad.getEpisode();
+		String section = ad.getSection();
+		
+		try (PreparedStatement listCQ = ApplicationManager.getDB_CONN().prepareStatement("SELECT SongId, Comment FROM CurrentQueue ORDER BY SongOrder ASC")) {
+			ResultSet rs = listCQ.executeQuery();
+			while (rs.next())
+				SQLObjectTransformer.addSongInArchive(rs.getInt(1), episodeId, section, rs.getString(2));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		
+		
+		try (PreparedStatement listCQ = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM CurrentQueue")) {
+			listCQ.executeUpdate();
+			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_ARCHIVE, DataChangedListener.DataType.CURRENT_QUEUE));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
 		}
 	}
-	
-	
 }

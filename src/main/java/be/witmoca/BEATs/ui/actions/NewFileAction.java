@@ -17,45 +17,27 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: NewFileAction.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.actions;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EnumSet;
-
-import javax.swing.JTabbedPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
-	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
+public class NewFileAction implements ActionListener {
 
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+	public NewFileAction() {
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			this.removeAll();
-			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public void actionPerformed(ActionEvent e) {
+		ApplicationManager.changeModel(null);
 	}
-	
-	
+
 }

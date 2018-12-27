@@ -40,12 +40,12 @@ import org.sqlite.SQLiteConnection;
 import org.sqlite.SQLiteErrorCode;
 
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.FileManager;
-import be.witmoca.BEATs.model.DataChangedListener;
+import be.witmoca.BEATs.utils.ResourceLoader;
 
 public class SQLConnection implements AutoCloseable {
 	private final SQLiteConnection Db; // Internal Connection
 	private static final int APPLICATION_ID = 0x77776462;
+	private static final String DB_LOC = ResourceLoader.DB_LOC;
 	private boolean changedState = false;
 	private Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> dataListeners = new HashMap<>();
 	private final boolean recoveredDb;
@@ -59,7 +59,7 @@ public class SQLConnection implements AutoCloseable {
 	 * @throws ConnectionException thrown when the connection failed to establish
 	 */
 	public SQLConnection(File loadFile) throws ConnectionException {
-		boolean dbExists = (new File(FileManager.DB_LOC)).exists();
+		boolean dbExists = (new File(DB_LOC)).exists();
 
 		// Check if a lock exists on the the database (and create a connection to said
 		// db)
@@ -67,7 +67,7 @@ public class SQLConnection implements AutoCloseable {
 		// usually)
 		// And waiting for an SQLITE_BUSY
 		try {
-			Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + FileManager.DB_LOC,
+			Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + DB_LOC,
 					configSettings(dbExists).toProperties());
 			Db.setAutoCommit(false);
 			createTables();
@@ -284,9 +284,9 @@ public class SQLConnection implements AutoCloseable {
 			return;
 		Db.commit();
 		Db.close();
-		if (!(new File(FileManager.DB_LOC)).delete())
+		if (!(new File(DB_LOC)).delete())
 			throw new SQLException(
-					new IOException("Could not cleanup BEATS internal storage (" + FileManager.DB_LOC + ")"));
+					new IOException("Could not cleanup BEATS internal storage (" + DB_LOC + ")"));
 	}
 
 	public SQLiteConnection getDb() {

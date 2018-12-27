@@ -1,22 +1,22 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.southpanel;
+package be.witmoca.BEATs.ui.archivepanel.actions;
 
+import java.awt.event.ActionEvent;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
-import javax.swing.ListModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.ui.archivepanel.ArchiveTableModel;
+import be.witmoca.BEATs.utils.UiIcon;
 
 /*
 *
@@ -37,54 +37,45 @@ import be.witmoca.BEATs.connection.DataChangedListener;
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: CCPListModel.java
+* File: DeleteEntryAction.java
 * Created: 2018
 */
-class CCPListModel implements ListModel<String>, DataChangedListener{
-	private final List<TransferableSong> content = new ArrayList<TransferableSong>();
-	private final List<ListDataListener> ldlList = new ArrayList<ListDataListener>();
+class DeleteEntryAction extends AbstractAction {
+	private static final long serialVersionUID = 1L;
+	private final JTable archive;
 	
-	public CCPListModel() {
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.CCP));
+	DeleteEntryAction(JTable table) {
+		super("Delete");
+		this.putValue(Action.SMALL_ICON, UiIcon.DELETE.getIcon());
+		archive = table;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
-	public int getSize() {
-		return content.size();
-	}
-	@Override
-	public String getElementAt(int index) {
-		return content.get(index).toString();
-	}
-	
-	@Override
-	public void addListDataListener(ListDataListener l) {
-		ldlList.add(l);	
-	}
-	@Override
-	public void removeListDataListener(ListDataListener l) {
-		ldlList.remove(l);	
-	}
-	
-	@Override
-	public void tableChanged() {
-		try (PreparedStatement selCCP = ApplicationManager.getDB_CONN().prepareStatement("SELECT Artist, Song FROM ccp")) {
-			ResultSet rs = selCCP.executeQuery();
+	public void actionPerformed(ActionEvent e) {
+		int index = archive.getSelectedRow();
+		if(index < 0)
+			return;
+		if(archive.getRowSorter() != null)
+			index = archive.getRowSorter().convertRowIndexToModel(index);
+		
+		if (JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(),
+				"Are you sure you want to delete row?", "Delete?",
+				 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
+			return;
+		
+		int rowid = ((ArchiveTableModel) archive.getModel()).getRowId(index);
+		
+		try (PreparedStatement delLine = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM SongsInArchive WHERE rowid = ?")) {
+			delLine.setInt(1, rowid);
+			delLine.executeUpdate();
 			
-			content.clear();
-			while(rs.next()) {
-				content.add(new TransferableSong(rs.getString(1), rs.getString(2), 0));
-			}
+			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		
-		
-		// inform ListDataListeners
-		ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize());
-		for(ListDataListener ldl : ldlList) {
-			ldl.contentsChanged(e);
-		}
 	}
+
 }

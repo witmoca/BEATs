@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 
+import be.witmoca.BEATs.ui.playlistpanel.actions.PlaylistToolbar;
 import be.witmoca.BEATs.ui.southpanel.SouthPanel;
 import be.witmoca.BEATs.ui.t4j.RowNumberTable;
 

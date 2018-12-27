@@ -17,45 +17,27 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: PlaylistPopupMenu.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.playlistpanel.actions;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EnumSet;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 
-import javax.swing.JTabbedPane;
+import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
 
-import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
+public class PlaylistPopupMenu extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
-
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+	
+	public PlaylistPopupMenu(JTable assocTable) {
+		super();
+		this.add(new JMenuItem(ClipboardActionFactory.getCutAction(assocTable)));
+		this.add(new JMenuItem(ClipboardActionFactory.getCopyAction(assocTable)));
+		this.add(new JMenuItem(ClipboardActionFactory.getPasteAction(assocTable)));
+		this.addSeparator();
+		this.add(new JMenuItem(new DeleteAction(assocTable)));
 	}
-	
-	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			this.removeAll();
-			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
 }

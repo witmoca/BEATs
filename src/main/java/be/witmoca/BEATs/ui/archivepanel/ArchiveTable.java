@@ -25,9 +25,11 @@ package be.witmoca.BEATs.ui.archivepanel;
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableRowSorter;
+
 import be.witmoca.BEATs.clipboard.TransferableSong;
-import be.witmoca.BEATs.model.ArchiveTableModel;
-import be.witmoca.BEATs.ui.extendables.SongTable;
+import be.witmoca.BEATs.ui.archivepanel.actions.ArchivePopupMenu;
+import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
 
 class ArchiveTable extends SongTable {
@@ -40,7 +42,12 @@ class ArchiveTable extends SongTable {
 		this.getColumnModel().getColumn(2).setCellRenderer(new EpisodeRenderer());
 
 		// Add a rowsorter and render icons at the top to indicate sorting order
-		this.setRowSorter(new ArchiveTableRowSorter<>(this.getModel()));
+		TableRowSorter<?> sorter = new TableRowSorter<>(this.getModel());
+		sorter.setSortsOnUpdates(true);
+		sorter.setMaxSortKeys(2);
+		this.setRowSorter(sorter);
+		
+
 		this.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
 		
 		this.setComponentPopupMenu(new ArchivePopupMenu(this));

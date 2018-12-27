@@ -17,45 +17,58 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: SaveFileAction.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.actions;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.EnumSet;
 
-import javax.swing.JTabbedPane;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
+import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
 
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
-	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
+public class SaveFileAction implements ActionListener {
+	private boolean hasSucceeded = false;
 
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+	public SaveFileAction() {
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			this.removeAll();
-			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
+	public void actionPerformed(ActionEvent e) {
+		final JFileChooser fc = new JFileChooser();
+		fc.setAcceptAllFileFilterUsed(false);
+		fc.setFileFilter(new BEATsFileFilter());
+		if (fc.showSaveDialog(ApplicationManager.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
+			String pathToFile = fc.getSelectedFile().getAbsolutePath();
+			// Only 1 ".beats" extension!
+			while (pathToFile.endsWith(".beats")) {
+				pathToFile = pathToFile.substring(0, pathToFile.length() - 6);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			pathToFile += ".beats";
+			try {
+				ApplicationManager.getDB_CONN().saveDatabase(pathToFile);
+				hasSucceeded = true;
+			} catch (SQLException e1) {
+				JOptionPane.showMessageDialog(ApplicationManager.getAPP_WINDOW(),
+						"Error during saving:\n" + e1.getLocalizedMessage(), "Oops!",
+						javax.swing.JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
+
 	
-	
+	boolean hasSucceeded() {
+		return hasSucceeded;
+	}
 }

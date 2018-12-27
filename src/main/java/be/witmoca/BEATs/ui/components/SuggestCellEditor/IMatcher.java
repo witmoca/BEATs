@@ -1,3 +1,12 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.ui.components.SuggestCellEditor;
+
+import java.util.List;
+
+import javax.swing.JTable;
+
 /*
 *
 +===============================================================================+
@@ -17,45 +26,20 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: IMatcher.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.EnumSet;
-
-import javax.swing.JTabbedPane;
-
-import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
-
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
-	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
-
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
-	}
-	
-	@Override
-	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
-			ResultSet value = getValue.executeQuery();
-			this.removeAll();
-			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
+interface IMatcher {
+	/** 
+	 * The table, row and col parameter are used for determining extra information.
+	 * They should NEVER be used to edit the model of the jtable while an edit is in progress
+	 * 
+	 * @param search The string to search for
+	 * @param forwardOnly True when {@code search} has to be the start of a match. False when it may be anywhere within a match string
+	 * @param table The JTable that contains the cell being edited
+	 * @param row The row of the cell being edited
+	 * @param col The column of the cell being edited
+	 * @return A list of matches for the given parameters
+	 */
+	public List<String> match(String search, boolean forwardOnly, JTable table, int row, int col);
 }

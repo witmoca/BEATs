@@ -17,45 +17,62 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: CurrentQueueListModel.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.currentqueue;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import javax.swing.JTabbedPane;
+import javax.swing.AbstractListModel;
 
 import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
+public class CurrentQueueListModel extends AbstractListModel<String> implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
+	private final SortedMap<Integer, String> internalMap = new TreeMap<Integer, String>();
 
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
+	public CurrentQueueListModel() {
+		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.CURRENT_QUEUE));
 		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+	}
+
+	@Override
+	public int getSize() {
+		return internalMap.size();
+	}
+
+	@Override
+	public String getElementAt(int index) {
+		return internalMap.get(this.getSongOrderAt(index));
 	}
 	
+	public int getSongOrderAt(int index) {
+		return (int) internalMap.keySet().toArray()[index];
+	}
+
 	@Override
 	public void tableChanged() {
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT PlaylistName FROM Playlist ORDER BY TabOrder")) {
+		// Commit happend that changed the currentqueue => reload
+		internalMap.clear();
+		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT SongOrder, (ArtistName || ' - ' || Title) FROM CurrentQueue, Song WHERE CurrentQueue.SongId = Song.SongId ORDER BY SongOrder ASC")) {
 			ResultSet value = getValue.executeQuery();
-			this.removeAll();
 			while(value.next()) {
-				this.addTab(value.getString(1), new PlaylistPanel(this , value.getString(1)));
+				internalMap.put(value.getInt(1) ,value.getString(2));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		// notify listeners
+		this.fireContentsChanged(this, 0, this.getSize());
 	}
-	
-	
+
+
 }

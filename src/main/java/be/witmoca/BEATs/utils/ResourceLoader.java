@@ -3,6 +3,8 @@
  */
 package be.witmoca.BEATs.utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -32,6 +34,26 @@ import java.util.stream.Stream;
 * Created: 2018
 */
 public class ResourceLoader {
+	private static final String APP_FOLDER = System.getProperty("user.home") + File.separator + "BEATs";
+	public static final String DB_LOC = APP_FOLDER + File.separator + "currentDocument.beats";
+
+	/**
+	 * Initialises the File/Folder tree needed for operation.
+	 * 
+	 * @throws IOException if the necessary tree could not be created.
+	 */
+	public static void initFileTree() throws IOException {
+		try {
+			// create root
+			File root = new File(APP_FOLDER);
+			root.mkdirs();
+			if (!root.exists() || !root.isDirectory())
+				throw new IOException("Root folder " + APP_FOLDER + " doesn't exist or is not a directory");
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+	}
+	
 	/**
 	 * Reads in a text based file and returns a list containing the lines inside it
 	 * 
