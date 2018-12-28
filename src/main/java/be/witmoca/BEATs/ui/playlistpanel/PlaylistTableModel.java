@@ -32,6 +32,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.utils.StringUtils;
@@ -47,7 +48,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 		super();
 		this.setPlaylistName(playlistName);
 
-		SQLConnection.getDbConn().addDataChangedListener(this, DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
+		SQLConnection.getDbConn().addDataChangedListener(this, DataChangedType.PLAYLIST_DATA_OPTS);
 		tableChanged();
 	}
 
@@ -113,7 +114,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 			return;
 		try {
 			CommonSQL.removeFromSongsInPlaylist(playlistList.get(rowIndex).getROWID());
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -153,7 +154,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 				}
 
 			}
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -64,7 +64,12 @@ public class LoadFileAction implements ActionListener {
 		if (!SwingUtilities.isEventDispatchThread())
 			throw new RuntimeException("Cannot be called from outside the EDT!");
 
-		// TODO: check if saved
+		// Check if data has changed
+		CheckFileSavedAction check = new CheckFileSavedAction();
+		check.actionPerformed(e);
+		// check if action is cancelled or allowed to continue
+		if (!check.hasSucceeded())
+			return;
 
 		File loadFile = this.loadFile;
 		// Load new Database Connection
@@ -72,6 +77,7 @@ public class LoadFileAction implements ActionListener {
 			final JFileChooser fc = new JFileChooser();
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileFilter(new BEATsFileFilter());
+			fc.setCurrentDirectory(SQLConnection.getDbConn().getCurrentFile());
 			if (fc.showOpenDialog(ApplicationWindow.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
 				loadFile = fc.getSelectedFile();
 			} else {
@@ -81,12 +87,8 @@ public class LoadFileAction implements ActionListener {
 
 		try {
 			SQLConnection.loadNewInternalDb(loadFile);
-			// Loading succeeded, but is db also a recovered db?
-			// TODO: add in user dialogues for the different methods of failure (all
-			// ConnectionException.ConnState types included)
-			// TODO: DB_CONN.isRecovered && Exception => recovery failed dialogs
 		} catch (ConnectionException e1) {
-			//e1.printStackTrace();
+			e1.printStackTrace();
 			String errorMessage = "";
 			if(SQLConnection.isRecoveredDb()) {
 				errorMessage += "Database recovered!\nBurning Ember detected an unusual shutdown.\nAn error occurred while recovering database.\n\n";

@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import be.witmoca.BEATs.connection.CommonSQL;
-import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.UiIcon;
@@ -90,7 +90,7 @@ class ChangeLocalAction extends AbstractAction {
 		// update artist
 		try {
 			CommonSQL.updateLocalityOfArtist(localBox.isSelected(), artist);
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.ARTIST));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.ARTIST));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

@@ -1,3 +1,10 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.connection;
+
+import java.util.EnumSet;
+
 /*
 *
 +===============================================================================+
@@ -17,42 +24,13 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: DataChangedType.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
-
-import java.sql.SQLException;
-import java.util.EnumSet;
-
-import javax.swing.JTabbedPane;
-
-import be.witmoca.BEATs.connection.CommonSQL;
-import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.connection.DataChangedType;
-import be.witmoca.BEATs.connection.SQLConnection;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
-
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
-	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
-
-	public PlaylistsTabbedPane() {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
-		this.tableChanged();
-		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedType.PLAYLIST));
-	}
-	
-	@Override
-	public void tableChanged() {
-		this.removeAll();
-		try {
-			for(String playlist : CommonSQL.getPlaylists()) {
-				this.addTab(playlist, new PlaylistPanel(playlist));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+public enum DataChangedType {
+    ARTIST, SONG, PLAYLIST, EPISODE, GENRE, SONGS_IN_PLAYLIST, CURRENT_QUEUE, SONGS_IN_ARCHIVE, CCP, META_DATA;
+    public static final EnumSet<DataChangedType> ALL_OPTS = EnumSet.allOf(DataChangedType.class);
+    public static final EnumSet<DataChangedType> ARCHIVE_DATA_OPTS = EnumSet.of(ARTIST, SONG, EPISODE, GENRE, SONGS_IN_ARCHIVE);
+    public static final EnumSet<DataChangedType> PLAYLIST_DATA_OPTS = EnumSet.of(PLAYLIST, SONGS_IN_PLAYLIST);
 }
+

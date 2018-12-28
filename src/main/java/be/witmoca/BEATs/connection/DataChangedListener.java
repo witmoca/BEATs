@@ -22,15 +22,6 @@
 */
 package be.witmoca.BEATs.connection;
 
-import java.util.EnumSet;
-
 public interface DataChangedListener {
-	public static enum DataType {
-	    ARTIST, SONG, PLAYLIST, EPISODE, GENRE, SONGS_IN_PLAYLIST, CURRENT_QUEUE, SONGS_IN_ARCHIVE, CCP;
-	    public static final EnumSet<DataType> ALL_OPTS = EnumSet.allOf(DataType.class);
-	    public static final EnumSet<DataType> ARCHIVE_DATA_OPTS = EnumSet.of(ARTIST, SONG, EPISODE, GENRE, SONGS_IN_ARCHIVE);
-	    public static final EnumSet<DataType> PLAYLIST_DATA_OPTS = EnumSet.of(PLAYLIST, SONGS_IN_PLAYLIST);
-	}
-	
 	public void tableChanged();
 }

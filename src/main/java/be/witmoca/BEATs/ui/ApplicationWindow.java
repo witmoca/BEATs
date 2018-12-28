@@ -27,18 +27,23 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedType;
+import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.actions.ExitApplicationAction;
 import be.witmoca.BEATs.ui.currentqueue.CurrentQueuePanel;
 import be.witmoca.BEATs.utils.UiIcon;
 
-public class ApplicationWindow extends JFrame implements WindowListener{
+public class ApplicationWindow extends JFrame implements WindowListener, DataChangedListener{
 	private static final long serialVersionUID = 1L;
 	private static final String mainTitleBase = "Burning Ember";
 	
@@ -70,6 +75,8 @@ public class ApplicationWindow extends JFrame implements WindowListener{
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
 		this.setVisible(true);
+		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedType.META_DATA));
+		tableChanged();
 	}
 
 	private void setIconImages() {
@@ -114,5 +121,17 @@ public class ApplicationWindow extends JFrame implements WindowListener{
 
 	public static ApplicationWindow getAPP_WINDOW() {
 		return APP_WINDOW;
+	}
+
+	@Override
+	public void tableChanged() {
+		// META_DATA has changed => reload title
+		String title = "Burning Ember";
+		
+		File currentFile = SQLConnection.getDbConn().getCurrentFile();
+		if(currentFile != null)
+			title = currentFile.getAbsolutePath() + " - " + title;
+		
+		this.setTitle(title);
 	}
 }

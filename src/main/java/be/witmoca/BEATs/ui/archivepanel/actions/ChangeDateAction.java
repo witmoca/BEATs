@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import be.witmoca.BEATs.connection.CommonSQL;
-import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
@@ -93,7 +93,7 @@ class ChangeDateAction extends AbstractAction {
 		// EpisodeDates are unique => Constraint Violation if the episode exists already. So Ignore in that case
 		try {
 			CommonSQL.updateEpisodeDate(episode, episodeDate.getValue());
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.EPISODE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.EPISODE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

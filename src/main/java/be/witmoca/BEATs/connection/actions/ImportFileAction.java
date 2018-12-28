@@ -49,10 +49,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import be.witmoca.BEATs.FileFilters.WWDB1FileFilter;
-import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.connection.CommonSQL;
+import be.witmoca.BEATs.connection.DataChangedType;
 
 public class ImportFileAction implements ActionListener {
 
@@ -215,6 +215,6 @@ public class ImportFileAction implements ActionListener {
 			}
 		}
 		
-		SQLConnection.getDbConn().commit(DataChangedListener.DataType.ALL_OPTS);
+		SQLConnection.getDbConn().commit(DataChangedType.ALL_OPTS);
 	}
 }

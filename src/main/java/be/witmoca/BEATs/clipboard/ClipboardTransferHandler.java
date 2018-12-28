@@ -19,7 +19,7 @@ import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 
 /*
@@ -83,7 +83,7 @@ public class ClipboardTransferHandler extends TransferHandler {
 				insertCCP.setString(2, ts.getSONG());
 				insertCCP.executeUpdate();
 			}
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.CCP));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.CCP));
 		} catch (UnsupportedFlavorException | IOException | SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -135,7 +135,7 @@ public class ClipboardTransferHandler extends TransferHandler {
 				delRow.executeUpdate();
 			}
 
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.CCP));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.CCP));
 		} catch (SQLException | UnsupportedFlavorException | IOException e) {
 			e.printStackTrace();
 		}

@@ -32,9 +32,9 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JList;
 
-import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.utils.UiIcon;
 
 class ArchiveAction extends AbstractAction {
@@ -71,7 +71,7 @@ class ArchiveAction extends AbstractAction {
 		
 		try {
 			CommonSQL.clearCurrentQueue();
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_ARCHIVE, DataChangedListener.DataType.CURRENT_QUEUE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_ARCHIVE, DataChangedType.CURRENT_QUEUE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

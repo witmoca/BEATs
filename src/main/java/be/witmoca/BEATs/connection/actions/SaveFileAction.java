@@ -61,6 +61,7 @@ public class SaveFileAction implements ActionListener {
 		
 		fc.setAcceptAllFileFilterUsed(false);
 		fc.setFileFilter(new BEATsFileFilter());
+		fc.setCurrentDirectory(SQLConnection.getDbConn().getCurrentFile());
 		
 		if (fc.showSaveDialog(ApplicationWindow.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
 			String pathToFile = fc.getSelectedFile().getAbsolutePath();

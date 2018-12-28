@@ -34,9 +34,9 @@ import javax.swing.Action;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.currentqueue.CurrentQueueListModel;
 import be.witmoca.BEATs.utils.UiIcon;
@@ -93,7 +93,7 @@ class RevertToPlaylistFromQueueAction extends AbstractAction {
 			CommonSQL.addSongInPlaylist(playlistName, artist, song, comment);
 			CommonSQL.removeFromCurrentQueue(songOrder);
 			
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST, DataChangedListener.DataType.CURRENT_QUEUE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST, DataChangedType.CURRENT_QUEUE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

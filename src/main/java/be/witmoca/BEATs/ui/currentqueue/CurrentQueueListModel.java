@@ -32,6 +32,7 @@ import java.util.TreeMap;
 import javax.swing.AbstractListModel;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 
 public class CurrentQueueListModel extends AbstractListModel<String> implements DataChangedListener {
@@ -39,7 +40,7 @@ public class CurrentQueueListModel extends AbstractListModel<String> implements 
 	private final SortedMap<Integer, String> internalMap = new TreeMap<Integer, String>();
 
 	public CurrentQueueListModel() {
-		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.CURRENT_QUEUE));
+		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedType.CURRENT_QUEUE));
 		this.tableChanged();
 	}
 

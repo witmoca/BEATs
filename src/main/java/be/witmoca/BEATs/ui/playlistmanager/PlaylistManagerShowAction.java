@@ -33,7 +33,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import be.witmoca.BEATs.connection.CommonSQL;
-import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 
@@ -124,7 +124,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 			}
 			
 			// commit the changes
-			SQLConnection.getDbConn().commit(DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
+			SQLConnection.getDbConn().commit(DataChangedType.PLAYLIST_DATA_OPTS);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

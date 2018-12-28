@@ -16,6 +16,7 @@ import javax.swing.event.ListDataListener;
 
 import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 
 /*
@@ -46,7 +47,7 @@ class CCPListModel implements ListModel<String>, DataChangedListener{
 	
 	public CCPListModel() {
 		this.tableChanged();
-		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.CCP));
+		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedType.CCP));
 	}
 	
 	@Override

@@ -222,7 +222,7 @@ public class CommonSQL {
 			upDate.setLong(1, newDate.toEpochDay());
 			upDate.setInt(2, episodeId);
 			upDate.executeUpdate();
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.EPISODE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.EPISODE));
 		}
 	}
 

@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import be.witmoca.BEATs.connection.CommonSQL;
-import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.archivepanel.ArchiveTableModel;
@@ -71,7 +71,7 @@ class DeleteEntryAction extends AbstractAction {
 		
 		try {
 			CommonSQL.removeFromSongsInArchive(rowid);
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_ARCHIVE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

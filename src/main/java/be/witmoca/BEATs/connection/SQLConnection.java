@@ -45,14 +45,15 @@ import be.witmoca.BEATs.utils.ResourceLoader;
 public class SQLConnection implements AutoCloseable {
 	private static final int APPLICATION_ID = 0x77776462;
 	private static final String DB_LOC = ResourceLoader.DB_LOC;
-	private static boolean recoveredDb = false;
+	private static boolean recoveredDb = false; 
 
 	private static SQLConnection DbConn = null;
 
 	private final SQLiteConnection Db; // Internal Connection
-
+	private File currentFile; // Considered MetaData
+	
 	private boolean changedState = false;
-	private Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> dataListeners = new HashMap<>();
+	private Map<DataChangedListener, EnumSet<DataChangedType>> dataListeners = new HashMap<>();
 
 	/**
 	 * Loads a new internal Db as internal memory after closing the old one. See
@@ -63,7 +64,7 @@ public class SQLConnection implements AutoCloseable {
 	 * @throws ConnectionException
 	 */
 	public static void loadNewInternalDb(File loadFile) throws ConnectionException {
-		Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> listenerMap = null;
+		Map<DataChangedListener, EnumSet<DataChangedType>> listenerMap = null;
 
 		// deal with the old connection (and log any listeneres on that connection)
 		if (DbConn != null) {
@@ -100,7 +101,7 @@ public class SQLConnection implements AutoCloseable {
 	 */
 	private SQLConnection(File loadFile) throws ConnectionException {
 		boolean dbExists = (new File(DB_LOC)).exists();
-
+		this.currentFile = (loadFile == null ? null : loadFile.getAbsoluteFile());
 		// Check if a lock exists on the the database (and create a connection to said
 		// db)
 		// This is done by execution code that changes on the tables (create tables
@@ -148,15 +149,20 @@ public class SQLConnection implements AutoCloseable {
 	}
 
 	public void saveDatabase(String savePath) throws SQLException {
+		this.currentFile = new File(savePath).getAbsoluteFile();
+		
 		// Call optimize first
 		try (Statement optimize = Db.createStatement()) {
 			optimize.execute("PRAGMA optimize");
 		}
 
 		try (Statement save = Db.createStatement()) {
-			save.executeUpdate("backup to " + savePath);
+			save.executeUpdate("backup to " + currentFile.getAbsolutePath());
 		}
 		this.setSaved();
+		
+		// loadedLocation has been changed
+		notifyDataChangedListeners(EnumSet.of(DataChangedType.META_DATA));
 	}
 
 	/**
@@ -275,21 +281,21 @@ public class SQLConnection implements AutoCloseable {
 		return Db.prepareStatement(sql);
 	}
 
-	public synchronized void commit(EnumSet<DataChangedListener.DataType> eSet) throws SQLException {
+	public synchronized void commit(EnumSet<DataChangedType> eSet) throws SQLException {
 		Db.commit();
 		this.setChanged();
 		this.notifyDataChangedListeners(eSet);
 	}
 
 	public void announceDataRefresh() {
-		notifyDataChangedListeners(DataChangedListener.DataType.ALL_OPTS);
+		notifyDataChangedListeners(DataChangedType.ALL_OPTS);
 	}
 
-	private void notifyDataChangedListeners(EnumSet<DataChangedListener.DataType> eSet) {
+	private void notifyDataChangedListeners(EnumSet<DataChangedType> eSet) {
 		ArrayList<DataChangedListener> clientsToNotify = new ArrayList<>();
 		// First compile a list of clients to notify
 		for (DataChangedListener dL : dataListeners.keySet()) {
-			for (DataChangedListener.DataType dT : dataListeners.get(dL)) {
+			for (DataChangedType dT : dataListeners.get(dL)) {
 				if (eSet.contains(dT)) {
 					clientsToNotify.add(dL);
 					break;
@@ -327,11 +333,11 @@ public class SQLConnection implements AutoCloseable {
 		this.changedState = true;
 	}
 
-	public synchronized void addDataChangedListener(DataChangedListener d, EnumSet<DataChangedListener.DataType> e) {
+	public synchronized void addDataChangedListener(DataChangedListener d, EnumSet<DataChangedType> e) {
 		dataListeners.put(d, e);
 	}
 
-	public Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> getDataListeners() {
+	public Map<DataChangedListener, EnumSet<DataChangedType>> getDataListeners() {
 		return dataListeners;
 	}
 
@@ -341,5 +347,9 @@ public class SQLConnection implements AutoCloseable {
 
 	public static SQLConnection getDbConn() {
 		return DbConn;
+	}
+
+	public File getCurrentFile() {
+		return currentFile;
 	}
 }

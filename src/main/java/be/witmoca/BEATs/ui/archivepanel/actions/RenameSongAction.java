@@ -15,10 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.connection.CommonSQL;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.utils.StringUtils;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -99,7 +99,7 @@ class RenameSongAction extends AbstractAction {
 			// delete old songId
 			CommonSQL.removeSong(oldSongId);		
 			
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONG, DataChangedListener.DataType.CURRENT_QUEUE, DataChangedListener.DataType.SONGS_IN_ARCHIVE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONG, DataChangedType.CURRENT_QUEUE, DataChangedType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

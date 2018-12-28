@@ -43,7 +43,7 @@ public class CheckFileSavedAction implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (SQLConnection.getDbConn().isChanged()) {
+		if (SQLConnection.getDbConn() != null && SQLConnection.getDbConn().isChanged()) {
 			String options[] = { "Save", "Close without saving", "Cancel" };
 			int response = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(),
 					"You have not saved this file.\nYour changes will be discarded if you continue wihout saving.",

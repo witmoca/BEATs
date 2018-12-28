@@ -33,6 +33,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 
 public class ArchiveTableModel extends AbstractTableModel implements DataChangedListener {
@@ -43,7 +44,7 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	public ArchiveTableModel() {
 		super();
 		
-		SQLConnection.getDbConn().addDataChangedListener(this, DataChangedListener.DataType.ARCHIVE_DATA_OPTS);
+		SQLConnection.getDbConn().addDataChangedListener(this, DataChangedType.ARCHIVE_DATA_OPTS);
 		this.tableChanged();
 	}
 	
