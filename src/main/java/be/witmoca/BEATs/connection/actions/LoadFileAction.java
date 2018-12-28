@@ -89,7 +89,7 @@ public class LoadFileAction implements ActionListener {
 			//e1.printStackTrace();
 			String errorMessage = "";
 			if(SQLConnection.isRecoveredDb()) {
-				errorMessage += "Database recovered!\nBEATs detected an unusual shutdown.\nAn error occurred while recovering database.\n\n";
+				errorMessage += "Database recovered!\nBurning Ember detected an unusual shutdown.\nAn error occurred while recovering database.\n\n";
 			}
 			
 			switch (e1.getState()) {
@@ -123,7 +123,7 @@ public class LoadFileAction implements ActionListener {
 
 		if (SQLConnection.isRecoveredDb()) {
 			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
-					"Database recovered!\nBEATs detected an unusual shutdown.\nThe previously opened database has been recovered.",
+					"Database recovered!\nBurning Ember detected an unusual shutdown.\nThe previously opened database has been recovered.",
 					"Recovered", JOptionPane.WARNING_MESSAGE);
 		}
 	}

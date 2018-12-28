@@ -327,7 +327,7 @@ public class SQLConnection implements AutoCloseable {
 		Db.commit();
 		Db.close();
 		if (!(new File(DB_LOC)).delete())
-			throw new SQLException(new IOException("Could not cleanup BEATS internal storage (" + DB_LOC + ")"));
+			throw new SQLException(new IOException("Could not cleanup Burning Ember internal storage (" + DB_LOC + ")"));
 	}
 
 	public boolean isChanged() {
