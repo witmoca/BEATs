@@ -183,11 +183,6 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 			default: return null;
 			}
 		}
-
-		@Override
-		public String toString() {
-			return ARTIST + " - " + SONG + (COMMENT.isEmpty() ? "" : " (" +  COMMENT + ")");
-		}
 		
 		public int getROWID() {
 			return ROWID;

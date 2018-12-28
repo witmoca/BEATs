@@ -82,4 +82,9 @@ public class TransferableSong implements Transferable {
 			return null;		
 		return this;
 	}
+	
+	@Override
+	public String toString() {
+		return ARTIST + " - " + SONG;
+	}
 }
