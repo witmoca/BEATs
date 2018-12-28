@@ -30,7 +30,7 @@ public class ConnectionException extends Exception {
 	
 	private final ConnState state;
 	
-	static enum ConnState {
+	public static enum ConnState {
 		DB_ALREADY_LOCKED, 			// Another instance has locked the db
 		GENERAL_EXCEPTION, 			// General statement exception (usually sql syntax error)
 		APP_ID_INVALID, 			// Db Application id does not match application
@@ -44,6 +44,8 @@ public class ConnectionException extends Exception {
 	
 	ConnectionException(ConnState state, Throwable t) {
 		super(t);
+		if(state == null)
+			throw new IllegalArgumentException("state can't be null");
 		this.state = state;
 	}
 

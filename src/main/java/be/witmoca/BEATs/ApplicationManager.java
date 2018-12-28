@@ -29,24 +29,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-
 import javax.swing.SwingUtilities;
 
 import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
 import be.witmoca.BEATs.clipboard.BEATsClipboard;
-import be.witmoca.BEATs.connection.ConnectionException;
-import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.ui.ApplicationWindow;
-import be.witmoca.BEATs.ui.actions.ExitApplicationAction;
 import be.witmoca.BEATs.utils.ResourceLoader;
 
 public class ApplicationManager {
 	// Format : MMMmmmrrr with M = Major, m = minor & r = revision (do not lead with zeros, as this is interpreted as octal)
 	public static final int APP_VERSION = 1000;
 
-	private static ApplicationWindow APP_WINDOW = null;
-	private static SQLConnection DB_CONN = null;
 	private static final BEATsClipboard INT_CLIP = new BEATsClipboard("BEATs Internal Clipboard");
 
 	// Start up
@@ -59,21 +53,17 @@ public class ApplicationManager {
 			// Initialise Files & folders
 			ResourceLoader.initFileTree();
 			
-			// Setup Internal memory (new or load from file)
-			DB_CONN = new SQLConnection(loadFile);
-			// TODO: DB_CONN.isRecovered user dialogs
-		} catch (IOException | ConnectionException e) {
+		} catch (IOException e) {
 			fatalError(e);
 			return;
-			// TODO: add in user dialogues for the different methods of failure (all ConnectionException.ConnState types included)
-			// TODO: DB_CONN.isRecovered && Exception => recovery failed dialogs
 		}
 		
 		// Create the GUI on the EDT
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				APP_WINDOW = new ApplicationWindow();
+				LoadFileAction.getLoadFileAction(loadFile).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_LAST, "load"));
+				ApplicationWindow.createAndShowUi();
 			}
 		});
 	}
@@ -110,41 +100,6 @@ public class ApplicationManager {
 	}
 
 	/**
-	 * Closes the current model and loads a new one.
-	 * 
-	 * @param fileToLoad
-	 *            The Database to load. If this is null, the application will load
-	 *            an empty file.
-	 * @throws SQLException
-	 */
-	public static void changeModel(File load) {
-		if(!SwingUtilities.isEventDispatchThread())
-			throw new RuntimeException("Launch.changeModel called from outside the EDT!");
-		
-		// Do an 'exit'
-		ExitApplicationAction eaa = new ExitApplicationAction();
-		eaa.actionPerformed(new ActionEvent(ApplicationManager.class, ActionEvent.ACTION_PERFORMED, "changeModel"));
-		if(!eaa.hasSucceeded()) {
-			// Cancelled or Error
-			return;
-		}
-
-		// Load new Database Connection
-		try {
-			DB_CONN = new SQLConnection(load);
-			if(DB_CONN.isRecoveredDb()) {
-				// TODO: display recovered DB message
-			}
-		} catch (ConnectionException e) {
-			fatalError(e);
-			return;
-		}
-
-		// Start GUI
-		APP_WINDOW = new ApplicationWindow();
-	}
-
-	/**
 	 * Searches for the first loadable database in the arguments
 	 * 
 	 * @param args the arguments passed to the application (usually the arguments of the main method)
@@ -169,14 +124,6 @@ public class ApplicationManager {
 		return null;
 	}
 	
-	public static ApplicationWindow getAPP_WINDOW() {
-		return APP_WINDOW;
-	}
-
-	public static SQLConnection getDB_CONN() {
-		return DB_CONN;
-	}
-
 	public static BEATsClipboard getINT_CLIP() {
 		return INT_CLIP;
 	}

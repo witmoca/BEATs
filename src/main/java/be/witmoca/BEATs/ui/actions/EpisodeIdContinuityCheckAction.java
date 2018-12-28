@@ -13,8 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.CommonSQL;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 
 /*
 *
@@ -92,7 +92,7 @@ public class EpisodeIdContinuityCheckAction implements ActionListener {
 			result.setText(error);
 		}
 		
-		JOptionPane.showMessageDialog(ApplicationManager.getAPP_WINDOW(), new JScrollPane(result, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), "Episode Continuity Check", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), new JScrollPane(result, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), "Episode Continuity Check", JOptionPane.PLAIN_MESSAGE);
 	}
 
 }

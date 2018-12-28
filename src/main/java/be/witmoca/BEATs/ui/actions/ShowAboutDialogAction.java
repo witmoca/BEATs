@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JOptionPane;
 
-import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.ResourceLoader;
 
 /*
@@ -37,6 +37,6 @@ public class ShowAboutDialogAction implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		List<String> lines = ResourceLoader.ReadResource("Text/About");
-		JOptionPane.showMessageDialog(ApplicationManager.getAPP_WINDOW(), String.join("\n", lines), "About", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), String.join("\n", lines), "About", JOptionPane.PLAIN_MESSAGE);
 	}
 }

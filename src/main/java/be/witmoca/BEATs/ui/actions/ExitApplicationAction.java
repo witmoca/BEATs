@@ -26,55 +26,34 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-import javax.swing.JOptionPane;
-
-import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.connection.actions.CheckFileSavedAction;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 
 public class ExitApplicationAction implements ActionListener {
-	private boolean hasSucceeded = false;
-
-	public ExitApplicationAction() {
-	}
-
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// Check if data has changed
-		if(ApplicationManager.getDB_CONN().isChanged()) {
-			String options[] = {"Save", "Close without saving", "Cancel"};
-			int response = JOptionPane.showOptionDialog(ApplicationManager.getAPP_WINDOW(), "You have not saved this file.\nYour changes will be discarded if you continue wihout saving.", "Confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, null);
-			if(response == 2 || response == -1) {
-				// Cancelled
-				return;
-			} else if (response == 0) {
-				// Save first
-				SaveFileAction save = new SaveFileAction();
-				save.actionPerformed(e);
-				if(!save.hasSucceeded()) {
-					// Cancelled or Error
-					return;
-				}
-			}
-		}
+		CheckFileSavedAction check = new CheckFileSavedAction();
+		check.actionPerformed(e);
+		// check if action is cancelled or allowed to continue
+		if(!check.hasSucceeded())
+			return;
+			
 		
 		// Exit Application
-		// Kill GUI
-		ApplicationManager.getAPP_WINDOW().dispose();
 		
 		// KILL DB Connection
 		try {
-			ApplicationManager.getDB_CONN().close();
+			SQLConnection.getDbConn().close();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
 
-
-		hasSucceeded = true;
-	}
-
-	public boolean hasSucceeded() {
-		return hasSucceeded;
+		// Kill GUI
+		ApplicationWindow.getAPP_WINDOW().dispose();
 	}
 }

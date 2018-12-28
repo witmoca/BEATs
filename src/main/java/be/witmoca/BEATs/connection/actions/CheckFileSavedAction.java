@@ -1,3 +1,16 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.connection.actions;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JOptionPane;
+
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.ApplicationWindow;
+
 /*
 *
 +===============================================================================+
@@ -17,27 +30,11 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: SaveFileAction.java
+* File: CheckFileSavedAction.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.actions;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
-import be.witmoca.BEATs.ApplicationManager;
-import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
-
-public class SaveFileAction implements ActionListener {
+public class CheckFileSavedAction implements ActionListener {
 	private boolean hasSucceeded = false;
-
-	public SaveFileAction() {
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -46,29 +43,28 @@ public class SaveFileAction implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final JFileChooser fc = new JFileChooser();
-		fc.setAcceptAllFileFilterUsed(false);
-		fc.setFileFilter(new BEATsFileFilter());
-		if (fc.showSaveDialog(ApplicationManager.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
-			String pathToFile = fc.getSelectedFile().getAbsolutePath();
-			// Only 1 ".beats" extension!
-			while (pathToFile.endsWith(".beats")) {
-				pathToFile = pathToFile.substring(0, pathToFile.length() - 6);
-			}
-			pathToFile += ".beats";
-			try {
-				ApplicationManager.getDB_CONN().saveDatabase(pathToFile);
-				hasSucceeded = true;
-			} catch (SQLException e1) {
-				JOptionPane.showMessageDialog(ApplicationManager.getAPP_WINDOW(),
-						"Error during saving:\n" + e1.getLocalizedMessage(), "Oops!",
-						javax.swing.JOptionPane.ERROR_MESSAGE);
+		if (SQLConnection.getDbConn().isChanged()) {
+			String options[] = { "Save", "Close without saving", "Cancel" };
+			int response = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(),
+					"You have not saved this file.\nYour changes will be discarded if you continue wihout saving.",
+					"Confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, null);
+			if (response == JOptionPane.YES_OPTION) {
+				// Save first
+				SaveFileAction save = new SaveFileAction();
+				save.actionPerformed(e);
+				if (!save.hasSucceeded()) {
+					// Cancelled or Error
+					return;
+				}
+			} else if (response != JOptionPane.NO_OPTION) {
+				// Only yes (save) and no (close without saving) are accepted options
+				return;
 			}
 		}
+		hasSucceeded = true;
 	}
-
 	
-	boolean hasSucceeded() {
+	public boolean hasSucceeded() {
 		return hasSucceeded;
 	}
 }

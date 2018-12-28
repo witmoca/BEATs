@@ -20,7 +20,7 @@
 * File: ImportFileAction.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.actions;
+package be.witmoca.BEATs.connection.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,9 +48,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.FileFilters.WWDB1FileFilter;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.connection.CommonSQL;
 
 public class ImportFileAction implements ActionListener {
@@ -67,7 +68,7 @@ public class ImportFileAction implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// Start with new File
-		(new NewFileAction()).actionPerformed(e);
+		LoadFileAction.getNewFileAction().actionPerformed(e);
 
 		// Choose file to import (and method)
 		final JFileChooser fc = new JFileChooser();
@@ -77,7 +78,7 @@ public class ImportFileAction implements ActionListener {
 		fc.addChoosableFileFilter(new WWDB1FileFilter());
 
 		// Check for Cancel/Error
-		if (fc.showOpenDialog(ApplicationManager.getAPP_WINDOW()) != JFileChooser.APPROVE_OPTION) {
+		if (fc.showOpenDialog(ApplicationWindow.getAPP_WINDOW()) != JFileChooser.APPROVE_OPTION) {
 			return;
 		}
 
@@ -86,7 +87,7 @@ public class ImportFileAction implements ActionListener {
 			try {
 				importV1WWDBFile(fc.getSelectedFile());
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(ApplicationManager.getAPP_WINDOW(),
+				JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
 						"Could not open file:\n" + e1.getClass() + "\n" + e1.getLocalizedMessage(), "Import Error",
 						JOptionPane.ERROR_MESSAGE);
 				e1.printStackTrace();
@@ -214,6 +215,6 @@ public class ImportFileAction implements ActionListener {
 			}
 		}
 		
-		ApplicationManager.getDB_CONN().commit(DataChangedListener.DataType.ALL_OPTS);
+		SQLConnection.getDbConn().commit(DataChangedListener.DataType.ALL_OPTS);
 	}
 }

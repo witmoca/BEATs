@@ -15,8 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -72,7 +73,7 @@ class RenameArtistAction extends AbstractAction {
 		newName.setColumns(30);
 		userPanel.add(newName);
 
-		if (JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(), userPanel, "Rename",
+		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel, "Rename",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
 			return; // cancelled
 		}
@@ -108,7 +109,7 @@ class RenameArtistAction extends AbstractAction {
 			// delete old artist
 			CommonSQL.removeArtist(artist);
 
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.ARTIST,DataChangedListener.DataType.SONG, DataChangedListener.DataType.CURRENT_QUEUE,DataChangedListener.DataType.SONGS_IN_ARCHIVE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.ARTIST,DataChangedListener.DataType.SONG, DataChangedListener.DataType.CURRENT_QUEUE,DataChangedListener.DataType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

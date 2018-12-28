@@ -14,8 +14,8 @@ import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
 
 /*
 *
@@ -70,12 +70,12 @@ public class ClipboardTransferHandler extends TransferHandler {
 				throw new ClassCastException("TransferableSong");
 			}
 			TransferableSong ts = (TransferableSong) o;
-			try (PreparedStatement insertCCP = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO ccp (Artist, Song) VALUES (?,?)")) {
+			try (PreparedStatement insertCCP = SQLConnection.getDbConn().prepareStatement("INSERT INTO ccp (Artist, Song) VALUES (?,?)")) {
 				insertCCP.setString(1, ts.getARTIST());
 				insertCCP.setString(2, ts.getSONG());
 				insertCCP.executeUpdate();
 			}
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.CCP));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.CCP));
 		} catch (UnsupportedFlavorException | IOException | SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -97,7 +97,7 @@ public class ClipboardTransferHandler extends TransferHandler {
 	protected Transferable createTransferable(JComponent c) {
 		if(selected < 0)
 			return null;
-		try (PreparedStatement selRow = ApplicationManager.getDB_CONN().prepareStatement("SELECT rowid, artist, song FROM CCP ORDER BY rowid ASC")) {
+		try (PreparedStatement selRow = SQLConnection.getDbConn().prepareStatement("SELECT rowid, artist, song FROM CCP ORDER BY rowid ASC")) {
 			ResultSet rs = selRow.executeQuery();
 			for(int i = 0; i <= selected; i++) {
 				if(!rs.next())
@@ -122,12 +122,12 @@ public class ClipboardTransferHandler extends TransferHandler {
 			}
 			TransferableSong ts = (TransferableSong) o;
 
-			try (PreparedStatement delRow = ApplicationManager.getDB_CONN().prepareStatement("DELETE FROM CCP WHERE rowid = ?")) {
+			try (PreparedStatement delRow = SQLConnection.getDbConn().prepareStatement("DELETE FROM CCP WHERE rowid = ?")) {
 				delRow.setInt(1, ts.getROWID());
 				delRow.executeUpdate();
 			}
 
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.CCP));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.CCP));
 		} catch (SQLException | UnsupportedFlavorException | IOException e) {
 			e.printStackTrace();
 		}

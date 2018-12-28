@@ -43,13 +43,52 @@ import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.utils.ResourceLoader;
 
 public class SQLConnection implements AutoCloseable {
-	private final SQLiteConnection Db; // Internal Connection
 	private static final int APPLICATION_ID = 0x77776462;
 	private static final String DB_LOC = ResourceLoader.DB_LOC;
+	private static boolean recoveredDb = false;
+	
+	private static SQLConnection DbConn = null;
+	
+	private final SQLiteConnection Db; // Internal Connection
+
 	private boolean changedState = false;
 	private Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> dataListeners = new HashMap<>();
-	private final boolean recoveredDb;
 
+	
+	/**
+	 * Loads a new internal Db as internal memory after closing the old one. See {@link SQLConnection#SQLConnection(File)}.
+	 * @see SQLConnection#SQLConnection(File)
+	 * @param loadFile
+	 * @throws ConnectionException
+	 */
+	public static void loadNewInternalDb(File loadFile) throws ConnectionException {
+		Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> listenerMap = null;
+		
+		// deal with the old connection (and log any listeneres on that connection)
+		if(DbConn != null) {
+			listenerMap = new HashMap<>(DbConn.getDataListeners());			
+			try {
+				DbConn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e);
+			}
+		}
+		
+		// Create new connection
+		DbConn = new SQLConnection(loadFile);
+		
+		// Attach the old listeners if there where any
+		if(listenerMap != null) {
+			for(DataChangedListener lst : listenerMap.keySet()) {
+				DbConn.addDataChangedListener(lst, listenerMap.get(lst));
+			}
+		}
+		
+		// Notify listeners
+		DbConn.announceDataRefresh();
+	}
+	
 	/**
 	 * Opens a connection to the internal database, performs a recovery if necessary
 	 * (overrides loadFile behaviour), loads an external db into the internal db,
@@ -58,7 +97,7 @@ public class SQLConnection implements AutoCloseable {
 	 * @param loadFile the file to load or {@code null} for an empty db
 	 * @throws ConnectionException thrown when the connection failed to establish
 	 */
-	public SQLConnection(File loadFile) throws ConnectionException {
+	private SQLConnection(File loadFile) throws ConnectionException {
 		boolean dbExists = (new File(DB_LOC)).exists();
 
 		// Check if a lock exists on the the database (and create a connection to said
@@ -307,7 +346,15 @@ public class SQLConnection implements AutoCloseable {
 		dataListeners.put(d, e);
 	}
 
-	public boolean isRecoveredDb() {
+	public Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> getDataListeners() {
+		return dataListeners;
+	}
+
+	public static boolean isRecoveredDb() {
 		return recoveredDb;
+	}
+
+	public static SQLConnection getDbConn() {
+		return DbConn;
 	}
 }

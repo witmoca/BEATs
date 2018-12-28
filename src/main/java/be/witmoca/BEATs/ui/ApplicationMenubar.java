@@ -30,7 +30,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.connection.actions.ImportFileAction;
+import be.witmoca.BEATs.connection.actions.LoadFileAction;
+import be.witmoca.BEATs.connection.actions.SaveFileAction;
 import be.witmoca.BEATs.ui.actions.*;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
 import be.witmoca.BEATs.utils.UiIcon;
@@ -46,13 +49,13 @@ class ApplicationMenubar extends JMenuBar {
 		JMenuItem newFile = new JMenuItem("New", UiIcon.NEW.getIcon());
 		newFile.setMnemonic(KeyEvent.VK_N);
 		newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-		newFile.addActionListener(new NewFileAction());
+		newFile.addActionListener(LoadFileAction.getNewFileAction());
 		fileMenu.add(newFile);
 
 		JMenuItem openFile = new JMenuItem("Open", UiIcon.OPEN.getIcon());
 		openFile.setMnemonic(KeyEvent.VK_O);
 		openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
-		openFile.addActionListener(new OpenFileAction());
+		openFile.addActionListener(LoadFileAction.getLoadFileActionWithUI());
 		fileMenu.add(openFile);
 
 		JMenuItem saveFile = new JMenuItem("Save", UiIcon.SAVE.getIcon());
@@ -91,7 +94,7 @@ class ApplicationMenubar extends JMenuBar {
 		refreshScreen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ApplicationManager.getDB_CONN().announceDataRefresh(); // Notify all listeners that the data is 'changed' => reloads said data
+				SQLConnection.getDbConn().announceDataRefresh(); // Notify all listeners that the data is 'changed' => reloads said data
 			}
 		});
 		toolsMenu.add(refreshScreen);

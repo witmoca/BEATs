@@ -20,7 +20,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import be.witmoca.BEATs.ApplicationManager;
+import be.witmoca.BEATs.connection.SQLConnection;
 
 /*
 *
@@ -132,7 +132,7 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 			artistLast.setText("");
 			artistLocal.setText("");
 			
-			try (PreparedStatement selArtist = ApplicationManager.getDB_CONN()
+			try (PreparedStatement selArtist = SQLConnection.getDbConn()
 					.prepareStatement("SELECT Local, count(*) FROM Artist, Song, SongsInArchive WHERE Artist.ArtistName = Song.ArtistName AND Song.SongId = SongsInArchive.SongId AND Artist.ArtistName = ?")) {
 				selArtist.setString(1, artist);
 				ResultSet rs = selArtist.executeQuery();
@@ -144,7 +144,7 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 				}
 			}
 			
-			try (PreparedStatement selLastArtist = ApplicationManager.getDB_CONN().prepareStatement("SELECT Title, SongsInArchive.EpisodeId, Max(EpisodeDate) FROM SongsInArchive, Song, Episode WHERE SongsInArchive.songId = Song.songId AND SongsInArchive.EpisodeId = Episode.EpisodeID AND ArtistName = ?")) {
+			try (PreparedStatement selLastArtist = SQLConnection.getDbConn().prepareStatement("SELECT Title, SongsInArchive.EpisodeId, Max(EpisodeDate) FROM SongsInArchive, Song, Episode WHERE SongsInArchive.songId = Song.songId AND SongsInArchive.EpisodeId = Episode.EpisodeID AND ArtistName = ?")) {
 				selLastArtist.setString(1, artist);
 				ResultSet rs = selLastArtist.executeQuery();
 				if(rs.next()) {
@@ -154,7 +154,7 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 				}
 			}
 			
-			try (PreparedStatement selLastSong = ApplicationManager.getDB_CONN().prepareStatement("SELECT SongsInArchive.EpisodeId, max(EpisodeDate), count(title) FROM SongsInArchive, Song, Episode WHERE SongsInArchive.songId = Song.songId AND SongsInArchive.EpisodeId = Episode.EpisodeID AND ArtistName = ? AND title = ?")) {
+			try (PreparedStatement selLastSong = SQLConnection.getDbConn().prepareStatement("SELECT SongsInArchive.EpisodeId, max(EpisodeDate), count(title) FROM SongsInArchive, Song, Episode WHERE SongsInArchive.songId = Song.songId AND SongsInArchive.EpisodeId = Episode.EpisodeID AND ArtistName = ? AND title = ?")) {
 				selLastSong.setString(1, artist);
 				selLastSong.setString(2, song);
 				ResultSet rs = selLastSong.executeQuery();

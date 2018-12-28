@@ -31,8 +31,8 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.utils.StringUtils;
 import be.witmoca.BEATs.utils.UiIcon;
@@ -47,14 +47,14 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 		super();
 		this.setPlaylistName(playlistName);
 
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
+		SQLConnection.getDbConn().addDataChangedListener(this, DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
 		tableChanged();
 	}
 
 	@Override
 	public void tableChanged() {
 		playlistList = new ArrayList<PlaylistEntry>();
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN()
+		try (PreparedStatement getValue = SQLConnection.getDbConn()
 				.prepareStatement("SELECT rowid, Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = ? ORDER BY rowid")) {
 			getValue.setString(1, PlaylistName);
 			ResultSet value = getValue.executeQuery();
@@ -113,7 +113,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 			return;
 		try {
 			CommonSQL.removeFromSongsInPlaylist(playlistList.get(rowIndex).getROWID());
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -153,7 +153,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 				}
 
 			}
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

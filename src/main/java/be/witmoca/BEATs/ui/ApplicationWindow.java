@@ -42,10 +42,16 @@ public class ApplicationWindow extends JFrame implements WindowListener{
 	private static final long serialVersionUID = 1L;
 	private static final String mainTitleBase = "Burning Ember";
 	
+	public static ApplicationWindow APP_WINDOW = null;
+	
 	private final JComponent eastPanel = new CurrentQueuePanel();
 	private final JComponent centerPanel = new CenterTabbedPane();
 
-	public ApplicationWindow() {
+	public static void createAndShowUi() {
+		APP_WINDOW = new ApplicationWindow();
+	}
+	
+	private ApplicationWindow() {
 		// Initialise frame
 		super(mainTitleBase);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -104,5 +110,9 @@ public class ApplicationWindow extends JFrame implements WindowListener{
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
+	}
+
+	public static ApplicationWindow getAPP_WINDOW() {
+		return APP_WINDOW;
 	}
 }

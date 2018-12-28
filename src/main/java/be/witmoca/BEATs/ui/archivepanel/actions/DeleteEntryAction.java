@@ -12,9 +12,10 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.archivepanel.ArchiveTableModel;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -61,7 +62,7 @@ class DeleteEntryAction extends AbstractAction {
 		if(archive.getRowSorter() != null)
 			index = archive.getRowSorter().convertRowIndexToModel(index);
 		
-		if (JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(),
+		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(),
 				"Are you sure you want to delete row?", "Delete?",
 				 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
 			return;
@@ -70,7 +71,7 @@ class DeleteEntryAction extends AbstractAction {
 		
 		try {
 			CommonSQL.removeFromSongsInArchive(rowid);
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_ARCHIVE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

@@ -32,9 +32,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistTableModel;
 
 public class MoveToQueueAction extends AbstractAction {
@@ -59,7 +60,7 @@ public class MoveToQueueAction extends AbstractAction {
 		try {
 			// Check if artist exists already
 			boolean artistExists = false;
-			try (PreparedStatement findArtist = ApplicationManager.getDB_CONN()
+			try (PreparedStatement findArtist = SQLConnection.getDbConn()
 					.prepareStatement("SELECT count(*) FROM artist WHERE ArtistName = ?")) {
 				findArtist.setString(1, rawArtist);
 				ResultSet rs = findArtist.executeQuery();
@@ -70,7 +71,7 @@ public class MoveToQueueAction extends AbstractAction {
 			// if artist exist, find song
 			int songId = -1;
 			if (artistExists) {
-				try (PreparedStatement findSong = ApplicationManager.getDB_CONN()
+				try (PreparedStatement findSong = SQLConnection.getDbConn()
 						.prepareStatement("SELECT songId FROM Song WHERE ArtistName = ? AND Title = ?")) {
 					findSong.setString(1, rawArtist);
 					findSong.setString(2, rawSong);
@@ -82,7 +83,7 @@ public class MoveToQueueAction extends AbstractAction {
 				// create new artist if he doesn't exist
 				// ask if artist is local
 				String options[] = {"Local", "Not Local", "Cancel Operation"};
-				int answerLocal = JOptionPane.showOptionDialog(ApplicationManager.getAPP_WINDOW(), rawArtist + " is a new artist. Is this a local band?", "Band not recognized", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 2);
+				int answerLocal = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(), rawArtist + " is a new artist. Is this a local band?", "Band not recognized", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 2);
 				if(answerLocal == JOptionPane.CANCEL_OPTION || answerLocal == JOptionPane.CLOSED_OPTION) {
 					return; // CANCEL
 				}
@@ -101,7 +102,7 @@ public class MoveToQueueAction extends AbstractAction {
 			((PlaylistTableModel) source.getModel()).deleteRow(row);
 
 			// commit
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST, DataChangedListener.DataType.CURRENT_QUEUE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST, DataChangedListener.DataType.CURRENT_QUEUE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

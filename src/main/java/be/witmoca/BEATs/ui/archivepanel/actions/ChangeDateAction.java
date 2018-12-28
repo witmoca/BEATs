@@ -16,9 +16,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -84,7 +85,7 @@ class ChangeDateAction extends AbstractAction {
 		userPanel.add(episodeDate);
 				
 		
-		if(JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(), userPanel,"Change Date", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
+		if(JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel,"Change Date", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
 			return; // cancelled
 		}
 		
@@ -92,7 +93,7 @@ class ChangeDateAction extends AbstractAction {
 		// EpisodeDates are unique => Constraint Violation if the episode exists already. So Ignore in that case
 		try {
 			CommonSQL.updateEpisodeDate(episode, episodeDate.getValue());
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.EPISODE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.EPISODE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

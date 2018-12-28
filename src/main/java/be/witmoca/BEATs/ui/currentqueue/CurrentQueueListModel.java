@@ -31,15 +31,15 @@ import java.util.TreeMap;
 
 import javax.swing.AbstractListModel;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
 
 public class CurrentQueueListModel extends AbstractListModel<String> implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
 	private final SortedMap<Integer, String> internalMap = new TreeMap<Integer, String>();
 
 	public CurrentQueueListModel() {
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.CURRENT_QUEUE));
+		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.CURRENT_QUEUE));
 		this.tableChanged();
 	}
 
@@ -61,7 +61,7 @@ public class CurrentQueueListModel extends AbstractListModel<String> implements 
 	public void tableChanged() {
 		// Commit happend that changed the currentqueue => reload
 		internalMap.clear();
-		try (PreparedStatement getValue = ApplicationManager.getDB_CONN().prepareStatement("SELECT SongOrder, (ArtistName || ' - ' || Title) FROM CurrentQueue, Song WHERE CurrentQueue.SongId = Song.SongId ORDER BY SongOrder ASC")) {
+		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement("SELECT SongOrder, (ArtistName || ' - ' || Title) FROM CurrentQueue, Song WHERE CurrentQueue.SongId = Song.SongId ORDER BY SongOrder ASC")) {
 			ResultSet value = getValue.executeQuery();
 			while(value.next()) {
 				internalMap.put(value.getInt(1) ,value.getString(2));

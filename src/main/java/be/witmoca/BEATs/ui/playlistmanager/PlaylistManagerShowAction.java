@@ -32,9 +32,10 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 
 public class PlaylistManagerShowAction implements ActionListener {
 	/*
@@ -51,7 +52,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 
 		PlaylistManagerPanel pmp = new PlaylistManagerPanel();
 		// show dialog
-		if (JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(), pmp, "Playlist Manager",
+		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), pmp, "Playlist Manager",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null) != JOptionPane.OK_OPTION)
 			return;
 
@@ -99,14 +100,14 @@ public class PlaylistManagerShowAction implements ActionListener {
 			int maxTab = CommonSQL.getMaxTabOrderFromPlaylist();
 			
 			// move tabOrders up
-			try (PreparedStatement tabUp = ApplicationManager.getDB_CONN().prepareStatement("UPDATE Playlist SET TabOrder = TabOrder + ?")) {
+			try (PreparedStatement tabUp = SQLConnection.getDbConn().prepareStatement("UPDATE Playlist SET TabOrder = TabOrder + ?")) {
 				tabUp.setInt(1, maxTab);
 				tabUp.executeUpdate();
 			}
 			
 			// Create the playlists
 			for(String newP : create) {
-				try (PreparedStatement addP = ApplicationManager.getDB_CONN().prepareStatement("INSERT INTO Playlist VALUES (?, ( SELECT coalesce(max(TabOrder)+1,1) FROM Playlist) )")) {
+				try (PreparedStatement addP = SQLConnection.getDbConn().prepareStatement("INSERT INTO Playlist VALUES (?, ( SELECT coalesce(max(TabOrder)+1,1) FROM Playlist) )")) {
 					addP.setString(1, newP);
 					addP.executeUpdate();
 				}
@@ -115,7 +116,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 			// Reorder all the playlists
 			int i = 0;
 			for(String name : newNames) {
-				try (PreparedStatement order = ApplicationManager.getDB_CONN().prepareStatement("UPDATE Playlist SET TabOrder = ? WHERE PlaylistName = ?")) {
+				try (PreparedStatement order = SQLConnection.getDbConn().prepareStatement("UPDATE Playlist SET TabOrder = ? WHERE PlaylistName = ?")) {
 					order.setInt(1, i++);
 					order.setString(2, name);
 					order.executeUpdate();
@@ -123,7 +124,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 			}
 			
 			// commit the changes
-			ApplicationManager.getDB_CONN().commit(DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
+			SQLConnection.getDbConn().commit(DataChangedListener.DataType.PLAYLIST_DATA_OPTS);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

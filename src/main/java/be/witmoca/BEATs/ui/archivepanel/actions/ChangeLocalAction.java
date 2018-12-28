@@ -13,9 +13,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import be.witmoca.BEATs.ApplicationManager;
+
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.UiIcon;
 
 /*
@@ -76,7 +78,7 @@ class ChangeLocalAction extends AbstractAction {
 		JCheckBox localBox = new JCheckBox(artist + " is local", local);
 		userPanel.add(localBox);
 
-		if (JOptionPane.showConfirmDialog(ApplicationManager.getAPP_WINDOW(), userPanel, "Rename",
+		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel, "Rename",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
 			return; // cancelled
 		}
@@ -88,7 +90,7 @@ class ChangeLocalAction extends AbstractAction {
 		// update artist
 		try {
 			CommonSQL.updateLocalityOfArtist(localBox.isSelected(), artist);
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.ARTIST));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.ARTIST));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

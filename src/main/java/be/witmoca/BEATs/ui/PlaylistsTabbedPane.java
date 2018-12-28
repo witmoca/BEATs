@@ -27,9 +27,9 @@ import java.util.EnumSet;
 
 import javax.swing.JTabbedPane;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
 class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
@@ -40,7 +40,7 @@ class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
 		
 		this.tableChanged();
-		ApplicationManager.getDB_CONN().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
+		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedListener.DataType.PLAYLIST));
 	}
 	
 	@Override

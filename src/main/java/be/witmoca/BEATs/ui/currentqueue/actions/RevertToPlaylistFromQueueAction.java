@@ -34,9 +34,10 @@ import javax.swing.Action;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.currentqueue.CurrentQueueListModel;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -71,7 +72,7 @@ class RevertToPlaylistFromQueueAction extends AbstractAction {
 			List<String> playlists = CommonSQL.getPlaylists();
 
 			String[] options = playlists.toArray(new String[0]);
-			String playlistName = (String) JOptionPane.showInputDialog(ApplicationManager.getAPP_WINDOW(), "Playlist to revert to:",
+			String playlistName = (String) JOptionPane.showInputDialog(ApplicationWindow.getAPP_WINDOW(), "Playlist to revert to:",
 					"Revert played song", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if(playlistName == null)
 				return;
@@ -79,7 +80,7 @@ class RevertToPlaylistFromQueueAction extends AbstractAction {
 			String artist;
 			String song;
 			String comment;
-			try (PreparedStatement sel = ApplicationManager.getDB_CONN().prepareStatement("SELECT ArtistName, Title, Comment FROM CurrentQueue,Song WHERE CurrentQueue.songId = Song.SongId AND SongOrder = ?")) {
+			try (PreparedStatement sel = SQLConnection.getDbConn().prepareStatement("SELECT ArtistName, Title, Comment FROM CurrentQueue,Song WHERE CurrentQueue.songId = Song.SongId AND SongOrder = ?")) {
 				sel.setInt(1, songOrder);
 				ResultSet rs = sel.executeQuery();
 				if(!rs.next())
@@ -92,7 +93,7 @@ class RevertToPlaylistFromQueueAction extends AbstractAction {
 			CommonSQL.addSongInPlaylist(playlistName, artist, song, comment);
 			CommonSQL.removeFromCurrentQueue(songOrder);
 			
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST, DataChangedListener.DataType.CURRENT_QUEUE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST, DataChangedListener.DataType.CURRENT_QUEUE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

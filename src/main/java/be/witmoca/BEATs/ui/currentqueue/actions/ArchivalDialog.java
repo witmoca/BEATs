@@ -45,8 +45,9 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerListModel;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.connection.CommonSQL;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 
 class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private static final long serialVersionUID = 1L;
@@ -60,7 +61,7 @@ class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private boolean valid = false;
 	
 	public ArchivalDialog() {
-		super(ApplicationManager.getAPP_WINDOW(), "Archive", true);
+		super(ApplicationWindow.getAPP_WINDOW(), "Archive", true);
 		
 		// create the entryPanel
 		GroupLayout gLayout = new GroupLayout(entryPanel);
@@ -138,7 +139,7 @@ class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private static JTable constructSummary() {
 		try {
 			Vector<Vector<String>> tableData = new Vector<Vector<String>>();
-			try (PreparedStatement sel = ApplicationManager.getDB_CONN().prepareStatement(
+			try (PreparedStatement sel = SQLConnection.getDbConn().prepareStatement(
 					"SELECT ArtistName, Title, Comment FROM CurrentQueue,Song WHERE CurrentQueue.songId = Song.SongId ORDER BY SongOrder ASC")) {
 
 				ResultSet rs = sel.executeQuery();

@@ -17,27 +17,59 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: NewFileAction.java
+* File: SaveFileAction.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.actions;
+package be.witmoca.BEATs.connection.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
-import be.witmoca.BEATs.ApplicationManager;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
-public class NewFileAction implements ActionListener {
+import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.ApplicationWindow;
 
-	public NewFileAction() {
+public class SaveFileAction implements ActionListener {
+	private boolean hasSucceeded = false;
+
+	public SaveFileAction() {
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		ApplicationManager.changeModel(null);
+		final JFileChooser fc = new JFileChooser();
+		fc.setAcceptAllFileFilterUsed(false);
+		fc.setFileFilter(new BEATsFileFilter());
+		if (fc.showSaveDialog(ApplicationWindow.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
+			String pathToFile = fc.getSelectedFile().getAbsolutePath();
+			// Only 1 ".beats" extension!
+			while (pathToFile.endsWith(".beats")) {
+				pathToFile = pathToFile.substring(0, pathToFile.length() - 6);
+			}
+			pathToFile += ".beats";
+			try {
+				SQLConnection.getDbConn().saveDatabase(pathToFile);
+				hasSucceeded = true;
+			} catch (SQLException e1) {
+				JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
+						"Error during saving:\n" + e1.getLocalizedMessage(), "Oops!",
+						javax.swing.JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
+	
+	public boolean hasSucceeded() {
+		return hasSucceeded;
+	}
 }

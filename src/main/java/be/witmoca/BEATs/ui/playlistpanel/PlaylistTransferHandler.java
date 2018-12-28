@@ -11,9 +11,9 @@ import java.sql.SQLException;
 import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.connection.DataChangedListener;
+import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
 
 /*
@@ -81,7 +81,7 @@ class PlaylistTransferHandler extends TransferHandler {
 			
 			CommonSQL.addSongInPlaylist(pName, ts.getARTIST(), ts.getSONG(),"");
 			
-			ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));			
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));			
 		} catch (UnsupportedFlavorException | IOException | SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -114,7 +114,7 @@ class PlaylistTransferHandler extends TransferHandler {
 				
 				CommonSQL.removeFromSongsInPlaylist(ts.getROWID());
 				
-				ApplicationManager.getDB_CONN().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
+				SQLConnection.getDbConn().commit(EnumSet.of(DataChangedListener.DataType.SONGS_IN_PLAYLIST));
 			} catch (SQLException | UnsupportedFlavorException | IOException e) {
 				e.printStackTrace();
 			}		
