@@ -138,23 +138,23 @@ public class CommonSQL {
 		}	
 	}
 
-	public static void addSection(String sectionCode) throws SQLException {
+	public static void addGenre(String Genre) throws SQLException {
 		try (PreparedStatement add = SQLConnection.getDbConn()
-				.prepareStatement("INSERT OR IGNORE INTO section VALUES (?)")) {
-			add.setString(1, sectionCode);
+				.prepareStatement("INSERT OR IGNORE INTO Genre VALUES (?)")) {
+			add.setString(1, Genre);
 			add.executeUpdate();
 		}
 	}
 
 	/**
 	 * 
-	 * @return List of sections, ordered by name
+	 * @return List of Genres, ordered by name
 	 * @throws SQLException
 	 */
-	public static List<String> getSections() throws SQLException {
+	public static List<String> getGenres() throws SQLException {
 		List<String> result = new ArrayList<String>();
 		try (PreparedStatement sel = SQLConnection.getDbConn()
-				.prepareStatement("SELECT SectionName FROM Section ORDER BY SectionName ASC")) {
+				.prepareStatement("SELECT GenreName FROM Genre ORDER BY GenreName ASC")) {
 			ResultSet rs = sel.executeQuery();
 			while (rs.next()) {
 				result.add(rs.getString(1));
@@ -226,12 +226,12 @@ public class CommonSQL {
 		}
 	}
 
-	public static void addSongInArchive(int songId, int episodeId, String section, String comment) throws SQLException {
+	public static void addSongInArchive(int songId, int episodeId, String Genre, String comment) throws SQLException {
 		try (PreparedStatement add = SQLConnection.getDbConn().prepareStatement(
-				"INSERT INTO SongsInArchive (SongId, EpisodeId, SectionName, Comment) VALUES (?, ?, ?, ?)")) {
+				"INSERT INTO SongsInArchive (SongId, EpisodeId, GenreName, Comment) VALUES (?, ?, ?, ?)")) {
 			add.setInt(1, songId);
 			add.setInt(2, episodeId);
-			add.setString(3, section);
+			add.setString(3, Genre);
 			add.setString(4, StringUtils.ToUpperCamelCase(comment));
 			add.executeUpdate();
 		}

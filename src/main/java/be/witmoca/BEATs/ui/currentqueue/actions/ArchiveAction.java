@@ -57,12 +57,12 @@ class ArchiveAction extends AbstractAction {
 			return;
 		
 		int episodeId = ad.getEpisode();
-		String section = ad.getSection();
+		String Genre = ad.getGenre();
 		
 		try (PreparedStatement listCQ = SQLConnection.getDbConn().prepareStatement("SELECT SongId, Comment FROM CurrentQueue ORDER BY SongOrder ASC")) {
 			ResultSet rs = listCQ.executeQuery();
 			while (rs.next())
-				CommonSQL.addSongInArchive(rs.getInt(1), episodeId, section, rs.getString(2));
+				CommonSQL.addSongInArchive(rs.getInt(1), episodeId, Genre, rs.getString(2));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

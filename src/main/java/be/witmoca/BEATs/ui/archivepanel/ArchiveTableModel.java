@@ -37,7 +37,7 @@ import be.witmoca.BEATs.connection.SQLConnection;
 
 public class ArchiveTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
-	private static final String COLUMN_NAME[] = {"Artist","Song","Episode", "Section" ,"Comment"};
+	private static final String COLUMN_NAME[] = {"Artist","Song","Episode", "Genre" ,"Comment"};
 	private List<ArchiveEntry> archive = new ArrayList<ArchiveEntry>();
 	
 	public ArchiveTableModel() {
@@ -50,7 +50,7 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	@Override
 	public void tableChanged() {
 		archive.clear(); // clear() is (probably) faster as the backing array doesn't get resized (just turned into null values), so reinserting goes fast
-		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement("SELECT SongsInArchive.rowid, ArtistName, Title, SongsInArchive.EpisodeId, EpisodeDate, SectionName, Comment FROM SongsInArchive,Song, Episode WHERE SongsInArchive.SongId = Song.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeId")) {
+		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement("SELECT SongsInArchive.rowid, ArtistName, Title, SongsInArchive.EpisodeId, EpisodeDate, GenreName, Comment FROM SongsInArchive,Song, Episode WHERE SongsInArchive.SongId = Song.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeId")) {
 			ResultSet value = getValue.executeQuery();
 			while(value.next()) {
 				archive.add(new ArchiveEntry(value.getInt(1), value.getString(2), value.getString(3) ,value.getInt(4) , value.getInt(5), value.getString(6), value.getString(7)));
@@ -101,16 +101,16 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 		private final String SONG;
 		private final int EPISODE;
 		private final String EPISODE_DATE;
-		private final String SECTION;
+		private final String Genre;
 		private final String COMMENT;	
 
-		ArchiveEntry(int rowid, String artist, String song, int episode, int epDate, String section, String comment) {
+		ArchiveEntry(int rowid, String artist, String song, int episode, int epDate, String Genre, String comment) {
 			this.ROWID = rowid;
 			this.ARTIST =  artist;
 			this.SONG = song;
 			this.EPISODE = episode;
 			this.EPISODE_DATE =  DateTimeFormatter.ofPattern("dd/MM/uu").format(LocalDate.ofEpochDay(epDate));
-			this.SECTION = section;
+			this.Genre = Genre;
 			this.COMMENT = comment;
 		}
 		
@@ -119,7 +119,7 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 			case 0: return this.ARTIST;
 			case 1: return this.SONG;
 			case 2: return this.EPISODE;
-			case 3: return this.SECTION;
+			case 3: return this.Genre;
 			case 4: return this.COMMENT;
 			default: return null;
 			}

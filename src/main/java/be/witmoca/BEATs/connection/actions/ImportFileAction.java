@@ -168,7 +168,7 @@ public class ImportFileAction implements ActionListener {
 				throw new IOException("Archive item is missing a date. See items with aflNr: " + aflNr);
 			}
 			CommonSQL.addEpisode(aflNr, aflDatum);
-			CommonSQL.addSection(aflCode);
+			CommonSQL.addGenre(aflCode);
 			artiest = CommonSQL.addArtist(artiest, belgisch);
 			int songId = CommonSQL.addSong(titel, artiest);
 			CommonSQL.addSongInArchive(songId, aflNr, aflCode, commentaar);

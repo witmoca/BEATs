@@ -56,7 +56,7 @@ class ArchivalDialog extends JDialog implements PropertyChangeListener{
 	private final JPanel cPane = new JPanel(new BorderLayout());
 	private final JPanel entryPanel = new JPanel() ;
 	private final JSpinner episodeId;
-	private final JSpinner sectionId;
+	private final JSpinner GenreId;
 	
 	private boolean valid = false;
 	
@@ -74,22 +74,22 @@ class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		JComponent j2 = new JButton(new CreateNewEpisode(this, (SpinnerEpisodeModel) episodeId.getModel()));
 		entryPanel.add(j2);
 		
-		JLabel j3 = new JLabel("Section Code");
+		JLabel j3 = new JLabel("Genre");
 		entryPanel.add(j3);
-		List<String> sections = null;
+		List<String> Genres = null;
 		try {
-			sections = CommonSQL.getSections();
+			Genres = CommonSQL.getGenres();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		sectionId = new JSpinner(new SpinnerListModel(sections));
-		entryPanel.add(sectionId);
+		GenreId = new JSpinner(new SpinnerListModel(Genres));
+		entryPanel.add(GenreId);
 		
 		gLayout.setHorizontalGroup(gLayout.createSequentialGroup().addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(j1).addComponent(j3))
-		.addGap(5).addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(episodeId).addComponent(sectionId)).addComponent(j2));
+		.addGap(5).addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(episodeId).addComponent(GenreId)).addComponent(j2));
 		
 		gLayout.setVerticalGroup(gLayout.createSequentialGroup().addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(j1).addComponent(episodeId).addComponent(j2))
-				.addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(j3).addComponent(sectionId)));
+				.addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(j3).addComponent(GenreId)));
 		
 		// add the entryPanel
 		cPane.add(entryPanel, BorderLayout.CENTER);
@@ -113,8 +113,8 @@ class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		return (int) episodeId.getValue();
 	}
 	
-	public String getSection() {
-		return (String) sectionId.getValue();
+	public String getGenre() {
+		return (String) GenreId.getValue();
 	}
 	
 	@Override
