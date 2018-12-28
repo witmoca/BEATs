@@ -44,6 +44,7 @@ public enum UiIcon {
 	CHECKED("BasicUi/check-mark"),
 	SCREEN("BasicUi/desktop"),
 	EDIT_W("BasicUi/edit-write"),
+	FOLDER_OPEN("BasicUi/folder-open"),
 	
 	// Item operations
 	DELETE("BasicUi/garbage"),
@@ -69,7 +70,6 @@ public enum UiIcon {
 //	WARNING_TRI("exclamation-mark-triangle-sign"),
 //	
 //	// tools
-//	FOLDER_OPEN("folder-open"),
 //	OPTIONS("option-menu"),
 //	SETTINGS("gear-setting"),
 //	CHART("fold-chart"),

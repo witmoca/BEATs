@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 */
 public class ResourceLoader {
 	private static final String APP_DIR = System.getProperty("user.home") + File.separator + "BEATs";
-	private static final String LOG_DIR = APP_DIR + File.separator + "log";
+	public static final String LOG_DIR = APP_DIR + File.separator + "log";
 	private static final String[] DIRECTORIES = { APP_DIR, LOG_DIR };
 	
 	private static final String ERR_LOG_EXT = ".err";
@@ -67,9 +67,17 @@ public class ResourceLoader {
 	}
 
 	public static void registerStandardErrorLog() throws IOException {
-		// Delete oldest error logs
 		File[] errorLogs = listErrFiles();
-		while(errorLogs.length >= 10) {
+		// Delete empty log files
+		for(int i = 0; i < errorLogs.length; i++) {
+			if(errorLogs[i].length() == 0) {
+				errorLogs[i].delete();	// ignore if they couldn't be delete (might be in use by another instance)
+			}
+		}
+		// Reload list
+		errorLogs = listErrFiles();
+		// Delete oldest if necessary
+		while(errorLogs.length >= 20) {
 			// find oldest
 			File oldest = errorLogs[0];
 			for(int i = 1; i < errorLogs.length; i++) {
@@ -84,11 +92,11 @@ public class ResourceLoader {
 		
 		// Calculate new name
 		File errLog = null;
-		for(int i = 1; errLog == null || errLog.exists(); i++)
-			errLog = new File(LOG_DIR + File.separator + (LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu_MM_dd"))) + "-" + i + ERR_LOG_EXT);
+		while(errLog == null || errLog.exists())
+			errLog = new File(LOG_DIR + File.separator + (LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu_MM_dd-HH_mm_ss"))) + ERR_LOG_EXT);
 		
-		// Register new error log
-		System.setErr(new PrintStream(new FileOutputStream(errLog),true));
+		// Register new error log (to both standard error and the log folder)
+		System.setErr(new PrintStream(new DuplicateOutputStream(new FileOutputStream(errLog), System.err),true));
 	}
 	
 	private static File[] listErrFiles() {

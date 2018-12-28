@@ -22,9 +22,12 @@
 */
 package be.witmoca.BEATs.ui;
 
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -36,6 +39,7 @@ import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.connection.actions.SaveFileAction;
 import be.witmoca.BEATs.ui.actions.*;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
+import be.witmoca.BEATs.utils.ResourceLoader;
 import be.witmoca.BEATs.utils.UiIcon;
 
 class ApplicationMenubar extends JMenuBar {
@@ -90,15 +94,6 @@ class ApplicationMenubar extends JMenuBar {
 		
 		toolsMenu.addSeparator();
 		
-		JMenuItem refreshScreen = new JMenuItem("Refresh Screen", UiIcon.SCREEN.getIcon());
-		refreshScreen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				SQLConnection.getDbConn().announceDataRefresh(); // Notify all listeners that the data is 'changed' => reloads said data
-			}
-		});
-		toolsMenu.add(refreshScreen);
-		
 		JMenuItem episodeContinuityCheck = new JMenuItem("Episode Continuity Check", UiIcon.CHECKED.getIcon());
 		episodeContinuityCheck.addActionListener(new EpisodeIdContinuityCheckAction());
 		toolsMenu.add(episodeContinuityCheck);
@@ -108,6 +103,34 @@ class ApplicationMenubar extends JMenuBar {
 		// HELP
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setMnemonic(KeyEvent.VK_H);
+		
+		JMenuItem openLocal = new JMenuItem("Open log folder", UiIcon.FOLDER_OPEN.getIcon());
+		openLocal.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+						openLocal.setEnabled(false);
+						return;
+					}
+					Desktop.getDesktop().open(new File(ResourceLoader.LOG_DIR));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		helpMenu.add(openLocal);
+		
+		JMenuItem refreshScreen = new JMenuItem("Refresh Screen", UiIcon.SCREEN.getIcon());
+		refreshScreen.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SQLConnection.getDbConn().announceDataRefresh(); // Notify all listeners that the data is 'changed' => reloads said data
+			}
+		});
+		helpMenu.add(refreshScreen);
+		
+		helpMenu.addSeparator();
 		
 		JMenuItem about = new JMenuItem("About", UiIcon.INFO.getIcon());
 		about.addActionListener(new ShowAboutDialogAction());
