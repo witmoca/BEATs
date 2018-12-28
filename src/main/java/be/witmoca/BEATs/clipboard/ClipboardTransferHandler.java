@@ -10,9 +10,14 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
+
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.SQLConnection;
@@ -41,7 +46,10 @@ import be.witmoca.BEATs.connection.SQLConnection;
 */
 public class ClipboardTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
+	private static final List<ListSelectionListener> listeners = new ArrayList<ListSelectionListener>();
+	
 	private static int selected = -1;
+	
 
 	@Override
 	public boolean canImport(TransferSupport support) {
@@ -134,6 +142,17 @@ public class ClipboardTransferHandler extends TransferHandler {
 	}
 	
 	public static void setSelected(int selected) {
+		if(ClipboardTransferHandler.selected == selected)
+			return;
+		
 		ClipboardTransferHandler.selected = selected;
+		
+		for(ListSelectionListener l : listeners) {
+			l.valueChanged(new ListSelectionEvent(ClipboardTransferHandler.class, selected, selected, false));
+		}
+	}
+	
+	public static void addListSelectionListener(ListSelectionListener l) {
+		listeners.add(l);
 	}
 }

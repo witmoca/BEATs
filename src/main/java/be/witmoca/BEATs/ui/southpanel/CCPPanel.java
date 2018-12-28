@@ -40,28 +40,46 @@ import be.witmoca.BEATs.clipboard.ClipboardTransferHandler;
 */
 
 /**
- *  UI representation of the Cut/Copy/Paste container for songs
+ * UI representation of the Cut/Copy/Paste container for songs
  */
 class CCPPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	
+
 	public CCPPanel() {
-		super(new GridBagLayout());		
+		super(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1;
 		gbc.weighty = 1;
-		
+
 		JList<String> ccpList = new JList<>(new CCPListModel());
-		ccpList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				ClipboardTransferHandler.setSelected(e.getFirstIndex());
-			}
-		});
-		
-		add(new JScrollPane(ccpList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), gbc);
-		
+
+		ccpList.getSelectionModel().addListSelectionListener(new CCPUpdater(ccpList));
+
+		add(new JScrollPane(ccpList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
+				gbc);
+
 		this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+	}
+
+	private static class CCPUpdater implements ListSelectionListener {
+		private final JList<?> list;
+
+		public CCPUpdater(JList<?> list) {
+			this.list = list;
+			ClipboardTransferHandler.addListSelectionListener(this);
+		}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			if (ClipboardTransferHandler.class.equals(e.getSource()) && list.getSelectedIndex() != e.getFirstIndex()) {
+				// if transferhandler is source => update the list (only if it is different,
+				// otherwise this keeps going round and round)
+				list.setSelectedIndex(e.getFirstIndex());
+			} else {
+				// if list is source => update the transferhandler
+				ClipboardTransferHandler.setSelected(list.getSelectedIndex());
+			}
+		}
 	}
 }

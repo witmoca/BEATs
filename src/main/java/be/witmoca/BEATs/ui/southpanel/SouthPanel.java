@@ -45,6 +45,5 @@ public class SouthPanel extends JPanel {
 		
 		this.add(new CCPPanel());
 		this.add(new InfoPanel(trackingTable, infoArtistColumn, infoSongTitleColumn));
-		//this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 	}
 }
