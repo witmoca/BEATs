@@ -4,9 +4,14 @@
 package be.witmoca.BEATs.utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,8 +39,13 @@ import java.util.stream.Stream;
 * Created: 2018
 */
 public class ResourceLoader {
-	private static final String APP_FOLDER = System.getProperty("user.home") + File.separator + "BEATs";
-	public static final String DB_LOC = APP_FOLDER + File.separator + "currentDocument.beats";
+	private static final String APP_DIR = System.getProperty("user.home") + File.separator + "BEATs";
+	private static final String LOG_DIR = APP_DIR + File.separator + "log";
+	private static final String[] DIRECTORIES = { APP_DIR, LOG_DIR };
+	
+	private static final String ERR_LOG_EXT = ".err";
+	
+	public static final String DB_LOC = APP_DIR + File.separator + "currentDocument.beats";
 
 	/**
 	 * Initialises the File/Folder tree needed for operation.
@@ -44,16 +54,52 @@ public class ResourceLoader {
 	 */
 	public static void initFileTree() throws IOException {
 		try {
-			// create root
-			File root = new File(APP_FOLDER);
-			root.mkdirs();
-			if (!root.exists() || !root.isDirectory())
-				throw new IOException("Root folder " + APP_FOLDER + " doesn't exist or is not a directory");
+			// Create the folder structure
+			for (String dir : DIRECTORIES) {
+				File f = new File(dir);
+				f.mkdirs();
+				if (!f.exists() || !f.isDirectory())
+					throw new IOException("Could not create directory " +  dir);
+			}
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
 	}
+
+	public static void registerStandardErrorLog() throws IOException {
+		// Delete oldest error logs
+		File[] errorLogs = listErrFiles();
+		while(errorLogs.length >= 10) {
+			// find oldest
+			File oldest = errorLogs[0];
+			for(int i = 1; i < errorLogs.length; i++) {
+				if(oldest.getName().compareTo(errorLogs[i].getName()) > 0) {
+					oldest = errorLogs[i];
+				}
+			}
+			if(!oldest.delete())
+				throw new IOException("Could not delete error log!\n" + oldest.getAbsolutePath());
+			errorLogs = listErrFiles();
+		}
+		
+		// Calculate new name
+		File errLog = null;
+		for(int i = 1; errLog == null || errLog.exists(); i++)
+			errLog = new File(LOG_DIR + File.separator + (LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu_MM_dd"))) + "-" + i + ERR_LOG_EXT);
+		
+		// Register new error log
+		System.setErr(new PrintStream(new FileOutputStream(errLog),true));
+	}
 	
+	private static File[] listErrFiles() {
+		return (new File(LOG_DIR)).listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(ERR_LOG_EXT);
+			}
+		});
+	}
+
 	/**
 	 * Reads in a text based file and returns a list containing the lines inside it
 	 * 

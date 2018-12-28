@@ -49,7 +49,8 @@ public class ApplicationManager {
 		try {
 			// Initialise Files & folders
 			ResourceLoader.initFileTree();
-			
+			// Register a new standard output
+			ResourceLoader.registerStandardErrorLog();
 		} catch (IOException e) {
 			fatalError(e);
 			return;
