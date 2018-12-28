@@ -46,27 +46,28 @@ public class SQLConnection implements AutoCloseable {
 	private static final int APPLICATION_ID = 0x77776462;
 	private static final String DB_LOC = ResourceLoader.DB_LOC;
 	private static boolean recoveredDb = false;
-	
+
 	private static SQLConnection DbConn = null;
-	
+
 	private final SQLiteConnection Db; // Internal Connection
 
 	private boolean changedState = false;
 	private Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> dataListeners = new HashMap<>();
 
-	
 	/**
-	 * Loads a new internal Db as internal memory after closing the old one. See {@link SQLConnection#SQLConnection(File)}.
+	 * Loads a new internal Db as internal memory after closing the old one. See
+	 * {@link SQLConnection#SQLConnection(File)}.
+	 * 
 	 * @see SQLConnection#SQLConnection(File)
 	 * @param loadFile
 	 * @throws ConnectionException
 	 */
 	public static void loadNewInternalDb(File loadFile) throws ConnectionException {
 		Map<DataChangedListener, EnumSet<DataChangedListener.DataType>> listenerMap = null;
-		
+
 		// deal with the old connection (and log any listeneres on that connection)
-		if(DbConn != null) {
-			listenerMap = new HashMap<>(DbConn.getDataListeners());			
+		if (DbConn != null) {
+			listenerMap = new HashMap<>(DbConn.getDataListeners());
 			try {
 				DbConn.close();
 			} catch (SQLException e) {
@@ -74,21 +75,21 @@ public class SQLConnection implements AutoCloseable {
 				throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e);
 			}
 		}
-		
+
 		// Create new connection
 		DbConn = new SQLConnection(loadFile);
-		
+
 		// Attach the old listeners if there where any
-		if(listenerMap != null) {
-			for(DataChangedListener lst : listenerMap.keySet()) {
+		if (listenerMap != null) {
+			for (DataChangedListener lst : listenerMap.keySet()) {
 				DbConn.addDataChangedListener(lst, listenerMap.get(lst));
 			}
 		}
-		
+
 		// Notify listeners
 		DbConn.announceDataRefresh();
 	}
-	
+
 	/**
 	 * Opens a connection to the internal database, performs a recovery if necessary
 	 * (overrides loadFile behaviour), loads an external db into the internal db,
@@ -183,26 +184,9 @@ public class SQLConnection implements AutoCloseable {
 
 	private void createTables() throws SQLException {
 		try (Statement createEmptyTables = Db.createStatement()) {
-			// Artist-Song
-			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS Artist(ArtistName TEXT PRIMARY KEY COLLATE NOCASE, Local INTEGER NOT NULL)");
-			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS Song(SongId INTEGER PRIMARY KEY, Title TEXT COLLATE NOCASE, ArtistName REFERENCES Artist, UNIQUE (Title, ArtistName))");
-			// Other Base tables
-			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS Playlist(PlaylistName TEXT PRIMARY KEY, TabOrder INTEGER NOT NULL UNIQUE)");
-			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS Episode(EpisodeId INTEGER PRIMARY KEY, EpisodeDate INTEGER NOT NULL UNIQUE)");
-			createEmptyTables.executeUpdate("CREATE TABLE IF NOT EXISTS Section(SectionName TEXT PRIMARY KEY)");
-			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS ccp(rowid INTEGER PRIMARY KEY, Artist TEXT NOT NULL, Song TEXT NOT NULL)");
-			// Relation Tables
-			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS SongsInPlaylist(rowid INTEGER PRIMARY KEY, PlaylistName REFERENCES Playlist NOT NULL,Artist TEXT NOT NULL, Song TEXT NOT NULL, Comment TEXT)");
-			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS CurrentQueue(SongOrder INTEGER PRIMARY KEY, SongId REFERENCES Song NOT NULL, Comment TEXT)");
-			createEmptyTables.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS SongsInArchive(rowid INTEGER PRIMARY KEY, SongId REFERENCES Song NOT NULL, EpisodeId REFERENCES Episode NOT NULL, SectionName REFERENCES Section NOT NULL, Comment TEXT)");
+			for (String createLine : ResourceLoader.ReadResource("Text/create.sql")) {
+				createEmptyTables.executeUpdate(createLine);
+			}
 		}
 	}
 
@@ -327,7 +311,8 @@ public class SQLConnection implements AutoCloseable {
 		Db.commit();
 		Db.close();
 		if (!(new File(DB_LOC)).delete())
-			throw new SQLException(new IOException("Could not cleanup Burning Ember internal storage (" + DB_LOC + ")"));
+			throw new SQLException(
+					new IOException("Could not cleanup Burning Ember internal storage (" + DB_LOC + ")"));
 	}
 
 	public boolean isChanged() {
