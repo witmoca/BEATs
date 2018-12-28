@@ -47,9 +47,21 @@ public class SaveFileAction implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final JFileChooser fc = new JFileChooser();
+		final JFileChooser fc = new JFileChooser() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void approveSelection() {
+				// if file already exists => show confirm dialog
+		        if(getSelectedFile().exists() && JOptionPane.showConfirmDialog(this,"Do you want to overwrite this file?","File Exists",JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION){
+		        	return;
+		        }
+				super.approveSelection();
+			}
+		};
+		
 		fc.setAcceptAllFileFilterUsed(false);
 		fc.setFileFilter(new BEATsFileFilter());
+		
 		if (fc.showSaveDialog(ApplicationWindow.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
 			String pathToFile = fc.getSelectedFile().getAbsolutePath();
 			// Only 1 ".beats" extension!
