@@ -32,7 +32,6 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
 import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
-import be.witmoca.BEATs.clipboard.BEATsClipboard;
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.ResourceLoader;
@@ -40,8 +39,6 @@ import be.witmoca.BEATs.utils.ResourceLoader;
 public class ApplicationManager {
 	// Format : MMMmmmrrr with M = Major, m = minor & r = revision (do not lead with zeros, as this is interpreted as octal)
 	public static final int APP_VERSION = 1000;
-
-	private static final BEATsClipboard INT_CLIP = new BEATsClipboard("BEATs Internal Clipboard");
 
 	// Start up
 	public static void main(String[] args) {		
@@ -122,9 +119,5 @@ public class ApplicationManager {
 				return test;
 		}
 		return null;
-	}
-	
-	public static BEATsClipboard getINT_CLIP() {
-		return INT_CLIP;
 	}
 }

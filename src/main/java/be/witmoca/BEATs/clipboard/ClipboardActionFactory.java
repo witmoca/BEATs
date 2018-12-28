@@ -11,7 +11,7 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 import javax.swing.TransferHandler.TransferSupport;
-import be.witmoca.BEATs.ApplicationManager;
+
 import be.witmoca.BEATs.utils.UiIcon;
 
 /*
@@ -64,7 +64,7 @@ public class ClipboardActionFactory {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			TransferHandler th = source.getTransferHandler();
-			Clipboard clipboard = ApplicationManager.getINT_CLIP();
+			Clipboard clipboard = BEATsClipboard.getINT_CLIP();
 			if ((clipboard == null) || (th == null)) {
 				return;
 			}
@@ -91,7 +91,7 @@ public class ClipboardActionFactory {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			TransferHandler th = source.getTransferHandler();
-			BEATsClipboard clipboard = ApplicationManager.getINT_CLIP();
+			BEATsClipboard clipboard = BEATsClipboard.getINT_CLIP();
 
 			if ((clipboard == null) || (th == null)) {
 				return;
