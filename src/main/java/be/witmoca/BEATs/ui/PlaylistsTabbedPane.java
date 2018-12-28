@@ -45,6 +45,7 @@ class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
 	
 	@Override
 	public void tableChanged() {
+		this.removeAll();
 		try {
 			for(String playlist : CommonSQL.getPlaylists()) {
 				this.addTab(playlist, new PlaylistPanel(playlist));
