@@ -29,8 +29,8 @@ import java.sql.SQLException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
 import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 
 public class SaveFileAction implements ActionListener {

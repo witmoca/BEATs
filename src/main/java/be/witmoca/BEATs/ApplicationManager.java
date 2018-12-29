@@ -31,8 +31,8 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
-import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
+import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.ResourceLoader;
 

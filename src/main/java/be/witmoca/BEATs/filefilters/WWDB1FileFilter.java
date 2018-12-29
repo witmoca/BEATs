@@ -17,18 +17,18 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: BEATsFileFilter.java
+* File: WWDB1FileFilter.java
 * Created: 2018
 */
-package be.witmoca.BEATs.FileFilters;
+package be.witmoca.BEATs.filefilters;
 
 import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
-public class BEATsFileFilter extends FileFilter {
+public class WWDB1FileFilter extends FileFilter {
 
-	public BEATsFileFilter() {
+	public WWDB1FileFilter() {
 	}
 
 	/* (non-Javadoc)
@@ -36,7 +36,7 @@ public class BEATsFileFilter extends FileFilter {
 	 */
 	@Override
 	public boolean accept(File f) {
-		return (f.getName().endsWith(".beats") || f.isDirectory());
+		return (f.getName().endsWith(".wwdb") || f.isDirectory());
 	}
 
 	/* (non-Javadoc)
@@ -44,6 +44,7 @@ public class BEATsFileFilter extends FileFilter {
 	 */
 	@Override
 	public String getDescription() {
-		return "Burning Ember File (*.beats)";
+		return "Wieter's World Database V1.x format (*.wwdb)";
 	}
+
 }

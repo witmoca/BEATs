@@ -11,9 +11,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import be.witmoca.BEATs.FileFilters.BEATsFileFilter;
 import be.witmoca.BEATs.connection.ConnectionException;
 import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 
 /*
