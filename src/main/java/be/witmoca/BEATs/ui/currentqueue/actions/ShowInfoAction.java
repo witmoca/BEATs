@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.currentqueue.CurrentQueueListModel;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
 /*
@@ -49,7 +50,7 @@ class ShowInfoAction extends AbstractAction {
 	
 	
 	public ShowInfoAction(JList<String> queue) {
-		super("Song Info");
+		super(Lang.getUI("queue.info"));
 		this.putValue(Action.SMALL_ICON, UiIcon.INFO.getIcon());
 		this.queue = queue;
 	}
@@ -114,17 +115,17 @@ class ShowInfoAction extends AbstractAction {
 		}
 		
 		JPanel message = new JPanel(new GridLayout(0,2));
-		message.add(new JLabel("Artist: "));
+		message.add(new JLabel(Lang.getUI("col.artist") + ": "));
 		message.add(artist);
-		message.add(new JLabel("Song: "));
+		message.add(new JLabel(Lang.getUI("col.song") + ": "));
 		message.add(song);
-		message.add(new JLabel("Comment: "));
+		message.add(new JLabel(Lang.getUI("col.comment") + ": "));
 		message.add(comment);
-		message.add(new JLabel("Times Artist Was Played: "));
+		message.add(new JLabel(Lang.getUI("queue.info.artistTimes") + ": "));
 		message.add(artistCount);
-		message.add(new JLabel("Times Song Was Played: "));
+		message.add(new JLabel(Lang.getUI("queue.info.songTimes") + ": "));
 		message.add(songCount);
-		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), message, "Song Info", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), message, Lang.getUI("queue.info"), JOptionPane.PLAIN_MESSAGE);
 	}
 
 }

@@ -32,7 +32,7 @@ public class CurrentQueueToolbar extends JToolBar {
 
 	
 	public CurrentQueueToolbar(JList<String> Queue) {
-		super("CurrentQueue Toolbar",JToolBar.HORIZONTAL);
+		super(JToolBar.HORIZONTAL);
 		this.setFloatable(false);
 		queue = Queue;
 		

@@ -35,13 +35,14 @@ import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.StringUtils;
 import be.witmoca.BEATs.utils.UiIcon;
 
 public class PlaylistTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
 	private String PlaylistName;
-	private static final String COLUMN_NAME[] = { "Artist", "Song", "Comment", "To Queue"};
+	private static final String COLUMN_NAME[] = { Lang.getUI("col.artist"), Lang.getUI("col.song"), Lang.getUI("col.comment"), ""};
 	private List<PlaylistEntry> playlistList = null;
 
 	PlaylistTableModel(String playlistName) {

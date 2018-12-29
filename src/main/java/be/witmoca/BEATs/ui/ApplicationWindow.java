@@ -41,11 +41,11 @@ import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.actions.ExitApplicationAction;
 import be.witmoca.BEATs.ui.currentqueue.CurrentQueuePanel;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
 public class ApplicationWindow extends JFrame implements WindowListener, DataChangedListener{
 	private static final long serialVersionUID = 1L;
-	private static final String mainTitleBase = "Burning Ember";
 	
 	public static ApplicationWindow APP_WINDOW = null;
 	
@@ -58,7 +58,7 @@ public class ApplicationWindow extends JFrame implements WindowListener, DataCha
 	
 	private ApplicationWindow() {
 		// Initialise frame
-		super(mainTitleBase);
+		super(Lang.getUI("shortname"));
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.setIconImages();
 		this.addWindowListener(this);
@@ -126,7 +126,7 @@ public class ApplicationWindow extends JFrame implements WindowListener, DataCha
 	@Override
 	public void tableChanged() {
 		// META_DATA has changed => reload title
-		String title = "Burning Ember";
+		String title = Lang.getUI("shortname");
 		
 		File currentFile = SQLConnection.getDbConn().getCurrentFile();
 		if(currentFile != null)

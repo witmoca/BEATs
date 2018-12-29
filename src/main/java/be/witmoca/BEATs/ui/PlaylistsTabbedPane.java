@@ -35,7 +35,6 @@ import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
 class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
 	private static final long serialVersionUID = 1L;
-	static final String TITLE = "Playlists"; 
 
 	public PlaylistsTabbedPane() {
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);

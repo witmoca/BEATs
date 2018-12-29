@@ -37,6 +37,7 @@ import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistTableModel;
+import be.witmoca.BEATs.utils.Lang;
 
 public class MoveToQueueAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
@@ -82,8 +83,8 @@ public class MoveToQueueAction extends AbstractAction {
 			} else {
 				// create new artist if he doesn't exist
 				// ask if artist is local
-				String options[] = {"Local", "Not Local", "Cancel Operation"};
-				int answerLocal = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(), rawArtist + " is a new artist. Is this a local band?", "Band not recognized", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 2);
+				String options[] = {Lang.getUI("queue.moveToQueue.local"), Lang.getUI("queue.moveToQueue.notlocal"), Lang.getUI("action.cancel")};
+				int answerLocal = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(), rawArtist + " " + Lang.getUI("queue.moveToQueue.newArtist"), Lang.getUI("queue.moveToQueue.newArtistTitle"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 2);
 				if(answerLocal == JOptionPane.CANCEL_OPTION || answerLocal == JOptionPane.CLOSED_OPTION) {
 					return; // CANCEL
 				}

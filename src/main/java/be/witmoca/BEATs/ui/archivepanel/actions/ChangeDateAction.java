@@ -21,6 +21,7 @@ import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
 /*
@@ -51,7 +52,7 @@ class ChangeDateAction extends AbstractAction {
 	private final JTable archive;
 	
 	ChangeDateAction(JTable table) {
-		super("Change Date");
+		super(Lang.getUI("changeDateAction"));
 		this.putValue(Action.SMALL_ICON, UiIcon.CALENDAR.getIcon());
 		archive = table;
 	}
@@ -80,12 +81,12 @@ class ChangeDateAction extends AbstractAction {
 		
 		// USER UI interaction
 		JPanel userPanel = new JPanel();
-		userPanel.add(new JLabel("Change the date for episode: " + episode));
+		userPanel.add(new JLabel(Lang.getUI("changeDateAction.descr") + ": " + episode));
 		LocalDateCombo episodeDate = new LocalDateCombo(date, DateTimeFormatter.ofPattern("E d-MMM-uuuu"));
 		userPanel.add(episodeDate);
 				
 		
-		if(JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel,"Change Date", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
+		if(JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel, Lang.getUI("changeDateAction"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
 			return; // cancelled
 		}
 		

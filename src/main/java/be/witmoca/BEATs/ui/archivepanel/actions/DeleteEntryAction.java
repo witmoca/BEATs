@@ -17,6 +17,7 @@ import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.archivepanel.ArchiveTableModel;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
 /*
@@ -46,7 +47,7 @@ class DeleteEntryAction extends AbstractAction {
 	private final JTable archive;
 	
 	DeleteEntryAction(JTable table) {
-		super("Delete");
+		super(Lang.getUI("action.delete"));
 		this.putValue(Action.SMALL_ICON, UiIcon.DELETE.getIcon());
 		archive = table;
 	}
@@ -62,8 +63,7 @@ class DeleteEntryAction extends AbstractAction {
 		if(archive.getRowSorter() != null)
 			index = archive.getRowSorter().convertRowIndexToModel(index);
 		
-		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(),
-				"Are you sure you want to delete row?", "Delete?",
+		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("deleteAction.confirm"), Lang.getUI("deleteAction.confirmTitle"),
 				 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
 			return;
 		

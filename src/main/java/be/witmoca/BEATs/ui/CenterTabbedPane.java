@@ -26,6 +26,7 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
 import be.witmoca.BEATs.ui.archivepanel.ArchivePanel;
+import be.witmoca.BEATs.utils.Lang;
 
 class CenterTabbedPane extends JTabbedPane {
 	private static final long serialVersionUID = 1L;
@@ -37,7 +38,7 @@ class CenterTabbedPane extends JTabbedPane {
 	public CenterTabbedPane() {
 		super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
 		
-		this.addTab(ArchivePanel.TITLE, archivePanel);
-		this.addTab(PlaylistsTabbedPane.TITLE, playlistPanel);
+		this.addTab(Lang.getUI("Center.archive"), archivePanel);
+		this.addTab(Lang.getUI("Center.playlists"), playlistPanel);
 	}
 }

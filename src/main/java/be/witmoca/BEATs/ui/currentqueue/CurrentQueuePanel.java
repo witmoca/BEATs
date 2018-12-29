@@ -32,11 +32,12 @@ import javax.swing.event.ListDataListener;
 
 import be.witmoca.BEATs.ui.currentqueue.actions.CurrentQueuePopupMenu;
 import be.witmoca.BEATs.ui.currentqueue.actions.CurrentQueueToolbar;
+import be.witmoca.BEATs.utils.Lang;
 
 public class CurrentQueuePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> Queue = new CurrentQueueList(new CurrentQueueListModel());
-	private final JButton title = new JButton("Played this session:");
+	private final JButton title = new JButton(Lang.getUI("queue.titleLabel"));
 
 	public CurrentQueuePanel() {
 		super(new BorderLayout());

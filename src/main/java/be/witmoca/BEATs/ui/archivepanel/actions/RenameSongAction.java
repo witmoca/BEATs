@@ -19,6 +19,7 @@ import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedType;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.StringUtils;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -50,7 +51,7 @@ class RenameSongAction extends AbstractAction {
 	private final JTable archive;
 
 	RenameSongAction(JTable table) {
-		super("Song");
+		super(Lang.getUI("col.song"));
 		this.putValue(Action.SMALL_ICON, UiIcon.EDIT_W.getIcon());
 		archive = table;
 	}
@@ -70,7 +71,7 @@ class RenameSongAction extends AbstractAction {
 
 		// USER UI interaction
 		JPanel userPanel = new JPanel();
-		userPanel.add(new JLabel("Change the spelling of the song: "));
+		userPanel.add(new JLabel(Lang.getUI("renameSongAction.descr") + ": "));
 		JTextField newName = new JTextField(title);
 		newName.setColumns(30);
 		userPanel.add(newName);

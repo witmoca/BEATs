@@ -36,6 +36,7 @@ import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.utils.Lang;
 
 public class PlaylistManagerShowAction implements ActionListener {
 	/*
@@ -52,8 +53,9 @@ public class PlaylistManagerShowAction implements ActionListener {
 
 		PlaylistManagerPanel pmp = new PlaylistManagerPanel();
 		// show dialog
-		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), pmp, "Playlist Manager",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null) != JOptionPane.OK_OPTION)
+		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), pmp,
+				Lang.getUI("menu.tools.playlistManager"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+				null) != JOptionPane.OK_OPTION)
 			return;
 
 		// not cancelled => update playlists
@@ -80,49 +82,52 @@ public class PlaylistManagerShowAction implements ActionListener {
 
 		// confirm dialog
 		if (JOptionPane.showConfirmDialog((Component) e.getSource(),
-				"Are you sure you wish to make the following changes:\nCreate playlist: " + create.size()
-						+ "\nRemove playlist: " + delete.size() + "\nAnd possibly change the order of " + update.size()
-						+ " playlists?",
-				"Playlist Manager", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+				Lang.getUI("playlistManager.confirm") + "\n" + create.size() + "/" + delete.size() + "/"
+						+ update.size(),
+				Lang.getUI("menu.tools.playlistManager"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null) != JOptionPane.OK_OPTION)
 			return;
-		
+
 		try {
 			// start by removing
-			for(String pName : delete) {
+			for (String pName : delete) {
 				// first delete all the playlist entries
 				CommonSQL.clearSongsInPlaylist(pName);
 				// then delete the playlist
 				CommonSQL.removePlaylist(pName);
 			}
-			// Move all existing tabOrders upwards, so that we can guarantee unique tabOrders
+			// Move all existing tabOrders upwards, so that we can guarantee unique
+			// tabOrders
 			// select max taborder
 			int maxTab = CommonSQL.getMaxTabOrderFromPlaylist();
-			
+
 			// move tabOrders up
-			try (PreparedStatement tabUp = SQLConnection.getDbConn().prepareStatement("UPDATE Playlist SET TabOrder = TabOrder + ?")) {
+			try (PreparedStatement tabUp = SQLConnection.getDbConn()
+					.prepareStatement("UPDATE Playlist SET TabOrder = TabOrder + ?")) {
 				tabUp.setInt(1, maxTab);
 				tabUp.executeUpdate();
 			}
-			
+
 			// Create the playlists
-			for(String newP : create) {
-				try (PreparedStatement addP = SQLConnection.getDbConn().prepareStatement("INSERT INTO Playlist VALUES (?, ( SELECT coalesce(max(TabOrder)+1,1) FROM Playlist) )")) {
+			for (String newP : create) {
+				try (PreparedStatement addP = SQLConnection.getDbConn().prepareStatement(
+						"INSERT INTO Playlist VALUES (?, ( SELECT coalesce(max(TabOrder)+1,1) FROM Playlist) )")) {
 					addP.setString(1, newP);
 					addP.executeUpdate();
 				}
 			}
-			
+
 			// Reorder all the playlists
 			int i = 0;
-			for(String name : newNames) {
-				try (PreparedStatement order = SQLConnection.getDbConn().prepareStatement("UPDATE Playlist SET TabOrder = ? WHERE PlaylistName = ?")) {
+			for (String name : newNames) {
+				try (PreparedStatement order = SQLConnection.getDbConn()
+						.prepareStatement("UPDATE Playlist SET TabOrder = ? WHERE PlaylistName = ?")) {
 					order.setInt(1, i++);
 					order.setString(2, name);
 					order.executeUpdate();
 				}
 			}
-			
+
 			// commit the changes
 			SQLConnection.getDbConn().commit(DataChangedType.PLAYLIST_DATA_OPTS);
 		} catch (SQLException e1) {

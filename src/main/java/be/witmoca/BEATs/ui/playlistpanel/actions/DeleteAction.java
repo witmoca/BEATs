@@ -33,6 +33,7 @@ import javax.swing.KeyStroke;
 
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistTableModel;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
 class DeleteAction extends AbstractAction {
@@ -40,28 +41,28 @@ class DeleteAction extends AbstractAction {
 	private final JTable connectedTable;
 
 	protected DeleteAction(JTable table) {
-		super("Delete");
+		super(Lang.getUI("action.delete"));
 		this.putValue(Action.ACTION_COMMAND_KEY, "Playlist: Delete Song Selection");
 		this.putValue(Action.SMALL_ICON, UiIcon.DELETE.getIcon());
 		connectedTable = table;
-		
+
 		// Attach global hotkey
 		connectedTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
 				this.getValue(Action.ACTION_COMMAND_KEY));
-		connectedTable.getActionMap().put(this.getValue(Action.ACTION_COMMAND_KEY),this);
+		connectedTable.getActionMap().put(this.getValue(Action.ACTION_COMMAND_KEY), this);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		int index = connectedTable.getSelectedRow();
-		if(index < 0)
+		if (index < 0)
 			return;
-		if(connectedTable.getRowSorter() != null)
+		if (connectedTable.getRowSorter() != null)
 			index = connectedTable.getRowSorter().convertRowIndexToModel(index);
-		
-		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(),
-				"Are you sure you want to delete row?", "Delete?",
-				 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
+
+		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("deleteAction.confirm"),
+				Lang.getUI("deleteAction.confirmTitle"), JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
 			return;
 
 		((PlaylistTableModel) connectedTable.getModel()).deleteRow(index);

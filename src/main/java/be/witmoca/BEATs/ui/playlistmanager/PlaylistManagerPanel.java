@@ -33,9 +33,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import be.witmoca.BEATs.utils.Lang;
+
 class PlaylistManagerPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
-	private static final String PlaylistManagerDescription = "You can change the order of the playlist by dragging them in the order of your choice below.";
+	private static final String PlaylistManagerDescription = Lang.getUI("playlistManager.descr");
 	private final ReorderingListModel listModel;
 	
 	public PlaylistManagerPanel() {
@@ -48,17 +50,17 @@ class PlaylistManagerPanel extends JPanel{
 		listModel = playlistOrderList.getListModel();
 		
 		JPanel bPanel = new JPanel();
-		JButton newPlaylist = new JButton("New playlist");
+		JButton newPlaylist = new JButton(Lang.getUI("playlistManager.new"));
 		newPlaylist.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = JOptionPane.showInputDialog((Component) e.getSource(), "Playlist name: ", "Create new playlist", JOptionPane.PLAIN_MESSAGE);
+				String name = JOptionPane.showInputDialog((Component) e.getSource(), Lang.getUI("playlistManager.new.dialog") + " ", Lang.getUI("playlistManager.new.dialogTitle"), JOptionPane.PLAIN_MESSAGE);
 				playlistOrderList.getListModel().addElement(name);
 			}
 		});
 		bPanel.add(newPlaylist);
 		
-		JButton delPlaylist = new JButton("Delete playlist");
+		JButton delPlaylist = new JButton(Lang.getUI("playlistManager.delete"));
 		delPlaylist.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

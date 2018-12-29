@@ -12,6 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 import javax.swing.TransferHandler.TransferSupport;
 
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
 /*
@@ -55,7 +56,7 @@ public class ClipboardActionFactory {
 		private final JComponent source;
 
 		private CutCopyAction(JComponent source, boolean cutCopy) {
-			super(cutCopy ? "Cut" : "Copy");
+			super(cutCopy ? Lang.getUI("action.cut") : Lang.getUI("action.copy"));
 			this.putValue(Action.SMALL_ICON, cutCopy ? UiIcon.CUT.getIcon() : UiIcon.COPY.getIcon());
 			action = cutCopy ? TransferHandler.MOVE : TransferHandler.COPY;
 			this.source = source;
@@ -83,7 +84,7 @@ public class ClipboardActionFactory {
 		private final JComponent source;
 		
 		private PasteAction(JComponent source) {
-			super("Paste");
+			super(Lang.getUI("action.paste"));
 			this.putValue(Action.SMALL_ICON, UiIcon.PASTE.getIcon());
 			this.source = source;
 		}

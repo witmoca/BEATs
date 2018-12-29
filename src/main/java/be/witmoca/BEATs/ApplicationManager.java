@@ -45,7 +45,6 @@ public class ApplicationManager {
 		// Get the file to load from the arguments
 		File loadFile = extractFileFromArgs(args);
 		
-		
 		try {
 			// Initialise Files & folders
 			ResourceLoader.initFileTree();

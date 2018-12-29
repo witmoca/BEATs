@@ -55,10 +55,11 @@ import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
+import be.witmoca.BEATs.utils.Lang;
 
 class ArchivalDialog extends JDialog implements ActionListener, PropertyChangeListener, ListDataListener{
 	private static final long serialVersionUID = 1L;
-	private static final String[] summeryColumnNames = { "Artist", "Song", "Comment" };
+	private static final String[] summeryColumnNames = { Lang.getUI("col.artist"), Lang.getUI("col.song"), Lang.getUI("col.comment") };
 	
 	private final JPanel cPane = new JPanel(new BorderLayout(10,10));
 	private final JPanel entryPanel = new JPanel(new GridLayout(2,3,5,5)) ;
@@ -67,20 +68,20 @@ class ArchivalDialog extends JDialog implements ActionListener, PropertyChangeLi
 	private final JFormattedTextField episodeId = new JFormattedTextField(NumberFormat.getIntegerInstance());
 	private final LocalDateCombo episodeDate = new LocalDateCombo(DateTimeFormatter.ofPattern("E d-MMM-uuuu"));
 	private final JComboBox<String> genreId;
-	private final JButton okButton = new JButton("Ok");
-	private final JButton cancelButton = new JButton("Cancel");
+	private final JButton okButton = new JButton(Lang.getUI("action.ok"));
+	private final JButton cancelButton = new JButton(Lang.getUI("action.cancel"));
 	
 	private boolean valid = false;
 	
 	public ArchivalDialog() {
-		super(ApplicationWindow.getAPP_WINDOW(), "Archiving", true);
+		super(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("queue.archiving"), true);
 		
 		// LAYOUT
 		// create the entryPanel
 		// row 1
-		entryPanel.add(new JLabel("Episode"));
-		entryPanel.add(new JLabel("Date"));	
-		entryPanel.add(new JLabel("Genre"));
+		entryPanel.add(new JLabel(Lang.getUI("col.episode")));
+		entryPanel.add(new JLabel(Lang.getUI("col.date")));	
+		entryPanel.add(new JLabel(Lang.getUI("col.genre")));
 		
 		// row 2
 		episodeBorder.add(episodeId);

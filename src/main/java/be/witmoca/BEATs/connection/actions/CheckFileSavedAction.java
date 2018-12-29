@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.utils.Lang;
 
 /*
 *
@@ -44,10 +45,9 @@ public class CheckFileSavedAction implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (SQLConnection.getDbConn() != null && SQLConnection.getDbConn().isChanged()) {
-			String options[] = { "Save", "Close without saving", "Cancel" };
-			int response = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(),
-					"You have not saved this file.\nYour changes will be discarded if you continue wihout saving.",
-					"Confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, null);
+			String options[] = { Lang.getUI("action.save"), Lang.getUI("action.quit_no_save"), Lang.getUI("action.cancel") };
+			int response = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(),Lang.getUI("checkFileSavedAction.confirm"),
+					Lang.getUI("checkFileSavedAction.dialogTitle"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, null);
 			if (response == JOptionPane.YES_OPTION) {
 				// Save first
 				SaveFileAction save = new SaveFileAction();

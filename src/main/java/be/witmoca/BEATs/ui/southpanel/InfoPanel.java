@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.utils.Lang;
 
 /*
 *
@@ -74,26 +75,26 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 		GridBagConstraints left = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,10,0,10), 0, 0);
 		GridBagConstraints right = new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,10,0,10), 0, 0);
 		
-		add(new JLabel("Artist (#played):"), left);
+		add(new JLabel(Lang.getUI("infoPanel.artist")), left);
 		left.gridy += 1;
 		left.insets = new Insets(0,10,0,10); // only the top one needs a top inset
 		add(artistLabel, right);
 		right.gridy += 1;
 		right.insets = new Insets(0,10,0,10); // only the top one needs a top inset
-		add(new JLabel("Song (#played):"), left);
+		add(new JLabel(Lang.getUI("infoPanel.song")), left);
 		left.gridy += 1;
 		add(songLabel, right);
 		right.gridy += 1;
-		add(new JLabel("Song last played:"), left);
+		add(new JLabel(Lang.getUI("infoPanel.songLast")), left);
 		left.gridy += 1;
 		add(songLast, right);
 		right.gridy += 1;
-		add(new JLabel("Artist last played:"), left);
+		add(new JLabel(Lang.getUI("infoPanel.artistLast")), left);
 		left.gridy += 1;
 		add(artistLast, right);
 		right.gridy += 1;
 		right.weighty = 1; // The last box (the most south one) takes all the whitespace (and postions the element in the north-west
-		add(new JLabel("Artist is local:"), left);
+		add(new JLabel(Lang.getUI("infoPanel.local")), left);
 		add(artistLocal, right);
 
 		tracking = trackingTable;
@@ -126,8 +127,8 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 		
 		try {
 			// Default case: nothing found
-			artistLabel.setText("unknown artist");
-			songLabel.setText("unknown song");
+			artistLabel.setText(Lang.getUI("infoPanel.unknownArtist"));
+			songLabel.setText(Lang.getUI("infoPanel.unknownSong"));
 			songLast.setText("");
 			artistLast.setText("");
 			artistLocal.setText("");
@@ -137,8 +138,8 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 				selArtist.setString(1, artist);
 				ResultSet rs = selArtist.executeQuery();
 				if(rs.next() && rs.getInt(2) != 0) {
-					artistLocal.setText(rs.getBoolean(1) ? "Yes" : "No");
-					artistLabel.setText(artist + " (played " + rs.getInt(2) + " times)");
+					artistLocal.setText(rs.getBoolean(1) ? Lang.getUI("action.yes") : Lang.getUI("action.no"));
+					artistLabel.setText(artist + " (" + rs.getInt(2) + " " + Lang.getUI("infoPanel.timesPlayed") + ")");
 				} else {
 					return;
 				}
@@ -160,7 +161,7 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 				ResultSet rs = selLastSong.executeQuery();
 				if(rs.next() && rs.getInt(3) != 0) {
 					songLast.setText(rs.getInt(1) + " (" + DateTimeFormatter.ofPattern("dd/MM/uu").format(LocalDate.ofEpochDay(rs.getLong(2))) + ")");
-					songLabel.setText(song + " (played "  + rs.getInt(3) + " times)");
+					songLabel.setText(song + " ("  + rs.getInt(3) + " " + Lang.getUI("infoPanel.timesPlayed") +")");
 				} else {
 					return;
 				}

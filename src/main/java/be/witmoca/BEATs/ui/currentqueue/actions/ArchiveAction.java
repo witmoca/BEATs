@@ -35,6 +35,7 @@ import javax.swing.JList;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedType;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
 class ArchiveAction extends AbstractAction {
@@ -42,7 +43,7 @@ class ArchiveAction extends AbstractAction {
 	private final JList<String> queue;
 	
 	ArchiveAction(JList<String> Queue) {
-		super("Archive");
+		super(Lang.getUI("queue.archive"));
 		this.putValue(Action.SMALL_ICON, UiIcon.PROCEED.getIcon());
 		queue = Queue;
 	}

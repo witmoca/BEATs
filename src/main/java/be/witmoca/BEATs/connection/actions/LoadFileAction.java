@@ -15,6 +15,7 @@ import be.witmoca.BEATs.connection.ConnectionException;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.utils.Lang;
 
 /*
 *
@@ -124,9 +125,8 @@ public class LoadFileAction implements ActionListener {
 		}
 
 		if (SQLConnection.isRecoveredDb()) {
-			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
-					"Database recovered!\nBurning Ember detected an unusual shutdown.\nThe previously opened database has been recovered.",
-					"Recovered", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),Lang.getUI("loadFileAction.recoveredMsg"),
+					Lang.getUI("loadFileAction.recovered"), JOptionPane.WARNING_MESSAGE);
 		}
 	}
 }

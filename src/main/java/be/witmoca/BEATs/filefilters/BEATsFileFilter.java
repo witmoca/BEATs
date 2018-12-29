@@ -26,6 +26,8 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
+import be.witmoca.BEATs.utils.Lang;
+
 public class BEATsFileFilter extends FileFilter {
 
 	public BEATsFileFilter() {
@@ -44,6 +46,6 @@ public class BEATsFileFilter extends FileFilter {
 	 */
 	@Override
 	public String getDescription() {
-		return "Burning Ember File (*.beats)";
+		return Lang.getUI("fileFilters.BEATs.descr");
 	}
 }

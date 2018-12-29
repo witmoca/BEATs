@@ -28,6 +28,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 import be.witmoca.BEATs.utils.UiUtils;
 
@@ -35,11 +36,11 @@ public class ArchiveToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
 	private final JTextField searchTerm = new JTextField(20);
-	private final JButton searchSubmit = new JButton("Search", UiIcon.SEARCH.getIcon());
+	private final JButton searchSubmit = new JButton(Lang.getUI("action.search"), UiIcon.SEARCH.getIcon());
 
 	
 	public ArchiveToolbar(JTable table) {
-		super("Archive Toolbar",JToolBar.HORIZONTAL);
+		super(JToolBar.HORIZONTAL);
 		
 		this.setFloatable(false);
 		

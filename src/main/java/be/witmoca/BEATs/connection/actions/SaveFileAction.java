@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.utils.Lang;
 
 public class SaveFileAction implements ActionListener {
 	private boolean hasSucceeded = false;
@@ -52,7 +53,7 @@ public class SaveFileAction implements ActionListener {
 			@Override
 			public void approveSelection() {
 				// if file already exists => show confirm dialog
-		        if(getSelectedFile().exists() && JOptionPane.showConfirmDialog(this,"Do you want to overwrite this file?","File Exists",JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION){
+		        if(getSelectedFile().exists() && JOptionPane.showConfirmDialog(this, Lang.getUI("savedFileAction.overwrite"), Lang.getUI("savedFileAction.overwriteTitle"),JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION){
 		        	return;
 		        }
 				super.approveSelection();

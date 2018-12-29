@@ -18,6 +18,7 @@ import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
 /*
@@ -48,7 +49,7 @@ class ChangeLocalAction extends AbstractAction {
 	private final JTable archive;
 
 	ChangeLocalAction(JTable table) {
-		super("Local");
+		super(Lang.getUI("col.local"));
 		this.putValue(Action.SMALL_ICON, UiIcon.EDIT_W.getIcon());
 		archive = table;
 	}
@@ -75,7 +76,7 @@ class ChangeLocalAction extends AbstractAction {
 
 		// USER UI interaction
 		JPanel userPanel = new JPanel();
-		JCheckBox localBox = new JCheckBox(artist + " is local", local);
+		JCheckBox localBox = new JCheckBox(artist + " " + Lang.getUI("changeLocalAction.descr"), local);
 		userPanel.add(localBox);
 
 		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel, "Rename",

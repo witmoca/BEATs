@@ -33,7 +33,7 @@ public class PlaylistToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 	
 	public PlaylistToolbar(JTable table) {
-		super("Playlist Toolbar", JToolBar.HORIZONTAL);
+		super(JToolBar.HORIZONTAL);
 
 		this.setFloatable(false);
 		this.add(ClipboardActionFactory.getCutAction(table));

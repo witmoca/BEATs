@@ -35,10 +35,11 @@ import javax.swing.table.AbstractTableModel;
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.utils.Lang;
 
 public class ArchiveTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
-	private static final String COLUMN_NAME[] = {"Artist","Song","Episode", "Genre" ,"Comment"};
+	private static final String COLUMN_NAME[] = {Lang.getUI("col.artist"), Lang.getUI("col.song"), Lang.getUI("col.episode"), Lang.getUI("col.genre"), Lang.getUI("col.comment")};
 	private List<ArchiveEntry> archive = new ArrayList<ArchiveEntry>();
 	
 	public ArchiveTableModel() {

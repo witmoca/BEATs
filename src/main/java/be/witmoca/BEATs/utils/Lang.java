@@ -1,3 +1,10 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.utils;
+
+import java.util.ResourceBundle;
+
 /*
 *
 +===============================================================================+
@@ -17,35 +24,14 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: WWDB1FileFilter.java
+* File: Lang.java
 * Created: 2018
 */
-package be.witmoca.BEATs.filefilters;
-
-import java.io.File;
-
-import javax.swing.filechooser.FileFilter;
-
-import be.witmoca.BEATs.utils.Lang;
-
-public class WWDB1FileFilter extends FileFilter {
-
-	public WWDB1FileFilter() {
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
-	 */
-	@Override
-	public boolean accept(File f) {
-		return (f.getName().endsWith(".wwdb") || f.isDirectory());
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.filechooser.FileFilter#getDescription()
-	 */
-	@Override
-	public String getDescription() {
-		return Lang.getUI("fileFilters.WWDB1.descr");
+public class Lang {
+	private static final String BASE_NAME = "Langs.UserInterface";
+	private static ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
+	
+	public static String getUI(String msg) {
+		return bundle.getString(msg);
 	}
 }

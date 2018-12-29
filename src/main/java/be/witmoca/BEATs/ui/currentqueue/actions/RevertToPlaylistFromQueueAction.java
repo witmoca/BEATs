@@ -39,6 +39,7 @@ import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.currentqueue.CurrentQueueListModel;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
 class RevertToPlaylistFromQueueAction extends AbstractAction {
@@ -46,7 +47,7 @@ class RevertToPlaylistFromQueueAction extends AbstractAction {
 	private final JList<String> queue;
 
 	protected RevertToPlaylistFromQueueAction(JList<String> Queue) {
-		super("Revert To Playlist");
+		super(Lang.getUI("queue.revert"));
 		this.putValue(Action.SMALL_ICON, UiIcon.REVERT.getIcon());
 		queue = Queue;
 	}
@@ -72,8 +73,8 @@ class RevertToPlaylistFromQueueAction extends AbstractAction {
 			List<String> playlists = CommonSQL.getPlaylists();
 
 			String[] options = playlists.toArray(new String[0]);
-			String playlistName = (String) JOptionPane.showInputDialog(ApplicationWindow.getAPP_WINDOW(), "Playlist to revert to:",
-					"Revert played song", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			String playlistName = (String) JOptionPane.showInputDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("queue.revert.to"),
+					Lang.getUI("queue.revert.title"), JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if(playlistName == null)
 				return;
 			

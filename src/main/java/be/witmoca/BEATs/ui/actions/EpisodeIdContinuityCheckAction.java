@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
 
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.utils.Lang;
 
 /*
 *
@@ -70,13 +71,13 @@ public class EpisodeIdContinuityCheckAction implements ActionListener {
 				lastCorrectIndex = 0;
 			
 			// Compiled missing list
-			String message = "----- Continuity check result -----\n";
-			message += "Most Recent Episode: " + lastCorrectIndex.intValue() + "\n";
-			message += "Missing Episodes: " + missing.size() + "\n";
+			String message = Lang.getUI("continuity.start") + "\n";
+			message += Lang.getUI("continuity.recentEp") + ": " + lastCorrectIndex.intValue() + "\n";
+			message += Lang.getUI("continuity.missingEp") + ": " + missing.size() + "\n";
 			if(missing.size() == 0) {
-				message += "\nContinuity check finished with a perfect score!";
+				message += "\n" + Lang.getUI("continuity.perfect");
 			} else {
-				message += "\nMissing Episodes:\n";
+				message += "\n" + Lang.getUI("continuity.missingEp") + ":\n";
 				for(Integer missed : missing)
 					message += missed + "\n";
 			}
@@ -92,7 +93,7 @@ public class EpisodeIdContinuityCheckAction implements ActionListener {
 			result.setText(error);
 		}
 		
-		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), new JScrollPane(result, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), "Episode Continuity Check", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), new JScrollPane(result, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), Lang.getUI("menu.tools.continuity"), JOptionPane.PLAIN_MESSAGE);
 	}
 
 }

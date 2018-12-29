@@ -39,6 +39,7 @@ import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.connection.actions.SaveFileAction;
 import be.witmoca.BEATs.ui.actions.*;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
+import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.ResourceLoader;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -47,22 +48,22 @@ class ApplicationMenubar extends JMenuBar {
 
 	public ApplicationMenubar() {
 		// FILE MENU
-		JMenu fileMenu = new JMenu("File");
+		JMenu fileMenu = new JMenu(Lang.getUI("menu.file"));
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 
-		JMenuItem newFile = new JMenuItem("New", UiIcon.NEW.getIcon());
+		JMenuItem newFile = new JMenuItem(Lang.getUI("menu.file.new"), UiIcon.NEW.getIcon());
 		newFile.setMnemonic(KeyEvent.VK_N);
 		newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 		newFile.addActionListener(LoadFileAction.getNewFileAction());
 		fileMenu.add(newFile);
 
-		JMenuItem openFile = new JMenuItem("Open", UiIcon.OPEN.getIcon());
+		JMenuItem openFile = new JMenuItem(Lang.getUI("menu.file.open"), UiIcon.OPEN.getIcon());
 		openFile.setMnemonic(KeyEvent.VK_O);
 		openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 		openFile.addActionListener(LoadFileAction.getLoadFileActionWithUI());
 		fileMenu.add(openFile);
 
-		JMenuItem saveFile = new JMenuItem("Save", UiIcon.SAVE.getIcon());
+		JMenuItem saveFile = new JMenuItem(Lang.getUI("menu.file.save"), UiIcon.SAVE.getIcon());
 		saveFile.setMnemonic(KeyEvent.VK_S);
 		saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 		saveFile.addActionListener(new SaveFileAction());
@@ -70,13 +71,13 @@ class ApplicationMenubar extends JMenuBar {
 
 		fileMenu.addSeparator();
 
-		JMenuItem importFile = new JMenuItem("Import", UiIcon.IMPORT.getIcon());
+		JMenuItem importFile = new JMenuItem(Lang.getUI("menu.file.import"), UiIcon.IMPORT.getIcon());
 		importFile.setMnemonic(KeyEvent.VK_I);
 		importFile.addActionListener(new ImportFileAction());
 		fileMenu.add(importFile);
 
 		fileMenu.addSeparator();
-		JMenuItem exitApplication = new JMenuItem("Exit", UiIcon.CLOSE_APP.getIcon());
+		JMenuItem exitApplication = new JMenuItem(Lang.getUI("menu.file.exit"), UiIcon.CLOSE_APP.getIcon());
 		exitApplication.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
 		exitApplication.addActionListener(new ExitApplicationAction());
 		fileMenu.add(exitApplication);
@@ -84,27 +85,27 @@ class ApplicationMenubar extends JMenuBar {
 		this.add(fileMenu);
 		
 		// TOOLS MENU
-		JMenu toolsMenu = new JMenu("Tools");
+		JMenu toolsMenu = new JMenu(Lang.getUI("menu.tools"));
 		toolsMenu.setMnemonic(KeyEvent.VK_T);
 		
-		JMenuItem playlistManager = new JMenuItem("Playlist Manager", UiIcon.PLAYLISTS.getIcon());
+		JMenuItem playlistManager = new JMenuItem(Lang.getUI("menu.tools.playlistManager"), UiIcon.PLAYLISTS.getIcon());
 		playlistManager.setMnemonic(KeyEvent.VK_P);
 		playlistManager.addActionListener(new PlaylistManagerShowAction());
 		toolsMenu.add(playlistManager);
 		
 		toolsMenu.addSeparator();
 		
-		JMenuItem episodeContinuityCheck = new JMenuItem("Episode Continuity Check", UiIcon.CHECKED.getIcon());
+		JMenuItem episodeContinuityCheck = new JMenuItem(Lang.getUI("menu.tools.continuity"), UiIcon.CHECKED.getIcon());
 		episodeContinuityCheck.addActionListener(new EpisodeIdContinuityCheckAction());
 		toolsMenu.add(episodeContinuityCheck);
 		
 		this.add(toolsMenu);
 		
 		// HELP
-		JMenu helpMenu = new JMenu("Help");
+		JMenu helpMenu = new JMenu(Lang.getUI("menu.help"));
 		helpMenu.setMnemonic(KeyEvent.VK_H);
 		
-		JMenuItem openLocal = new JMenuItem("Open log folder", UiIcon.FOLDER_OPEN.getIcon());
+		JMenuItem openLocal = new JMenuItem(Lang.getUI("menu.logdir"), UiIcon.FOLDER_OPEN.getIcon());
 		openLocal.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -121,7 +122,7 @@ class ApplicationMenubar extends JMenuBar {
 		});
 		helpMenu.add(openLocal);
 		
-		JMenuItem refreshScreen = new JMenuItem("Refresh Screen", UiIcon.SCREEN.getIcon());
+		JMenuItem refreshScreen = new JMenuItem(Lang.getUI("menu.refresh"), UiIcon.SCREEN.getIcon());
 		refreshScreen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -132,7 +133,7 @@ class ApplicationMenubar extends JMenuBar {
 		
 		helpMenu.addSeparator();
 		
-		JMenuItem about = new JMenuItem("About", UiIcon.INFO.getIcon());
+		JMenuItem about = new JMenuItem(Lang.getUI("menu.about"), UiIcon.INFO.getIcon());
 		about.addActionListener(new ShowAboutDialogAction());
 		helpMenu.add(about);
 		
