@@ -43,7 +43,7 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		setSelectionModel(main.getSelectionModel());
 
 		TableColumn column = new TableColumn();
-		column.setHeaderValue("# (No sort)");
+		column.setHeaderValue("#");
 		addColumn(column);
 		column.setCellRenderer(new RowNumberRenderer());
 

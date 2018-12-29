@@ -64,6 +64,9 @@ public abstract class SongTable extends JTable {
 		// Not a prefered method (especially the property), but no better one exists
 		this.setFocusable(false);
 		this.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		
+		// Table look
+		this.setRowHeight(this.getRowHeight() +2); // Add 2 pixels to row height so all characters are visible when editing
 	}
 
 	@Override
