@@ -56,22 +56,26 @@ class ArchiveAction extends AbstractAction {
 		if(!ad.isValid())
 			return;
 		
-		int episodeId = ad.getEpisode();
+		int episodeId = ad.getEpisodeId();
 		String Genre = ad.getGenre();
 		
-		try (PreparedStatement listCQ = SQLConnection.getDbConn().prepareStatement("SELECT SongId, Comment FROM CurrentQueue ORDER BY SongOrder ASC")) {
-			ResultSet rs = listCQ.executeQuery();
-			while (rs.next())
-				CommonSQL.addSongInArchive(rs.getInt(1), episodeId, Genre, rs.getString(2));
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-			return;
-		}
-		
-		
 		try {
+			// Make sure that the episode & genre exist
+			CommonSQL.addEpisode(episodeId, ad.getEpisodeDate());
+			CommonSQL.addGenre(Genre);
+			
+			// Add songs from Queue to Archive
+			try (PreparedStatement listCQ = SQLConnection.getDbConn().prepareStatement("SELECT SongId, Comment FROM CurrentQueue ORDER BY SongOrder ASC")) {
+				ResultSet rs = listCQ.executeQuery();
+				while (rs.next())
+					CommonSQL.addSongInArchive(rs.getInt(1), episodeId, Genre, rs.getString(2));
+			}
+			
+			// Clear the queue
 			CommonSQL.clearCurrentQueue();
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_ARCHIVE, DataChangedType.CURRENT_QUEUE));
+			
+			// Commit changes
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_ARCHIVE, DataChangedType.CURRENT_QUEUE, DataChangedType.EPISODE, DataChangedType.GENRE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

@@ -207,7 +207,7 @@ public class LocalDateCombo extends JComboBox<LocalDate> {
 	 *            The value to set
 	 */
 	public void setValue(LocalDate value) {
-		if (getSelectedItem().equals(value)) {
+		if (value.equals(getSelectedItem())) {
 			return;
 		}
 		if (min != null && value.isBefore(min)) {

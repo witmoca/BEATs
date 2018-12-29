@@ -23,114 +23,233 @@
 package be.witmoca.BEATs.ui.currentqueue.actions;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.AbstractSpinnerModel;
-import javax.swing.GroupLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComponent;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTable;
-import javax.swing.SpinnerListModel;
-
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
 
-class ArchivalDialog extends JDialog implements PropertyChangeListener{
+class ArchivalDialog extends JDialog implements ActionListener, PropertyChangeListener, ListDataListener{
 	private static final long serialVersionUID = 1L;
 	private static final String[] summeryColumnNames = { "Artist", "Song", "Comment" };
 	
-	private final JPanel cPane = new JPanel(new BorderLayout());
-	private final JPanel entryPanel = new JPanel() ;
-	private final JSpinner episodeId;
-	private final JSpinner GenreId;
+	private final JPanel cPane = new JPanel(new BorderLayout(10,10));
+	private final JPanel entryPanel = new JPanel(new GridLayout(2,3,5,5)) ;
+	private final JPanel episodeBorder = new JPanel(new GridLayout(1,1)); // It's recommended to only set borders on jpanels
+	private final JPanel genreBorder = new JPanel(new GridLayout(1,1));
+	private final JFormattedTextField episodeId = new JFormattedTextField(NumberFormat.getIntegerInstance());
+	private final LocalDateCombo episodeDate = new LocalDateCombo(DateTimeFormatter.ofPattern("E d-MMM-uuuu"));
+	private final JComboBox<String> genreId;
+	private final JButton okButton = new JButton("Ok");
+	private final JButton cancelButton = new JButton("Cancel");
 	
 	private boolean valid = false;
 	
 	public ArchivalDialog() {
-		super(ApplicationWindow.getAPP_WINDOW(), "Archive", true);
+		super(ApplicationWindow.getAPP_WINDOW(), "Archiving", true);
 		
+		// LAYOUT
 		// create the entryPanel
-		GroupLayout gLayout = new GroupLayout(entryPanel);
-		entryPanel.setLayout(gLayout); 
-
-		JLabel j1 = new JLabel("Episode");
-		entryPanel.add(j1);
-		episodeId = new JSpinner(new SpinnerEpisodeModel());
-		entryPanel.add(episodeId);
-		JComponent j2 = new JButton(new CreateNewEpisode(this, (SpinnerEpisodeModel) episodeId.getModel()));
-		entryPanel.add(j2);
+		// row 1
+		entryPanel.add(new JLabel("Episode"));
+		entryPanel.add(new JLabel("Date"));	
+		entryPanel.add(new JLabel("Genre"));
 		
-		JLabel j3 = new JLabel("Genre");
-		entryPanel.add(j3);
+		// row 2
+		episodeBorder.add(episodeId);
+		entryPanel.add(episodeBorder);
+		episodeDate.setEditable(false);
+		episodeDate.setEnabled(false);
+		entryPanel.add(episodeDate);
+		
 		List<String> Genres = null;
 		try {
 			Genres = CommonSQL.getGenres();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Genres = new ArrayList<String>();
 		}
-		GenreId = new JSpinner(new SpinnerListModel(Genres));
-		entryPanel.add(GenreId);
+		genreId = new JComboBox<String>(Genres.toArray(new String[0]));
+		genreId.setEditable(true);
+		genreBorder.add(genreId);
+		entryPanel.add(genreBorder);
 		
-		gLayout.setHorizontalGroup(gLayout.createSequentialGroup().addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(j1).addComponent(j3))
-		.addGap(5).addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(episodeId).addComponent(GenreId)).addComponent(j2));
-		
-		gLayout.setVerticalGroup(gLayout.createSequentialGroup().addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(j1).addComponent(episodeId).addComponent(j2))
-				.addGroup(gLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(j3).addComponent(GenreId)));
+		entryPanel.setBorder(BorderFactory.createEmptyBorder(0,10,10,10));
 		
 		// add the entryPanel
-		cPane.add(entryPanel, BorderLayout.CENTER);
+		cPane.add(new JScrollPane(entryPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.NORTH);
 		 
 		// add the summary view
-		cPane.add(new JScrollPane(constructSummary(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.EAST);
+		cPane.add(new JScrollPane(constructSummary(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
 		
-		// Include the created cPane as the message of an optionpane, set this optionpane as the content for the dialog
-		// (optionpane just functions as a set of buttons here)
-		JOptionPane oPane = new JOptionPane(cPane, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-		this.setContentPane(oPane);
+		// add buttons to the panel
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(okButton);
+		buttonPanel.add(cancelButton);
+		cPane.add(buttonPanel, BorderLayout.SOUTH);
 		
-		oPane.addPropertyChangeListener("value",this);
+		cPane.setOpaque(true);
+		cPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		this.setContentPane(cPane);
+		
+		// FUNCTIONALITY
+		okButton.addActionListener(this);
+		cancelButton.addActionListener(this);
+		
+		// episodeDate should follow episodeId
+		episodeId.addPropertyChangeListener("value",this);
+
+		// episodeId should follow episodeDate
+		episodeDate.getModel().addListDataListener(this);
+		
+		// set initial value of episode id 
+		try {
+			// Today's date is already associated with an episode?
+			int id = CommonSQL.getEpisodeByDate(episodeDate.getValue());
+			if(id < 0) {
+				// No episode of today => set as new episode
+				List<Integer> epiL = CommonSQL.getEpisodes();
+				if(epiL.isEmpty()) {
+					id = 1; // no previous existing => choose 1 as starting number
+				} else {
+					id = epiL.get(epiL.size()-1) +1; // equal to Max(EpisodeId) + 1
+				}
+			}
+			episodeId.setValue(id);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		// PREPARE FOR VIEW
 		this.pack();
 		this.setLocationRelativeTo(this.getParent());
 		// setVisible DOES NOT RETURN BEFORE dispose() WHEN MODAL!
 		this.setVisible(true);
 	}
 	
-	public int getEpisode() {
-		return (int) episodeId.getValue();
-	}
-	
-	public String getGenre() {
-		return (String) GenreId.getValue();
-	}
-	
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if(!this.isVisible())
+	public void actionPerformed(ActionEvent e) {
+		if( cancelButton.equals(e.getSource()) ){
+			// cancelled
+			this.dispose();
+			return; 
+		}
+		if( !okButton.equals(e.getSource()) )
+			return; // nothing interesting happened
+		
+		// Reset borders
+		episodeBorder.setBorder(BorderFactory.createEmptyBorder());
+		genreBorder.setBorder(BorderFactory.createEmptyBorder());
+		
+		// Check if all fields are valid
+		// check episodeId	
+		if(episodeId.getValue() == null || !episodeId.isEditValid()) {
+			episodeBorder.setBorder(BorderFactory.createLineBorder(Color.red));
+			episodeId.requestFocusInWindow();
+			return;
+		}
+		
+		// check episodeDate (should be true)
+		if(episodeDate.getValue() == null)
 			return;
 		
-		// Any other button than 'ok' pressed? => cancel/close screen
-		if(evt.getNewValue() == JOptionPane.UNINITIALIZED_VALUE || (int) evt.getNewValue() != JOptionPane.OK_OPTION) {
-			this.dispose();
+		if(genreId.getSelectedItem() == null || ((String) genreId.getSelectedItem()).trim().isEmpty() ) {
+			genreBorder.setBorder(BorderFactory.createLineBorder(Color.red));
+			genreId.requestFocusInWindow();
 			return;
 		}
 		
 		valid = true;
 		this.dispose();
-	}	
+	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		// value of episodeId has changed		
+		if(!episodeId.isEditValid() || episodeId.getValue() == null) {
+			return;
+		}
+		
+		// Do not accept negatives
+		int value = this.getEpisodeId();
+		if(value < 0) {
+			episodeId.setValue(Math.abs(value));
+			return;
+		}
+		
+		// set episodeDate accordingly
+		try {
+			LocalDate d = CommonSQL.getEpisodeDateById(value);
+			if(d == null) {
+				// this episode does not exist;
+				episodeDate.setEnabled(true); // set enabled first! (for listDatalistener)
+				episodeDate.setValue(LocalDate.now());
+			} else {
+				// this episode does exist;
+				episodeDate.setEnabled(false); // set enabled first! (for listDatalistener)
+				episodeDate.setValue(d);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return;
+		}
+	}
+	
+	@Override
+	public void intervalAdded(ListDataEvent e) {
+		contentsChanged(e);
+	}
+
+	@Override
+	public void intervalRemoved(ListDataEvent e) {
+		// Don't care
+	}
+
+	@Override
+	public void contentsChanged(ListDataEvent e) {
+		// episodeDate has been changed
+		if(!episodeDate.isEnabled() || episodeDate.getValue() == null)
+			return; // if not enabled or no value, then don't really care
+		
+		try {
+			int ep = CommonSQL.getEpisodeByDate(episodeDate.getValue());
+			if(ep < 0) {
+				return; // this is ok
+			} else {
+				// episode exists => change episodeId field accordingly
+				episodeId.setValue(ep);
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
 
 	/***
 	 *  Constructs a JTable containing a summary of the items in the currentQueue
@@ -164,52 +283,15 @@ class ArchivalDialog extends JDialog implements PropertyChangeListener{
 		return valid;
 	}
 	
-	static class SpinnerEpisodeModel extends AbstractSpinnerModel {
-		private static final long serialVersionUID = 1L;
-		private List<Integer> episodeList;
-		private int index;
-
-		protected SpinnerEpisodeModel() {
-			this.loadValues();
-		}
-		
-		void loadValues() {
-			try{
-				episodeList = CommonSQL.getEpisodes();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-			index = episodeList.size()-1;
-		}
-
-		@Override
-		public Object getValue() {
-			return episodeList.get(index);
-		}
-
-		@Override
-		public void setValue(Object value) {
-			if(!Integer.class.isInstance(value) || !episodeList.contains(value))
-				throw new IllegalArgumentException(value + " is not an acceptable value");
-			index = episodeList.indexOf(value);
-			this.fireStateChanged();
-		}
-
-		@Override
-		public Object getNextValue() {
-			if(index+1 >= episodeList.size())
-				return null;
-			else
-				return episodeList.get(index+1);
-		}
-
-		@Override
-		public Object getPreviousValue() {
-			if(index <= 0)
-				return null;
-			else
-				return episodeList.get(index-1);
-		}
+	public int getEpisodeId() {
+		return ((Number) episodeId.getValue()).intValue(); // For some weird reason this can return different number types (Long/Integer/int)
+	}
+	
+	public LocalDate getEpisodeDate() {
+		return episodeDate.getValue();
+	}
+	
+	public String getGenre() {
+		return ((String) genreId.getSelectedItem()).trim();
 	}
 }
