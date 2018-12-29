@@ -82,7 +82,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 
 		// confirm dialog
 		if (JOptionPane.showConfirmDialog((Component) e.getSource(),
-				Lang.getUI("playlistManager.confirm") + "\n" + create.size() + "/" + delete.size() + "/"
+				Lang.getUI("playlistManager.confirm") + ":\n" + create.size() + "/" + delete.size() + "/"
 						+ update.size(),
 				Lang.getUI("menu.tools.playlistManager"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null) != JOptionPane.OK_OPTION)

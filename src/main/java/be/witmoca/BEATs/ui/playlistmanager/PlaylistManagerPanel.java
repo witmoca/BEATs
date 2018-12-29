@@ -54,7 +54,7 @@ class PlaylistManagerPanel extends JPanel{
 		newPlaylist.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = JOptionPane.showInputDialog((Component) e.getSource(), Lang.getUI("playlistManager.new.dialog") + " ", Lang.getUI("playlistManager.new.dialogTitle"), JOptionPane.PLAIN_MESSAGE);
+				String name = JOptionPane.showInputDialog((Component) e.getSource(), Lang.getUI("playlistManager.new.dialog") + ": ", Lang.getUI("playlistManager.new.dialogTitle"), JOptionPane.PLAIN_MESSAGE);
 				playlistOrderList.getListModel().addElement(name);
 			}
 		});

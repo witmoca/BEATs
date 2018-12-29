@@ -75,26 +75,26 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 		GridBagConstraints left = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,10,0,10), 0, 0);
 		GridBagConstraints right = new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,10,0,10), 0, 0);
 		
-		add(new JLabel(Lang.getUI("infoPanel.artist")), left);
+		add(new JLabel(Lang.getUI("infoPanel.artist") + ":"), left);
 		left.gridy += 1;
 		left.insets = new Insets(0,10,0,10); // only the top one needs a top inset
 		add(artistLabel, right);
 		right.gridy += 1;
 		right.insets = new Insets(0,10,0,10); // only the top one needs a top inset
-		add(new JLabel(Lang.getUI("infoPanel.song")), left);
+		add(new JLabel(Lang.getUI("infoPanel.song") + ":"), left);
 		left.gridy += 1;
 		add(songLabel, right);
 		right.gridy += 1;
-		add(new JLabel(Lang.getUI("infoPanel.songLast")), left);
+		add(new JLabel(Lang.getUI("infoPanel.songLast") + ":"), left);
 		left.gridy += 1;
 		add(songLast, right);
 		right.gridy += 1;
-		add(new JLabel(Lang.getUI("infoPanel.artistLast")), left);
+		add(new JLabel(Lang.getUI("infoPanel.artistLast") + ":"), left);
 		left.gridy += 1;
 		add(artistLast, right);
 		right.gridy += 1;
 		right.weighty = 1; // The last box (the most south one) takes all the whitespace (and postions the element in the north-west
-		add(new JLabel(Lang.getUI("infoPanel.local")), left);
+		add(new JLabel(Lang.getUI("infoPanel.local") + ":"), left);
 		add(artistLocal, right);
 
 		tracking = trackingTable;
