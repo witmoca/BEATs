@@ -3,7 +3,10 @@
  */
 package be.witmoca.BEATs.utils;
 
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /*
 *
@@ -28,10 +31,19 @@ import java.util.ResourceBundle;
 * Created: 2018
 */
 public class Lang {
-	private static final String BASE_NAME = "Langs.UserInterface";
-	private static ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
-	
+	private static final String UI_BASE = "Langs.UserInterface";
+	private static ResourceBundle UiBundle = ResourceBundle.getBundle(UI_BASE);
+
 	public static String getUI(String msg) {
-		return bundle.getString(msg);
+		return UiBundle.getString(msg);
+	}
+
+	public static Set<Locale> getPossibleLocales() {
+		Set<Locale> locales = new HashSet<>();
+		for (Locale lo : Locale.getAvailableLocales()) {
+			Locale l = ResourceBundle.getBundle(UI_BASE, lo).getLocale();
+			locales.add(l);
+		}
+		return locales;
 	}
 }

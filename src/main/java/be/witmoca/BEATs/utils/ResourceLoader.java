@@ -40,12 +40,12 @@ import java.util.stream.Stream;
 */
 public class ResourceLoader {
 	private static final String APP_DIR = System.getProperty("user.home") + File.separator + "BEATs";
-	public static final String LOG_DIR = APP_DIR + File.separator + "log";
-	private static final String[] DIRECTORIES = { APP_DIR, LOG_DIR };
-	
-	private static final String ERR_LOG_EXT = ".err";
-	
+	public static final String LOG_DIR = APP_DIR + File.separator + "log";	
 	public static final String DB_LOC = APP_DIR + File.separator + "currentDocument.beats";
+	public static final String USER_SETTINGS_LOC = APP_DIR + File.separator + "UserPreferences.properties";
+	
+	private static final String[] DIRECTORIES = { APP_DIR, LOG_DIR };	
+	private static final String ERR_LOG_EXT = ".err";
 
 	/**
 	 * Initialises the File/Folder tree needed for operation.

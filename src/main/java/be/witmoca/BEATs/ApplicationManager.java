@@ -35,6 +35,7 @@ import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.ResourceLoader;
+import be.witmoca.BEATs.utils.BEATsSettings;
 
 public class ApplicationManager {
 	// Format : MMMmmmrrr with M = Major, m = minor & r = revision (do not lead with zeros, as this is interpreted as octal)
@@ -50,6 +51,8 @@ public class ApplicationManager {
 			ResourceLoader.initFileTree();
 			// Register a new standard output
 			ResourceLoader.registerStandardErrorLog();
+			// Load (and install) userpreferences
+			BEATsSettings.loadPreferences();
 		} catch (IOException e) {
 			fatalError(e);
 			return;

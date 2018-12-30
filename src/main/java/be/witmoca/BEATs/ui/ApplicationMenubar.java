@@ -99,6 +99,12 @@ class ApplicationMenubar extends JMenuBar {
 		episodeContinuityCheck.addActionListener(new EpisodeIdContinuityCheckAction());
 		toolsMenu.add(episodeContinuityCheck);
 		
+		toolsMenu.addSeparator();
+		
+		JMenuItem settings = new JMenuItem(Lang.getUI("menu.tools.settings"), UiIcon.SETTINGS.getIcon());
+		settings.addActionListener(new ShowSettingsDialogAction());
+		toolsMenu.add(settings);
+		
 		this.add(toolsMenu);
 		
 		// HELP

@@ -45,6 +45,7 @@ public enum UiIcon {
 	SCREEN("BasicUi/desktop"),
 	EDIT_W("BasicUi/edit-write"),
 	FOLDER_OPEN("BasicUi/folder-open"),
+	SETTINGS("BasicUi/gear-setting"),
 	
 	// Item operations
 	DELETE("BasicUi/garbage"),
@@ -71,7 +72,6 @@ public enum UiIcon {
 //	
 //	// tools
 //	OPTIONS("option-menu"),
-//	SETTINGS("gear-setting"),
 //	CHART("fold-chart"),
 //	PRINT("printer"),
 //	
