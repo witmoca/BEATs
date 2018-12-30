@@ -55,7 +55,10 @@ public class StringUtils {
 	* @return Sanitized and transformed string
 	 */
 	public static String ToUpperCamelCase(String s) {
-		List<String> words = Arrays.asList(s.trim().split(" ")); //immutable list
+		s = s.trim();
+		if(s.isEmpty())
+			return s;
+		List<String> words = Arrays.asList(s.split(" ")); //immutable list
 		List<String> returnWords = new ArrayList<String>();
 		
 		for (String word : words) {

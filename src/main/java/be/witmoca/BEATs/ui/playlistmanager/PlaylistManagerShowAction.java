@@ -22,23 +22,27 @@
 */
 package be.witmoca.BEATs.ui.playlistmanager;
 
-import java.awt.Component;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
-import be.witmoca.BEATs.connection.CommonSQL;
-import be.witmoca.BEATs.connection.DataChangedType;
-import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.Lang;
 
 public class PlaylistManagerShowAction implements ActionListener {
+	private final JList<String> plList = new JList<String>(new PMListModel());
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -47,92 +51,29 @@ public class PlaylistManagerShowAction implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (!(e.getSource() instanceof Component)) {
-			return;
-		}
-
-		PlaylistManagerPanel pmp = new PlaylistManagerPanel();
-		// show dialog
-		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), pmp,
-				Lang.getUI("menu.tools.playlistManager"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-				null) != JOptionPane.OK_OPTION)
-			return;
-
-		// not cancelled => update playlists
-		List<String> newNames = pmp.getListModel().getNewPlaylists();
-		List<String> oldNames = (new ReorderingListModel()).getNewPlaylists();
-		if (newNames.containsAll(oldNames) && oldNames.containsAll(newNames))
-			return;
-
-		// divide into create, delete and update
-		List<String> create = new ArrayList<String>();
-		List<String> update = new ArrayList<String>();
-		for (String s : newNames) {
-			if (!oldNames.contains(s))
-				create.add(s);
-			else
-				update.add(s);
-		}
-
-		List<String> delete = new ArrayList<String>();
-		for (String s : oldNames) {
-			if (!newNames.contains(s))
-				delete.add(s);
-		}
-
-		// confirm dialog
-		if (JOptionPane.showConfirmDialog((Component) e.getSource(),
-				Lang.getUI("playlistManager.confirm") + ":\n" + create.size() + "/" + delete.size() + "/"
-						+ update.size(),
-				Lang.getUI("menu.tools.playlistManager"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-				null) != JOptionPane.OK_OPTION)
-			return;
-
-		try {
-			// start by removing
-			for (String pName : delete) {
-				// first delete all the playlist entries
-				CommonSQL.clearSongsInPlaylist(pName);
-				// then delete the playlist
-				CommonSQL.removePlaylist(pName);
-			}
-			// Move all existing tabOrders upwards, so that we can guarantee unique
-			// tabOrders
-			// select max taborder
-			int maxTab = CommonSQL.getMaxTabOrderFromPlaylist();
-
-			// move tabOrders up
-			try (PreparedStatement tabUp = SQLConnection.getDbConn()
-					.prepareStatement("UPDATE Playlist SET TabOrder = TabOrder + ?")) {
-				tabUp.setInt(1, maxTab);
-				tabUp.executeUpdate();
-			}
-
-			// Create the playlists
-			for (String newP : create) {
-				try (PreparedStatement addP = SQLConnection.getDbConn().prepareStatement(
-						"INSERT INTO Playlist VALUES (?, ( SELECT coalesce(max(TabOrder)+1,1) FROM Playlist) )")) {
-					addP.setString(1, newP);
-					addP.executeUpdate();
-				}
-			}
-
-			// Reorder all the playlists
-			int i = 0;
-			for (String name : newNames) {
-				try (PreparedStatement order = SQLConnection.getDbConn()
-						.prepareStatement("UPDATE Playlist SET TabOrder = ? WHERE PlaylistName = ?")) {
-					order.setInt(1, i++);
-					order.setString(2, name);
-					order.executeUpdate();
-				}
-			}
-
-			// commit the changes
-			SQLConnection.getDbConn().commit(DataChangedType.PLAYLIST_DATA_OPTS);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-			return;
-		}
+		JPanel contentPanel = new JPanel(new BorderLayout(10,10));
+		
+		// listing of playlists
+		contentPanel.add(new JScrollPane(plList,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+		plList.setVisibleRowCount(8);
+		
+		// button panel
+		JPanel buttonPanel = new JPanel(new GridLayout(0,1));
+		buttonPanel.setBorder(BorderFactory.createEtchedBorder());
+		buttonPanel.add(wrapAction(new AddPlaylistAction()));
+		buttonPanel.add(wrapAction(new ChangeOrderAction(true, plList)));
+		buttonPanel.add(wrapAction(new ChangeOrderAction(false, plList)));
+		buttonPanel.add(wrapAction(new DeletePlaylistAction(plList)));
+		contentPanel.add(buttonPanel, BorderLayout.EAST);
+		
+		JOptionPane.showMessageDialog(ApplicationWindow.APP_WINDOW, contentPanel, Lang.getUI("menu.tools.playlistManager"), JOptionPane.PLAIN_MESSAGE, null);
+	}
+	
+	private JComponent wrapAction(Action a) {
+		JPanel p = new JPanel();
+		JButton b = new JButton(a);
+		b.setPreferredSize(new Dimension(60,25));
+		p.add(b);
+		return p;
 	}
 }

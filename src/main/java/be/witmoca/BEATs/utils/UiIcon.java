@@ -56,6 +56,8 @@ public enum UiIcon {
 	CUT("Icons8/cut"),
 	COPY("Icons8/copy"),
 	PASTE("Icons8/paste"),
+	UP(UIManager.getIcon("Table.ascendingSortIcon")),
+	DOWN(UIManager.getIcon("Table.descendingSortIcon")),
 	
 	// Logo's
 	LOGO_256("Logo/logo-0"),

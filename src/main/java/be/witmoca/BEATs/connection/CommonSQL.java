@@ -278,6 +278,16 @@ public class CommonSQL {
 			return 0;
 		}
 	}
+	
+	public static int getTabOrder(String playlistName) throws SQLException {
+		try (PreparedStatement selTab = SQLConnection.getDbConn().prepareStatement("SELECT taborder FROM playlist WHERE PlaylistName = ?")) {
+			selTab.setString(1, playlistName);
+			ResultSet rs = selTab.executeQuery();
+			if (rs.next())
+				return rs.getInt(1);
+			return 0;
+		}
+	}
 
 	/**
 	 * 
@@ -294,6 +304,14 @@ public class CommonSQL {
 			}
 		}
 		return result;
+	}
+	
+	public static void updatePlaylistOrder(String playlistName, int tabOrder) throws SQLException {
+		try (PreparedStatement upT = SQLConnection.getDbConn().prepareStatement("UPDATE Playlist SET TabOrder = ? WHERE PlaylistName = ?")) {
+			upT.setInt(1, tabOrder);
+			upT.setString(2, playlistName);
+			upT.executeUpdate();
+		}
 	}
 
 	public static void removePlaylist(String playlistName) throws SQLException {
@@ -326,6 +344,16 @@ public class CommonSQL {
 			updateVal.setInt(4, rowid);
 			updateVal.executeUpdate();
 		}
+	}
+	
+	public static int countSongsInPlaylist(String playlistName) throws SQLException {
+		try (PreparedStatement selSong = SQLConnection.getDbConn().prepareStatement("SELECT count(*) FROM SongsInPlaylist WHERE PlaylistName = ?")) {
+			selSong.setString(1, playlistName);
+			ResultSet rs = selSong.executeQuery();
+			if(rs.next())
+				return rs.getInt(1);
+		}
+		return 0;
 	}
 
 	public static void removeFromSongsInPlaylist(int rowid) throws SQLException {
