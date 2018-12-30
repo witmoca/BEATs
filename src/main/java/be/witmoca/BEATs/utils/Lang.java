@@ -5,6 +5,7 @@ package be.witmoca.BEATs.utils;
 
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -33,9 +34,17 @@ import java.util.Set;
 public class Lang {
 	private static final String UI_BASE = "Langs.UserInterface";
 	private static ResourceBundle UiBundle = ResourceBundle.getBundle(UI_BASE);
-
+	private static ResourceBundle defaultUiBundle = ResourceBundle.getBundle(UI_BASE, new Locale(""));
+	
 	public static String getUI(String msg) {
-		return UiBundle.getString(msg);
+		try {
+			return UiBundle.getString(msg);
+		} catch (MissingResourceException e) {
+			// Log message
+			e.printStackTrace(); 
+			// return default instead
+			return defaultUiBundle.getString(msg);
+		}
 	}
 
 	public static Set<Locale> getPossibleLocales() {
