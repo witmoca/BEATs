@@ -55,6 +55,8 @@ public class StringUtils {
 	* @return Sanitized and transformed string
 	 */
 	public static String ToUpperCamelCase(String s) {
+		if(s == null)
+			return s;
 		s = s.trim();
 		if(s.isEmpty())
 			return s;

@@ -54,7 +54,7 @@ public class RenamePlaylistAction extends AbstractAction {
 			return;
 		
 		String newName = StringUtils.ToUpperCamelCase(JOptionPane.showInputDialog((Component) e.getSource(), Lang.getUI("playlistManager.rename.dialog") + ": "));
-		if(newName.isEmpty())
+		if(newName == null || newName.isEmpty())
 			return;
 		
 		// Make sure tab orders are perfect
