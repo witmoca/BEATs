@@ -346,6 +346,14 @@ public class CommonSQL {
 		}
 	}
 	
+	public static void updatePlaylistReferences(String newName, String oldName) throws SQLException {
+		try (PreparedStatement updateVal = SQLConnection.getDbConn().prepareStatement("UPDATE SongsInPlaylist SET PlaylistName = ? WHERE PlaylistName = ?")) {
+			updateVal.setString(1, newName);
+			updateVal.setString(2, oldName);
+			updateVal.executeUpdate();
+		}
+	}
+	
 	public static int countSongsInPlaylist(String playlistName) throws SQLException {
 		try (PreparedStatement selSong = SQLConnection.getDbConn().prepareStatement("SELECT count(*) FROM SongsInPlaylist WHERE PlaylistName = ?")) {
 			selSong.setString(1, playlistName);

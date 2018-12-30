@@ -56,6 +56,7 @@ public enum UiIcon {
 	CUT("Icons8/cut"),
 	COPY("Icons8/copy"),
 	PASTE("Icons8/paste"),
+	EDIT("BasicUi/edit"),
 	UP(UIManager.getIcon("Table.ascendingSortIcon")),
 	DOWN(UIManager.getIcon("Table.descendingSortIcon")),
 	
@@ -78,7 +79,6 @@ public enum UiIcon {
 //	PRINT("printer"),
 //	
 //	// item operations
-//	EDIT("edit"),
 //	LOCKED("lock-locked"),
 //	UNLOCKED("lock-unlocked"),
 //	STICKY("pricker"),

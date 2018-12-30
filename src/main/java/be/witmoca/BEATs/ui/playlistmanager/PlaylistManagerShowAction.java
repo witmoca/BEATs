@@ -55,7 +55,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 		
 		// listing of playlists
 		contentPanel.add(new JScrollPane(plList,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-		plList.setVisibleRowCount(8);
+		plList.setVisibleRowCount(10);
 		
 		// button panel
 		JPanel buttonPanel = new JPanel(new GridLayout(0,1));
@@ -63,6 +63,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 		buttonPanel.add(wrapAction(new AddPlaylistAction()));
 		buttonPanel.add(wrapAction(new ChangeOrderAction(true, plList)));
 		buttonPanel.add(wrapAction(new ChangeOrderAction(false, plList)));
+		buttonPanel.add(wrapAction(new RenamePlaylistAction(plList)));
 		buttonPanel.add(wrapAction(new DeletePlaylistAction(plList)));
 		contentPanel.add(buttonPanel, BorderLayout.EAST);
 		
