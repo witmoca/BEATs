@@ -216,7 +216,7 @@ public class SQLConnection implements AutoCloseable {
 				if (fileVersion > ApplicationManager.APP_VERSION) {
 					// File is newer than app => update app
 					throw new ConnectionException(ConnectionException.ConnState.APP_OUTDATED, null);
-				} else if ((fileVersion >>> 6) < (ApplicationManager.APP_VERSION >>> 6)) {
+				} else if ((fileVersion /1000000 ) < (ApplicationManager.APP_VERSION /1000000)) {
 					// Major version of file < major version of app => not compatible
 					throw new ConnectionException(ConnectionException.ConnState.DB_OUTDATED, null);
 				}

@@ -5,7 +5,7 @@
 
 	<groupId>be.witmoca</groupId>
 	<artifactId>BEATs</artifactId>
-	<version>0.2.0-beta</version>
+	<version>0.3.0-beta</version>
 	<packaging>jar</packaging>
 
 	<name>BEATs (Burning Ember Archival Tool Suite)</name>
