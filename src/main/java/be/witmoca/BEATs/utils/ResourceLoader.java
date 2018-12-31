@@ -46,6 +46,8 @@ public class ResourceLoader {
 	
 	private static final String[] DIRECTORIES = { APP_DIR, LOG_DIR };	
 	private static final String ERR_LOG_EXT = ".err";
+	
+	public static int bytesOfErrorData = 0;
 
 	/**
 	 * Initialises the File/Folder tree needed for operation.
@@ -88,6 +90,11 @@ public class ResourceLoader {
 			if(!oldest.delete())
 				throw new IOException("Could not delete error log!\n" + oldest.getAbsolutePath());
 			errorLogs = listErrFiles();
+		}
+		
+		// Calculate total amount of error data 
+		for(File f : errorLogs) {
+			bytesOfErrorData += f.length();
 		}
 		
 		// Calculate new name

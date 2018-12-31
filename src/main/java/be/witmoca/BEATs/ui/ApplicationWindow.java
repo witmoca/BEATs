@@ -67,6 +67,9 @@ public class ApplicationWindow extends JFrame implements WindowListener, DataCha
 		// Components
 		this.add(eastPanel, BorderLayout.EAST);
 		this.add(centerPanel, BorderLayout.CENTER);
+		NotificationBar notify = new NotificationBar();
+		if(notify.holdsNotifications())
+			this.add(notify, BorderLayout.SOUTH);
 		
 		// Menu
 		this.setJMenuBar(new ApplicationMenubar());
