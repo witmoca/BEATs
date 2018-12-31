@@ -3,18 +3,17 @@
  */
 package be.witmoca.BEATs.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /*
 *
@@ -119,14 +118,18 @@ public class ResourceLoader {
 	 * Reads in a text based file and returns a list containing the lines inside it
 	 * 
 	 * @param resource the resource to load
-	 * @return the list containing the resulting lines. There are no guarantees on
-	 *         the type, mutability,serializability, or thread-safety of the List
+	 * @return the list containing the resulting lines.
 	 *         returned. May return {@code null} if the resource was not found.
 	 */
 	public static List<String> ReadResource(String resource) {
-		try (Stream<String> lines = Files
-				.lines(Paths.get(ResourceLoader.class.getClassLoader().getResource(resource).toURI()));) {
-			List<String> result = lines.collect(Collectors.toList());
+		try (BufferedReader in = new BufferedReader(new InputStreamReader(ResourceLoader.class.getClassLoader().getResourceAsStream(resource))) ) {
+			List<String> result = new ArrayList<String>();
+			String line = "";
+			while(line != null) {
+			    if(!line.isEmpty())
+			    	result.add(line.trim());
+			    line = in.readLine();
+			}
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
