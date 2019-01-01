@@ -72,7 +72,7 @@ public class SaveFileAction implements ActionListener {
 			}
 			pathToFile += ".beats";
 			try {
-				SQLConnection.getDbConn().saveDatabase(pathToFile);
+				SQLConnection.getDbConn().saveDatabase(pathToFile, false);
 				hasSucceeded = true;
 			} catch (SQLException e1) {
 				JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),

@@ -38,14 +38,20 @@ import java.util.List;
 * Created: 2018
 */
 public class ResourceLoader {
+	// Directories
 	private static final String APP_DIR = System.getProperty("user.home") + File.separator + "BEATs";
 	public static final String LOG_DIR = APP_DIR + File.separator + "log";	
+	public static final String BACKUP_DIR = APP_DIR + File.separator + "backups";
+	private static final String[] DIRECTORIES = { APP_DIR, LOG_DIR, BACKUP_DIR};	
+	
+	// Files
 	public static final String DB_LOC = APP_DIR + File.separator + "currentDocument.beats";
 	public static final String USER_SETTINGS_LOC = APP_DIR + File.separator + "UserPreferences.properties";
-	
-	private static final String[] DIRECTORIES = { APP_DIR, LOG_DIR };	
+
+	// Extensions
 	private static final String ERR_LOG_EXT = ".err";
 	
+	// Metadata
 	public static int bytesOfErrorData = 0;
 
 	/**

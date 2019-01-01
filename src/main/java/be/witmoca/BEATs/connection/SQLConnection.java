@@ -53,6 +53,7 @@ public class SQLConnection implements AutoCloseable {
 	private File currentFile; // Considered MetaData
 	
 	private boolean changedState = false;
+	private boolean backupState = false;
 	private Map<DataChangedListener, EnumSet<DataChangedType>> dataListeners = new HashMap<>();
 
 	/**
@@ -89,6 +90,9 @@ public class SQLConnection implements AutoCloseable {
 
 		// Notify listeners
 		DbConn.announceDataRefresh();
+		
+		// Start backups
+		BackupHandler.StartBackups();
 	}
 
 	/**
@@ -148,8 +152,8 @@ public class SQLConnection implements AutoCloseable {
 		this.vacuum();
 	}
 
-	public void saveDatabase(String savePath) throws SQLException {
-		this.currentFile = new File(savePath).getAbsoluteFile();
+	public void saveDatabase(String savePath, boolean isBackup) throws SQLException {
+		File saveFile = new File(savePath).getAbsoluteFile();
 		
 		// Call optimize first
 		try (Statement optimize = Db.createStatement()) {
@@ -157,12 +161,17 @@ public class SQLConnection implements AutoCloseable {
 		}
 
 		try (Statement save = Db.createStatement()) {
-			save.executeUpdate("backup to " + currentFile.getAbsolutePath());
+			save.executeUpdate("backup to " + saveFile.getPath());
 		}
-		this.setSaved();
-		
-		// loadedLocation has been changed
-		notifyDataChangedListeners(EnumSet.of(DataChangedType.META_DATA));
+		if(isBackup) {
+			this.setBackedUp();
+		} else {
+			this.currentFile = saveFile;
+			this.setSaved();
+			
+			// loadedLocation has been changed
+			notifyDataChangedListeners(EnumSet.of(DataChangedType.META_DATA));
+		}
 	}
 
 	/**
@@ -316,6 +325,7 @@ public class SQLConnection implements AutoCloseable {
 			return;
 		Db.commit();
 		Db.close();
+		BackupHandler.StopBackups();
 		if (!(new File(DB_LOC)).delete())
 			throw new SQLException(
 					new IOException("Could not cleanup Burning Ember internal storage (" + DB_LOC + ")"));
@@ -327,10 +337,20 @@ public class SQLConnection implements AutoCloseable {
 
 	private void setSaved() {
 		this.changedState = false;
+		this.backupState = false;
 	}
 
 	private void setChanged() {
 		this.changedState = true;
+		this.backupState = true;
+	}
+
+	public boolean isBackupNeeded() {
+		return backupState;
+	}
+
+	public void setBackedUp() {
+		this.backupState = false;
 	}
 
 	public synchronized void addDataChangedListener(DataChangedListener d, EnumSet<DataChangedType> e) {
