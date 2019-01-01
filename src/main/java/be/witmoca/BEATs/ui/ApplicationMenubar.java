@@ -128,6 +128,10 @@ class ApplicationMenubar extends JMenuBar {
 		});
 		helpMenu.add(openLocal);
 		
+		JMenuItem loadBackup = new JMenuItem(Lang.getUI("menu.loadbackup"), UiIcon.FOLDER_OPEN.getIcon());
+		loadBackup.addActionListener(LoadFileAction.getLoadFileActionWithUI(new File(ResourceLoader.BACKUP_DIR)));
+		helpMenu.add(loadBackup);
+		
 		JMenuItem refreshScreen = new JMenuItem(Lang.getUI("menu.refresh"), UiIcon.SCREEN.getIcon());
 		refreshScreen.addActionListener(new ActionListener() {
 			@Override

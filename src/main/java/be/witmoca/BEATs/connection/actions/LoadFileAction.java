@@ -55,6 +55,10 @@ public class LoadFileAction implements ActionListener {
 	public static ActionListener getLoadFileActionWithUI() {
 		return new LoadFileAction(true, null);
 	}
+	
+	public static ActionListener getLoadFileActionWithUI(File suggestLocation) {
+		return new LoadFileAction(true, suggestLocation);
+	}
 
 	public static final ActionListener getLoadFileAction(File loadFile) {
 		return new LoadFileAction(false, loadFile);
@@ -78,7 +82,10 @@ public class LoadFileAction implements ActionListener {
 			final JFileChooser fc = new JFileChooser();
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileFilter(new BEATsFileFilter());
-			fc.setCurrentDirectory(SQLConnection.getDbConn().getCurrentFile());
+			if(this.loadFile == null)
+				fc.setCurrentDirectory(SQLConnection.getDbConn().getCurrentFile());
+			else
+				fc.setCurrentDirectory(this.loadFile);
 			if (fc.showOpenDialog(ApplicationWindow.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
 				loadFile = fc.getSelectedFile();
 			} else {
