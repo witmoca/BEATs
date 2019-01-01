@@ -38,6 +38,7 @@ import be.witmoca.BEATs.connection.actions.ImportFileAction;
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.connection.actions.SaveFileAction;
 import be.witmoca.BEATs.ui.actions.*;
+import be.witmoca.BEATs.ui.genremanager.GenreManagerShowAction;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.ResourceLoader;
@@ -88,10 +89,15 @@ class ApplicationMenubar extends JMenuBar {
 		JMenu toolsMenu = new JMenu(Lang.getUI("menu.tools"));
 		toolsMenu.setMnemonic(KeyEvent.VK_T);
 		
-		JMenuItem playlistManager = new JMenuItem(Lang.getUI("menu.tools.playlistManager"), UiIcon.PLAYLISTS.getIcon());
+		JMenuItem playlistManager = new JMenuItem(Lang.getUI("menu.tools.playlistManager"), UiIcon.LIST.getIcon());
 		playlistManager.setMnemonic(KeyEvent.VK_P);
 		playlistManager.addActionListener(new PlaylistManagerShowAction());
 		toolsMenu.add(playlistManager);
+		
+		JMenuItem genreManager = new JMenuItem(Lang.getUI("menu.tools.genreManager"), UiIcon.LIST.getIcon());
+		genreManager.setMnemonic(KeyEvent.VK_G);
+		genreManager.addActionListener(new GenreManagerShowAction());
+		toolsMenu.add(genreManager);
 		
 		toolsMenu.addSeparator();
 		

@@ -162,6 +162,31 @@ public class CommonSQL {
 		}
 		return result;
 	}
+	
+	public static int countGenreInArchive(String genreName) throws SQLException {
+		try (PreparedStatement sel = SQLConnection.getDbConn().prepareStatement("SELECT count(*) FROM SongsInArchive WHERE GenreName = ?")) {
+			sel.setString(1, genreName);
+			ResultSet rs = sel.executeQuery();
+			if(rs.next())
+				return rs.getInt(1);
+		}
+		return 0;
+	}
+	
+	public static void updateAllGenreReferences(String oldGenre, String newGenre) throws SQLException {
+		try (PreparedStatement update = SQLConnection.getDbConn().prepareStatement("UPDATE SongsInArchive SET GenreName = ? WHERE GenreName = ?")) {
+			update.setString(1, newGenre);
+			update.setString(2, oldGenre);
+			update.executeUpdate();
+		}
+	}
+	
+	public static void removeGenre(String genreName) throws SQLException {
+		try (PreparedStatement delLine = SQLConnection.getDbConn().prepareStatement("DELETE FROM Genre WHERE GenreName = ?")) {
+			delLine.setString(1, genreName);
+			delLine.executeUpdate();
+		}
+	}
 
 	public static void addEpisode(int episodeID, LocalDate episodeDate) throws SQLException {
 		try (PreparedStatement add = SQLConnection.getDbConn()

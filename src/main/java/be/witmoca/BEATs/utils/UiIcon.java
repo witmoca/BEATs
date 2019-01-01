@@ -38,7 +38,7 @@ public enum UiIcon {
 	CLOSE_APP("BasicUi/home"),
 	
 	// Tool icons
-	PLAYLISTS("BasicUi/list-mark"),
+	LIST("BasicUi/list-mark"),
 	SEARCH("BasicUi/search"),
 	CALENDAR("BasicUi/calendar"),
 	CHECKED("BasicUi/check-mark"),
