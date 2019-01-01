@@ -130,10 +130,9 @@ public class ResourceLoader {
 	public static List<String> ReadResource(String resource) {
 		try (BufferedReader in = new BufferedReader(new InputStreamReader(ResourceLoader.class.getClassLoader().getResourceAsStream(resource))) ) {
 			List<String> result = new ArrayList<String>();
-			String line = "";
+			String line = in.readLine();
 			while(line != null) {
-			    if(!line.isEmpty())
-			    	result.add(line.trim());
+			    result.add(line.trim());
 			    line = in.readLine();
 			}
 			return result;
