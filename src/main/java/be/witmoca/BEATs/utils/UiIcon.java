@@ -57,6 +57,7 @@ public enum UiIcon {
 	COPY("Icons8/copy"),
 	PASTE("Icons8/paste"),
 	EDIT("BasicUi/edit"),
+	PRINT("BasicUi/printer"),
 	UP(UIManager.getIcon("Table.ascendingSortIcon")),
 	DOWN(UIManager.getIcon("Table.descendingSortIcon")),
 	
@@ -76,7 +77,6 @@ public enum UiIcon {
 //	// tools
 //	OPTIONS("option-menu"),
 //	CHART("fold-chart"),
-//	PRINT("printer"),
 //	
 //	// item operations
 //	LOCKED("lock-locked"),

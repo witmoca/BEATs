@@ -2,7 +2,7 @@
 *
 +===============================================================================+
 |    BEATs (Burning Ember Archival Tool suite)                                  |
-|    Copyright 2018 Jente Heremans                                              |
+|    Copyright 2019 Jente Heremans                                              |
 |                                                                               |
 |    Licensed under the Apache License, Version 2.0 (the "License");            |
 |    you may not use this file except in compliance with the License.           |
@@ -17,35 +17,49 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistToolbar.java
-* Created: 2018
+* File: PrintTableAction.java
+* Created: 2019
 */
 package be.witmoca.BEATs.ui.playlistpanel.actions;
 
-import javax.swing.Box;
-import javax.swing.JButton;
+import java.awt.event.ActionEvent;
+import java.awt.print.PrinterException;
+import javax.swing.AbstractAction;
 import javax.swing.JTable;
-import javax.swing.JToolBar;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
-import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
-import be.witmoca.BEATs.utils.UiUtils;
+import be.witmoca.BEATs.utils.Lang;
+import be.witmoca.BEATs.utils.UiIcon;
 
-public class PlaylistToolbar extends JToolBar {
+public class PrintTableAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
-	
-	public PlaylistToolbar(JTable table) {
-		super(JToolBar.HORIZONTAL);
+	private final JTable table;
 
-		this.setFloatable(false);
-		this.add(ClipboardActionFactory.getCutAction(table));
-		this.add(ClipboardActionFactory.getCopyAction(table));
-		this.add(ClipboardActionFactory.getPasteAction(table));
-		add(UiUtils.SingleLineSeparator());
-		this.add(new DeleteAction(table));
-		
-		// Beyond this point all goes on the right
-		add(Box.createHorizontalGlue());
-		
-		this.add(new JButton(new PrintTableAction(table)));
+	public PrintTableAction(JTable table) {
+		super(Lang.getUI("action.print"), UiIcon.PRINT.getIcon());
+		this.table = table;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		try {
+			// Hide the last row
+			TableColumnModel columnModel = table.getColumnModel();
+			TableColumn col = columnModel.getColumn(3);
+			columnModel.removeColumn(col);
+			table.print();
+			columnModel.addColumn(col);
+
+		} catch (PrinterException e1) {
+			e1.printStackTrace();
+		}
+	}
+
 }
