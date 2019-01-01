@@ -38,14 +38,10 @@ import be.witmoca.BEATs.utils.ResourceLoader;
 import be.witmoca.BEATs.utils.BEATsSettings;
 
 public class ApplicationManager {
-	// Format : MMMmmmrrr with M = Major, m = minor & r = revision (do not lead with zeros, as this is interpreted as octal)
-	public static final int APP_VERSION = 3000;
-
 	// Start up
 	public static void main(String[] args) {		
 		// Get the file to load from the arguments
 		File loadFile = extractFileFromArgs(args);
-		
 		try {
 			// Initialise Files & folders
 			ResourceLoader.initFileTree();

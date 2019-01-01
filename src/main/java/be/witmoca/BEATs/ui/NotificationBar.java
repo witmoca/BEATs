@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.ResourceLoader;
+import be.witmoca.BEATs.utils.StaticSettings;
 
 class NotificationBar extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -36,11 +37,21 @@ class NotificationBar extends JPanel {
 
 	public NotificationBar() {
 		this.setBorder(BorderFactory.createEtchedBorder());
+		
+		JLabel errorLabel = null;
+		
 		if(ResourceLoader.bytesOfErrorData > 0) {
-			JLabel msgL = new JLabel(Lang.getUI("notification.msg") + " Bytes: " + ResourceLoader.bytesOfErrorData);
-			msgL.setForeground(Color.red);
-			this.add(msgL);
+			errorLabel = new JLabel(Lang.getUI("notification.errorlogs") + " Bytes: " + ResourceLoader.bytesOfErrorData);
+		}
+		if(StaticSettings.getAppVersionInt() == 0) {
+			errorLabel = new JLabel(Lang.getUI("notification.development"));
+		}
+		
+		if(errorLabel != null) {
+			errorLabel.setForeground(Color.red);
+			this.add(errorLabel);
 			holdsNotifications = true;
+			return;
 		}
 	}
 	

@@ -39,8 +39,8 @@ import org.sqlite.SQLiteConfig.LockingMode;
 import org.sqlite.SQLiteConnection;
 import org.sqlite.SQLiteErrorCode;
 
-import be.witmoca.BEATs.ApplicationManager;
 import be.witmoca.BEATs.utils.ResourceLoader;
+import be.witmoca.BEATs.utils.StaticSettings;
 
 public class SQLConnection implements AutoCloseable {
 	private static final int APPLICATION_ID = 0x77776462;
@@ -185,7 +185,7 @@ public class SQLConnection implements AutoCloseable {
 		SQLiteConfig config = new SQLiteConfig();
 		if (!existing) {
 			// Add application_id & user_version (only add these on a new db)
-			config.setUserVersion(ApplicationManager.APP_VERSION);
+			config.setUserVersion(StaticSettings.getAppVersionInt());
 			config.setApplicationId(APPLICATION_ID);
 		}
 		// Enforce foreign key correctness
@@ -222,10 +222,10 @@ public class SQLConnection implements AutoCloseable {
 																										// value! (0 as
 																										// default)
 				int fileVersion = appversionCheckIdResult.getInt(1);
-				if (fileVersion > ApplicationManager.APP_VERSION) {
+				if (fileVersion > StaticSettings.getAppVersionInt()) {
 					// File is newer than app => update app
 					throw new ConnectionException(ConnectionException.ConnState.APP_OUTDATED, null);
-				} else if ((fileVersion /1000000 ) < (ApplicationManager.APP_VERSION /1000000)) {
+				} else if ((fileVersion /1000000 ) < StaticSettings.getAppVersionMajor()) {
 					// Major version of file < major version of app => not compatible
 					throw new ConnectionException(ConnectionException.ConnState.DB_OUTDATED, null);
 				}
