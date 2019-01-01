@@ -35,7 +35,7 @@ import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.utils.UiIcon;
 
-public class ChangeOrderAction extends AbstractAction {
+class ChangeOrderAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final int movement;
 	private final JList<String> model;
@@ -43,7 +43,7 @@ public class ChangeOrderAction extends AbstractAction {
 	/**
 	 * @param up {@code true} if up, {@code false} if down
 	 */
-	public ChangeOrderAction(boolean up, JList<String> model) {
+	ChangeOrderAction(boolean up, JList<String> model) {
 		super(null, up ? UiIcon.UP.getIcon() : UiIcon.DOWN.getIcon());
 		this.movement = up ? 1 : -1;
 		this.model = model;

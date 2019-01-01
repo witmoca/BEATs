@@ -36,7 +36,7 @@ import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 
-public class PMListModel implements ListModel<String>, DataChangedListener {
+class PMListModel implements ListModel<String>, DataChangedListener {
 	private final List<String> content = new ArrayList<String>();
 	private final List<ListDataListener> listeners = new ArrayList<ListDataListener>();
 	

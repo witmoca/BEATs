@@ -38,7 +38,7 @@ import javax.swing.Timer;
 
 import be.witmoca.BEATs.utils.ResourceLoader;
 
-public class BackupHandler implements ActionListener {
+class BackupHandler implements ActionListener {
 	private static final int DELAY = (int) TimeUnit.SECONDS.toMillis(3); // 5 minutes
 	private static final int MAX_BACKUP_COUNT = 20; // Max 20 files representing a backup
 	private static final int MAX_BACKUP_SIZE = 1024 * 1024 * 50; // Max 50Mb total space used by the backups 

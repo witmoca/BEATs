@@ -29,7 +29,7 @@ import java.util.List;
 
 import be.witmoca.BEATs.connection.CommonSQL;
 
-public class OptimiseTabOrderAction implements ActionListener {
+class OptimiseTabOrderAction implements ActionListener {
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */

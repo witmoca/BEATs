@@ -38,11 +38,11 @@ import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.StringUtils;
 import be.witmoca.BEATs.utils.UiIcon;
 
-public class RenamePlaylistAction extends AbstractAction {
+class RenamePlaylistAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> model;
 	
-	public RenamePlaylistAction(JList<String> model) {
+	RenamePlaylistAction(JList<String> model) {
 		super(null, UiIcon.EDIT.getIcon());
 		this.model = model;
 	}

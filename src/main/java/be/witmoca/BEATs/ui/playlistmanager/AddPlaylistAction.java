@@ -36,7 +36,7 @@ import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.StringUtils;
 
-public class AddPlaylistAction extends AbstractAction {
+class AddPlaylistAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 
 	public AddPlaylistAction() {

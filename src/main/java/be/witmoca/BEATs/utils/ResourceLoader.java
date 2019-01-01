@@ -46,7 +46,7 @@ public class ResourceLoader {
 	
 	// Files
 	public static final String DB_LOC = APP_DIR + File.separator + "currentDocument.beats";
-	public static final String USER_SETTINGS_LOC = APP_DIR + File.separator + "UserPreferences.properties";
+	static final String USER_SETTINGS_LOC = APP_DIR + File.separator + "UserPreferences.properties";
 
 	// Extensions
 	private static final String ERR_LOG_EXT = ".err";

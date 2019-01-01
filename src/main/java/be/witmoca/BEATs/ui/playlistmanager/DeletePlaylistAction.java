@@ -34,11 +34,11 @@ import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
-public class DeletePlaylistAction extends AbstractAction {
+class DeletePlaylistAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> model;
 
-	public DeletePlaylistAction(JList<String> model) {
+	DeletePlaylistAction(JList<String> model) {
 		super(null,UiIcon.DELETE.getIcon());
 		this.model = model;
 	}

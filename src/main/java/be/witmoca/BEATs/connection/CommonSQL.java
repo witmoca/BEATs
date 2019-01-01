@@ -278,16 +278,6 @@ public class CommonSQL {
 			return 0;
 		}
 	}
-	
-	public static int getTabOrder(String playlistName) throws SQLException {
-		try (PreparedStatement selTab = SQLConnection.getDbConn().prepareStatement("SELECT taborder FROM playlist WHERE PlaylistName = ?")) {
-			selTab.setString(1, playlistName);
-			ResultSet rs = selTab.executeQuery();
-			if (rs.next())
-				return rs.getInt(1);
-			return 0;
-		}
-	}
 
 	/**
 	 * 

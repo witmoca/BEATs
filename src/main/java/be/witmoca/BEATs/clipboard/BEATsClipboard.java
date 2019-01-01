@@ -34,7 +34,7 @@ import javax.swing.TransferHandler.TransferSupport;
 * File: BEATsClipboard.java
 * Created: 2018
 */
-public class BEATsClipboard extends Clipboard {
+class BEATsClipboard extends Clipboard {
 	private static final ClipboardTransferHandler handler = new ClipboardTransferHandler();
 	private static final JComponent COMPONENT_REPRESENTATION = new JLabel("Internal Clipboard");
 	private static final BEATsClipboard INT_CLIP = new BEATsClipboard("BEATs Internal Clipboard");
@@ -64,7 +64,7 @@ public class BEATsClipboard extends Clipboard {
 		handler.exportDone(COMPONENT_REPRESENTATION, t, TransferHandler.MOVE);
 	}
 
-	public static BEATsClipboard getINT_CLIP() {
+	static BEATsClipboard getINT_CLIP() {
 		return INT_CLIP;
 	}
 }

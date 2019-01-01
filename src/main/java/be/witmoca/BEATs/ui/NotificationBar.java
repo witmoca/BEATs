@@ -30,7 +30,7 @@ import javax.swing.JPanel;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.ResourceLoader;
 
-public class NotificationBar extends JPanel {
+class NotificationBar extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private boolean holdsNotifications = false;
 
@@ -44,7 +44,7 @@ public class NotificationBar extends JPanel {
 		}
 	}
 	
-	public boolean holdsNotifications() {
+	boolean holdsNotifications() {
 		return holdsNotifications;
 	}
 }

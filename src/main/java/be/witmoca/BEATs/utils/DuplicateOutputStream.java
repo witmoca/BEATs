@@ -28,11 +28,11 @@ import java.io.OutputStream;
 * File: DuplicateOutputStream.java
 * Created: 2018
 */
-public class DuplicateOutputStream extends OutputStream {
+class DuplicateOutputStream extends OutputStream {
 	private final OutputStream out1;
 	private final OutputStream out2;
 	
-	public DuplicateOutputStream(OutputStream o1, OutputStream o2) {
+	DuplicateOutputStream(OutputStream o1, OutputStream o2) {
 		if(o1 == null || o2 == null)
 			throw new NullPointerException();
 		out1 = o1;

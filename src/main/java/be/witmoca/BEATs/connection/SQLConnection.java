@@ -349,7 +349,7 @@ public class SQLConnection implements AutoCloseable {
 		return backupState;
 	}
 
-	public void setBackedUp() {
+	private void setBackedUp() {
 		this.backupState = false;
 	}
 
