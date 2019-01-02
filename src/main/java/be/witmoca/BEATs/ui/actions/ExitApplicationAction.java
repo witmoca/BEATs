@@ -24,8 +24,7 @@ package be.witmoca.BEATs.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
-
+import be.witmoca.BEATs.connection.ConnectionException;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.actions.CheckFileSavedAction;
 import be.witmoca.BEATs.ui.ApplicationWindow;
@@ -49,7 +48,7 @@ public class ExitApplicationAction implements ActionListener {
 		// KILL DB Connection
 		try {
 			SQLConnection.getDbConn().close();
-		} catch (SQLException e1) {
+		} catch (ConnectionException e1) {
 			e1.printStackTrace();
 		}
 

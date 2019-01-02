@@ -45,13 +45,13 @@ import be.witmoca.BEATs.utils.StaticSettings;
 public class SQLConnection implements AutoCloseable {
 	private static final int APPLICATION_ID = 0x77776462;
 	private static final String DB_LOC = ResourceLoader.DB_LOC;
-	private static boolean recoveredDb = false; 
+	private static boolean recoveredDb = false;
 
 	private static SQLConnection DbConn = null;
 
 	private final SQLiteConnection Db; // Internal Connection
 	private File currentFile; // Considered MetaData
-	
+
 	private boolean changedState = false;
 	private boolean backupState = false;
 	private Map<DataChangedListener, EnumSet<DataChangedType>> dataListeners = new HashMap<>();
@@ -65,34 +65,35 @@ public class SQLConnection implements AutoCloseable {
 	 * @throws ConnectionException
 	 */
 	public static void loadNewInternalDb(File loadFile) throws ConnectionException {
-		Map<DataChangedListener, EnumSet<DataChangedType>> listenerMap = null;
+		try {
+			Map<DataChangedListener, EnumSet<DataChangedType>> listenerMap = null;
 
-		// deal with the old connection (and log any listeneres on that connection)
-		if (DbConn != null) {
-			listenerMap = new HashMap<>(DbConn.getDataListeners());
-			try {
+			// deal with the old connection (and log any listeneres on that connection)
+			if (DbConn != null) {
+				listenerMap = new HashMap<>(DbConn.getDataListeners());
 				DbConn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e);
 			}
-		}
 
-		// Create new connection
-		DbConn = new SQLConnection(loadFile);
+			// Create new connection
+			DbConn = new SQLConnection(loadFile);
 
-		// Attach the old listeners if there where any
-		if (listenerMap != null) {
-			for (DataChangedListener lst : listenerMap.keySet()) {
-				DbConn.addDataChangedListener(lst, listenerMap.get(lst));
+			// Attach the old listeners if there where any
+			if (listenerMap != null) {
+				for (DataChangedListener lst : listenerMap.keySet()) {
+					DbConn.addDataChangedListener(lst, listenerMap.get(lst));
+				}
 			}
-		}
 
-		// Notify listeners
-		DbConn.announceDataRefresh();
-		
-		// Start backups
-		BackupHandler.StartBackups();
+			// Notify listeners
+			DbConn.announceDataRefresh();
+
+			// Start backups
+			BackupHandler.StartBackups();
+		} catch (ConnectionException e) {
+			if(DbConn != null)
+				DbConn.close();
+			throw e;
+		}
 	}
 
 	/**
@@ -100,8 +101,10 @@ public class SQLConnection implements AutoCloseable {
 	 * (overrides loadFile behaviour), loads an external db into the internal db,
 	 * Performs sanity checks and optimisation
 	 * 
-	 * @param loadFile the file to load or {@code null} for an empty db
-	 * @throws ConnectionException thrown when the connection failed to establish
+	 * @param loadFile
+	 *            the file to load or {@code null} for an empty db
+	 * @throws ConnectionException
+	 *             thrown when the connection failed to establish
 	 */
 	private SQLConnection(File loadFile) throws ConnectionException {
 		boolean dbExists = (new File(DB_LOC)).exists();
@@ -139,11 +142,7 @@ public class SQLConnection implements AutoCloseable {
 			try (Statement load = Db.createStatement()) {
 				load.executeUpdate("restore from " + loadFile.getAbsolutePath());
 			} catch (SQLException e) {
-				try {
-					this.close();
-				} catch (SQLException e1) {
-					throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e1);
-				}
+				this.close();
 				throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e);
 			}
 		}
@@ -154,7 +153,7 @@ public class SQLConnection implements AutoCloseable {
 
 	public void saveDatabase(String savePath, boolean isBackup) throws SQLException {
 		File saveFile = new File(savePath).getAbsoluteFile();
-		
+
 		// Call optimize first
 		try (Statement optimize = Db.createStatement()) {
 			optimize.execute("PRAGMA optimize");
@@ -163,12 +162,12 @@ public class SQLConnection implements AutoCloseable {
 		try (Statement save = Db.createStatement()) {
 			save.executeUpdate("backup to " + saveFile.getPath());
 		}
-		if(isBackup) {
+		if (isBackup) {
 			this.setBackedUp();
 		} else {
 			this.currentFile = saveFile;
 			this.setSaved();
-			
+
 			// loadedLocation has been changed
 			notifyDataChangedListeners(EnumSet.of(DataChangedType.META_DATA));
 		}
@@ -177,8 +176,9 @@ public class SQLConnection implements AutoCloseable {
 	/**
 	 * Create the connection settings for the sqlite connection
 	 * 
-	 * @param existing {@code true} when the db already exists, {@code false} for
-	 *                 new db's
+	 * @param existing
+	 *            {@code true} when the db already exists, {@code false} for new
+	 *            db's
 	 * @return the configuration object
 	 */
 	private SQLiteConfig configSettings(boolean existing) {
@@ -225,7 +225,7 @@ public class SQLConnection implements AutoCloseable {
 				if (fileVersion > StaticSettings.getAppVersionInt()) {
 					// File is newer than app => update app
 					throw new ConnectionException(ConnectionException.ConnState.APP_OUTDATED, null);
-				} else if ((fileVersion /1000000 ) < StaticSettings.getAppVersionMajor()) {
+				} else if ((fileVersion / 1000000) < StaticSettings.getAppVersionMajor()) {
 					// Major version of file < major version of app => not compatible
 					throw new ConnectionException(ConnectionException.ConnState.DB_OUTDATED, null);
 				}
@@ -320,15 +320,18 @@ public class SQLConnection implements AutoCloseable {
 	}
 
 	@Override
-	public void close() throws SQLException {
-		if (Db.isClosed())
-			return;
-		Db.commit();
-		Db.close();
-		BackupHandler.StopBackups();
-		if (!(new File(DB_LOC)).delete())
-			throw new SQLException(
-					new IOException("Could not cleanup Burning Ember internal storage (" + DB_LOC + ")"));
+	public void close() throws ConnectionException {
+		try {
+			if (Db.isClosed())
+				return;
+			Db.commit();
+			Db.close();
+			BackupHandler.StopBackups();
+			if (!(new File(DB_LOC)).delete())
+				throw new IOException("Could not cleanup Burning Ember internal storage (" + DB_LOC + ")");
+		} catch (SQLException | IOException e) {
+			throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e);
+		}
 	}
 
 	public boolean isChanged() {
