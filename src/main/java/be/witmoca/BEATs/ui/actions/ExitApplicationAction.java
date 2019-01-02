@@ -54,5 +54,6 @@ public class ExitApplicationAction implements ActionListener {
 
 		// Kill GUI
 		ApplicationWindow.getAPP_WINDOW().dispose();
+		System.exit(0);
 	}
 }

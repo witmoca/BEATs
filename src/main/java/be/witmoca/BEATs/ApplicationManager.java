@@ -35,6 +35,7 @@ import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.ResourceLoader;
+import be.witmoca.BEATs.utils.SingleInstanceManager;
 import be.witmoca.BEATs.utils.BEATsSettings;
 
 public class ApplicationManager {
@@ -45,6 +46,9 @@ public class ApplicationManager {
 		try {
 			// Initialise Files & folders
 			ResourceLoader.initFileTree();
+			// Check if single instance
+			if(!SingleInstanceManager.start(loadFile))
+				return; // Already running
 			// Register a new standard output
 			ResourceLoader.registerStandardErrorLog();
 			// Load (and install) userpreferences
