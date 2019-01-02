@@ -81,15 +81,27 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 	public int getRowCount() {
 		return main.getRowCount();
 	}
+	
+	
 
 	@Override
 	public int getRowHeight(int row) {
+		// Note: Individual row height becomes too slow after a few thousand entries
+		// Height rendering will suffer and possibly render incorrectly on fast movement (eg, scrolling really fast)
+		// For this reason, speed was improved (by Witmoca) when row height is universal
 		int rowHeight = main.getRowHeight(row);
-
-		if (rowHeight != super.getRowHeight(row)) {
-			super.setRowHeight(row, rowHeight);
+		
+		if(rowHeight == main.getRowHeight()) {
+			// Universal row height
+			if (rowHeight != super.getRowHeight()) {
+				super.setRowHeight(rowHeight);
+			}
+		} else {
+			// Row dependent height (this creates a SizeSequence, making rendering a lot slower)
+			if (rowHeight != super.getRowHeight(row)) {
+				super.setRowHeight(rowHeight, row);
+			}
 		}
-
 		return rowHeight;
 	}
 
