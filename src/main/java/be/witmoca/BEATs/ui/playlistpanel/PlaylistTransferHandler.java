@@ -40,7 +40,7 @@ import be.witmoca.BEATs.connection.DataChangedType;
 */
 class PlaylistTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Override
 	public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
 		return false;
@@ -48,13 +48,13 @@ class PlaylistTransferHandler extends TransferHandler {
 
 	@Override
 	public boolean canImport(TransferSupport support) {
-		if(!(support.getComponent() instanceof PlaylistTable))
+		if (!(support.getComponent() instanceof PlaylistTable))
 			return false;
-		
+
 		DataFlavor[] transferFlavors = support.getDataFlavors();
-		
-		for(DataFlavor df : transferFlavors) {
-			if(df.equals(TransferableSong.FLAVOR))
+
+		for (DataFlavor df : transferFlavors) {
+			if (df.equals(TransferableSong.FLAVOR))
 				return true;
 		}
 		return false;
@@ -64,29 +64,29 @@ class PlaylistTransferHandler extends TransferHandler {
 	public boolean importData(JComponent comp, Transferable t) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean importData(TransferSupport support) {
-		if(!this.canImport(support))
+		if (!this.canImport(support))
 			return false;
-		
+
 		String pName = ((PlaylistTable) support.getComponent()).getPlaylistName();
-		
+
 		try {
-			Object o =  support.getTransferable().getTransferData(TransferableSong.FLAVOR);
+			Object o = support.getTransferable().getTransferData(TransferableSong.FLAVOR);
 			if (!(o instanceof TransferableSong)) {
 				throw new ClassCastException("TransferableSong");
 			}
 			TransferableSong ts = (TransferableSong) o;
-			
-			CommonSQL.addSongInPlaylist(pName, ts.getARTIST(), ts.getSONG(),"");
-			
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST));			
+
+			CommonSQL.addSongInPlaylist(pName, ts.getARTIST(), ts.getSONG(), "");
+
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST));
 		} catch (UnsupportedFlavorException | IOException | SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -97,29 +97,28 @@ class PlaylistTransferHandler extends TransferHandler {
 
 	@Override
 	protected Transferable createTransferable(JComponent c) {
-		if(!(c instanceof PlaylistTable))
+		if (!(c instanceof PlaylistTable))
 			return null;
 		return ((PlaylistTable) c).getSelectedSong();
 	}
 
 	@Override
-	protected void exportDone(JComponent source, Transferable data, int action) {	
-		if(action == TransferHandler.MOVE) {			
+	protected void exportDone(JComponent source, Transferable data, int action) {
+		if (action == TransferHandler.MOVE) {
 			try {
 				Object o = data.getTransferData(TransferableSong.FLAVOR);
 				if (!(o instanceof TransferableSong)) {
 					throw new ClassCastException("TransferableSong");
 				}
 				TransferableSong ts = (TransferableSong) o;
-				
+
 				CommonSQL.removeFromSongsInPlaylist(ts.getROWID());
-				
+
 				SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST));
 			} catch (SQLException | UnsupportedFlavorException | IOException e) {
 				e.printStackTrace();
-			}		
+			}
 		}
 	}
-	
-	
+
 }

@@ -64,8 +64,8 @@ public class CurrentQueuePanel extends JPanel {
 				revalidate();
 			}
 		});
-		
-		// Add the popupmenu	
+
+		// Add the popupmenu
 		Queue.setComponentPopupMenu(new CurrentQueuePopupMenu(Queue));
 
 		// Add the toolbar

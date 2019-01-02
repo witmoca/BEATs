@@ -41,7 +41,7 @@ import be.witmoca.BEATs.utils.UiIcon;
 class ArchiveAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> queue;
-	
+
 	ArchiveAction(JList<String> Queue) {
 		super(Lang.getUI("queue.archive"));
 		this.putValue(Action.SMALL_ICON, UiIcon.PROCEED.getIcon());
@@ -50,33 +50,35 @@ class ArchiveAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(queue.getModel().getSize() == 0)
+		if (queue.getModel().getSize() == 0)
 			return;
 		ArchivalDialog ad = new ArchivalDialog();
 		// Archive action cancelled
-		if(!ad.isValid())
+		if (!ad.isValid())
 			return;
-		
+
 		int episodeId = ad.getEpisodeId();
 		String Genre = ad.getGenre();
-		
+
 		try {
 			// Make sure that the episode & genre exist
 			CommonSQL.addEpisode(episodeId, ad.getEpisodeDate());
 			CommonSQL.addGenre(Genre);
-			
+
 			// Add songs from Queue to Archive
-			try (PreparedStatement listCQ = SQLConnection.getDbConn().prepareStatement("SELECT SongId, Comment FROM CurrentQueue ORDER BY SongOrder ASC")) {
+			try (PreparedStatement listCQ = SQLConnection.getDbConn()
+					.prepareStatement("SELECT SongId, Comment FROM CurrentQueue ORDER BY SongOrder ASC")) {
 				ResultSet rs = listCQ.executeQuery();
 				while (rs.next())
 					CommonSQL.addSongInArchive(rs.getInt(1), episodeId, Genre, rs.getString(2));
 			}
-			
+
 			// Clear the queue
 			CommonSQL.clearCurrentQueue();
-			
+
 			// Commit changes
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_ARCHIVE, DataChangedType.CURRENT_QUEUE, DataChangedType.EPISODE, DataChangedType.GENRE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_ARCHIVE, DataChangedType.CURRENT_QUEUE,
+					DataChangedType.EPISODE, DataChangedType.GENRE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

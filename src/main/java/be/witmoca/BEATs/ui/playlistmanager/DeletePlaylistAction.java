@@ -39,32 +39,37 @@ class DeletePlaylistAction extends AbstractAction {
 	private final JList<String> model;
 
 	DeletePlaylistAction(JList<String> model) {
-		super(null,UiIcon.DELETE.getIcon());
+		super(null, UiIcon.DELETE.getIcon());
 		this.model = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(!(e.getSource() instanceof Component))
+		if (!(e.getSource() instanceof Component))
 			return;
 		try {
 			// Prepare for deletion
 			String pName = model.getSelectedValue();
-			if(pName == null)
+			if (pName == null)
 				return;
 			int count = CommonSQL.countSongsInPlaylist(pName);
 			// Confirm if playlist still contains values
-			if(count > 0) {
-				int confirm = JOptionPane.showConfirmDialog((Component) e.getSource(), Lang.getUI("playlistManager.delete.confirm"), "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-				if(confirm != JOptionPane.YES_OPTION)
+			if (count > 0) {
+				int confirm = JOptionPane.showConfirmDialog((Component) e.getSource(),
+						Lang.getUI("playlistManager.delete.confirm"), "", JOptionPane.YES_NO_OPTION,
+						JOptionPane.WARNING_MESSAGE);
+				if (confirm != JOptionPane.YES_OPTION)
 					return; // Cancel
 				// Delete contents
 				CommonSQL.clearSongsInPlaylist(pName);
 			}
-			
+
 			// Delete Playlist
 			CommonSQL.removePlaylist(pName);
 			// Optimise tab orders

@@ -40,14 +40,14 @@ import be.witmoca.BEATs.utils.BEATsSettings;
 
 public class ApplicationManager {
 	// Start up
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
 		// Get the file to load from the arguments
 		File loadFile = extractFileFromArgs(args);
 		try {
 			// Initialise Files & folders
 			ResourceLoader.initFileTree();
 			// Check if single instance
-			if(!SingleInstanceManager.start(loadFile))
+			if (!SingleInstanceManager.start(loadFile))
 				return; // Already running
 			// Register a new standard output
 			ResourceLoader.registerStandardErrorLog();
@@ -57,12 +57,13 @@ public class ApplicationManager {
 			fatalError(e);
 			return;
 		}
-		
+
 		// Create the GUI on the EDT
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				LoadFileAction.getLoadFileAction(loadFile).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_LAST, "load"));
+				LoadFileAction.getLoadFileAction(loadFile)
+						.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_LAST, "load"));
 				ApplicationWindow.createAndShowUi();
 			}
 		});
@@ -79,10 +80,11 @@ public class ApplicationManager {
 			final StringWriter stacktraceW = new StringWriter();
 			e.printStackTrace(new PrintWriter(stacktraceW, true));
 
-			javax.swing.JOptionPane.showMessageDialog(null,
-					e.getClass() + "\n" + e.getLocalizedMessage() + "\n\nStacktrace:\n"
-							+ stacktraceW.getBuffer().toString(),
-					"Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+			javax.swing.JOptionPane
+					.showMessageDialog(null,
+							e.getClass() + "\n" + e.getLocalizedMessage() + "\n\nStacktrace:\n"
+									+ stacktraceW.getBuffer().toString(),
+							"Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		} else {
 			// If not on EDT, then schedule for execution on EDT
@@ -102,23 +104,25 @@ public class ApplicationManager {
 	/**
 	 * Searches for the first loadable database in the arguments
 	 * 
-	 * @param args the arguments passed to the application (usually the arguments of the main method)
+	 * @param args
+	 *            the arguments passed to the application (usually the arguments of
+	 *            the main method)
 	 * @return the file to load, {@code null} if none was found
 	 */
 	private static File extractFileFromArgs(String[] args) {
-		for(String s : args) {
+		for (String s : args) {
 			// Check if string is valid
 			s = s.trim();
-			if(s.isEmpty())
+			if (s.isEmpty())
 				continue;
-			
+
 			File test = new File(s);
 			// check if the string denotes an existing file
-			if(!test.exists() || !test.isFile())
+			if (!test.exists() || !test.isFile())
 				continue;
-			
+
 			// Check if the file filter accepts this as a valid file
-			if((new BEATsFileFilter()).accept(test))
+			if ((new BEATsFileFilter()).accept(test))
 				return test;
 		}
 		return null;

@@ -32,7 +32,7 @@ import be.witmoca.BEATs.utils.UiUtils;
 
 public class PlaylistToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
-	
+
 	public PlaylistToolbar(JTable table) {
 		super(JToolBar.HORIZONTAL);
 
@@ -42,10 +42,10 @@ public class PlaylistToolbar extends JToolBar {
 		this.add(ClipboardActionFactory.getPasteAction(table));
 		add(UiUtils.SingleLineSeparator());
 		this.add(new DeleteAction(table));
-		
+
 		// Beyond this point all goes on the right
 		add(Box.createHorizontalGlue());
-		
+
 		this.add(new JButton(new PrintTableAction(table)));
 	}
 }

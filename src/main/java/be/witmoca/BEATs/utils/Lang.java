@@ -35,13 +35,13 @@ public class Lang {
 	private static final String UI_BASE = "Langs.UserInterface";
 	private static ResourceBundle UiBundle = ResourceBundle.getBundle(UI_BASE);
 	private static ResourceBundle defaultUiBundle = ResourceBundle.getBundle(UI_BASE, new Locale(""));
-	
+
 	public static String getUI(String msg) {
 		try {
 			return UiBundle.getString(msg);
 		} catch (MissingResourceException e) {
 			// Log message
-			e.printStackTrace(); 
+			e.printStackTrace();
 			// return default instead
 			return defaultUiBundle.getString(msg);
 		}

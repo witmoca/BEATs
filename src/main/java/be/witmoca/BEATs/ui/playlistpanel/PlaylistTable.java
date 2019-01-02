@@ -38,41 +38,43 @@ class PlaylistTable extends SongTable {
 	protected PlaylistTable(String PlaylistName) {
 		super(new PlaylistTableModel(PlaylistName));
 		this.playlistName = PlaylistName;
-		
+
 		// Add standard single column rowsorter
-		TableRowSorter<PlaylistTableModel> srt = new TableRowSorter<PlaylistTableModel>((PlaylistTableModel) this.getModel());
+		TableRowSorter<PlaylistTableModel> srt = new TableRowSorter<PlaylistTableModel>(
+				(PlaylistTableModel) this.getModel());
 		srt.setSortable(3, false);
 		srt.setMaxSortKeys(1);
 		this.setRowSorter(srt);
-		
+
 		// right click menu
 		this.setComponentPopupMenu(new PlaylistPopupMenu(this));
 		// Translate the cells from the last column into buttons
 		new ButtonColumn(this, new MoveToQueueAction(), 3);
 		this.getColumnModel().getColumn(3).setMaxWidth(100);
 		this.getColumnModel().getColumn(3).setResizable(false);
-		
+
 		// Drag and drop logic (no drag and drop, just Cut/Cop/Paste)
 		this.setTransferHandler(new PlaylistTransferHandler());
-		
+
 		// Suggest support for artist and song column
 		this.getColumnModel().getColumn(0).setCellEditor(AutoCompletingEditor.createArtistEditor());
 		this.getColumnModel().getColumn(1).setCellEditor(AutoCompletingEditor.createSongEditor(0));
 	}
 
 	@Override
-	public TransferableSong getSelectedSong() {			
+	public TransferableSong getSelectedSong() {
 		int rowIndex = this.getSelectedRow();
-		if(rowIndex < 0)
+		if (rowIndex < 0)
 			return null;
-		if(this.getRowSorter() != null)
+		if (this.getRowSorter() != null)
 			rowIndex = this.getRowSorter().convertRowIndexToModel(rowIndex);
-		
-		if(!(this.getModel() instanceof PlaylistTableModel) || rowIndex >= this.getRowCount())
+
+		if (!(this.getModel() instanceof PlaylistTableModel) || rowIndex >= this.getRowCount())
 			return null;
 		PlaylistTableModel model = (PlaylistTableModel) this.getModel();
 
-		return new TransferableSong((String) model.getValueAt(rowIndex, 0),(String) model.getValueAt(rowIndex, 1), model.getRowId(rowIndex));
+		return new TransferableSong((String) model.getValueAt(rowIndex, 0), (String) model.getValueAt(rowIndex, 1),
+				model.getRowId(rowIndex));
 	}
 
 	public String getPlaylistName() {

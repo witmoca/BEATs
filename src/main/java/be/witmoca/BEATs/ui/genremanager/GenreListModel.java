@@ -39,7 +39,7 @@ import be.witmoca.BEATs.connection.SQLConnection;
 class GenreListModel implements ListModel<String>, DataChangedListener {
 	private final List<String> content = new ArrayList<String>();
 	private final List<ListDataListener> listeners = new ArrayList<ListDataListener>();
-	
+
 	public GenreListModel() {
 		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedType.GENRE));
 		tableChanged();
@@ -50,7 +50,7 @@ class GenreListModel implements ListModel<String>, DataChangedListener {
 		// Load elements into list
 		content.clear();
 		try {
-			content.addAll(CommonSQL.getGenres());		
+			content.addAll(CommonSQL.getGenres());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -69,16 +69,16 @@ class GenreListModel implements ListModel<String>, DataChangedListener {
 
 	@Override
 	public void addListDataListener(ListDataListener l) {
-		listeners.add(l);	
+		listeners.add(l);
 	}
 
 	@Override
 	public void removeListDataListener(ListDataListener l) {
-		listeners.remove(l);		
+		listeners.remove(l);
 	}
-	
+
 	private void notifyListeners() {
-		for(ListDataListener l : listeners) {
+		for (ListDataListener l : listeners) {
 			l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize()));
 		}
 	}

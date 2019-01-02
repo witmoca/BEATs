@@ -31,13 +31,16 @@ public class EpisodeColumnRenderer extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		if(table == null || !(table.getModel() instanceof ContainsEpisodeColumn) )
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+			int row, int column) {
+		if (table == null || !(table.getModel() instanceof ContainsEpisodeColumn))
 			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		
-		if(table.getRowSorter() != null)
+
+		if (table.getRowSorter() != null)
 			row = table.getRowSorter().convertRowIndexToModel(row);
-		
-		return super.getTableCellRendererComponent(table, value + " (" +  ((ContainsEpisodeColumn) table.getModel()).getEpisodeDate(row) + ")", isSelected, hasFocus, row, column);
+
+		return super.getTableCellRendererComponent(table,
+				value + " (" + ((ContainsEpisodeColumn) table.getModel()).getEpisodeDate(row) + ")", isSelected,
+				hasFocus, row, column);
 	}
 }

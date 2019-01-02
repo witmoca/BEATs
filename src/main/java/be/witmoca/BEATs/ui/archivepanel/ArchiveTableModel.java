@@ -40,23 +40,27 @@ import be.witmoca.BEATs.utils.Lang;
 
 public class ArchiveTableModel extends AbstractTableModel implements DataChangedListener, ContainsEpisodeColumn {
 	private static final long serialVersionUID = 1L;
-	private static final String COLUMN_NAME[] = {Lang.getUI("col.artist"), Lang.getUI("col.song"), Lang.getUI("col.episode"), Lang.getUI("col.genre"), Lang.getUI("col.comment")};
+	private static final String COLUMN_NAME[] = { Lang.getUI("col.artist"), Lang.getUI("col.song"),
+			Lang.getUI("col.episode"), Lang.getUI("col.genre"), Lang.getUI("col.comment") };
 	private List<ArchiveEntry> archive = new ArrayList<ArchiveEntry>();
-	
+
 	public ArchiveTableModel() {
 		super();
-		
+
 		SQLConnection.getDbConn().addDataChangedListener(this, DataChangedType.ARCHIVE_DATA_OPTS);
 		this.tableChanged();
 	}
-	
+
 	@Override
 	public void tableChanged() {
-		archive.clear(); // clear() is (probably) faster as the backing array doesn't get resized (just turned into null values), so reinserting goes fast
-		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement("SELECT SongsInArchive.rowid, ArtistName, Title, SongsInArchive.EpisodeId, EpisodeDate, GenreName, Comment FROM SongsInArchive,Song, Episode WHERE SongsInArchive.SongId = Song.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeId")) {
+		archive.clear(); // clear() is (probably) faster as the backing array doesn't get resized (just
+							// turned into null values), so reinserting goes fast
+		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
+				"SELECT SongsInArchive.rowid, ArtistName, Title, SongsInArchive.EpisodeId, EpisodeDate, GenreName, Comment FROM SongsInArchive,Song, Episode WHERE SongsInArchive.SongId = Song.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeId")) {
 			ResultSet value = getValue.executeQuery();
-			while(value.next()) {
-				archive.add(new ArchiveEntry(value.getInt(1), value.getString(2), value.getString(3) ,value.getInt(4) , value.getInt(5), value.getString(6), value.getString(7)));
+			while (value.next()) {
+				archive.add(new ArchiveEntry(value.getInt(1), value.getString(2), value.getString(3), value.getInt(4),
+						value.getInt(5), value.getString(6), value.getString(7)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -65,7 +69,7 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	}
 
 	@Override
-	public int getRowCount() {		
+	public int getRowCount() {
 		return archive.size();
 	}
 
@@ -78,16 +82,15 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return archive.get(rowIndex).getColumn(columnIndex);
 	}
-	
+
 	public int getRowId(int row) {
 		return archive.get(row).getROWID();
 	}
-	
+
 	@Override
 	public String getEpisodeDate(int row) {
 		return archive.get(row).getDate();
 	}
-	
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
@@ -98,7 +101,7 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 	public String getColumnName(int column) {
 		return COLUMN_NAME[column];
 	}
-	
+
 	private static class ArchiveEntry {
 		private final int ROWID;
 		private final String ARTIST;
@@ -106,40 +109,48 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 		private final int EPISODE;
 		private final String EPISODE_DATE;
 		private final String Genre;
-		private final String COMMENT;	
+		private final String COMMENT;
 
 		ArchiveEntry(int rowid, String artist, String song, int episode, int epDate, String Genre, String comment) {
 			this.ROWID = rowid;
-			this.ARTIST =  artist;
+			this.ARTIST = artist;
 			this.SONG = song;
 			this.EPISODE = episode;
-			this.EPISODE_DATE =  DateTimeFormatter.ofPattern("dd/MM/uu").format(LocalDate.ofEpochDay(epDate));
+			this.EPISODE_DATE = DateTimeFormatter.ofPattern("dd/MM/uu").format(LocalDate.ofEpochDay(epDate));
 			this.Genre = Genre;
 			this.COMMENT = comment;
 		}
-		
+
 		Object getColumn(int i) {
-			switch(i) {
-			case 0: return this.ARTIST;
-			case 1: return this.SONG;
-			case 2: return this.EPISODE;
-			case 3: return this.Genre;
-			case 4: return this.COMMENT;
-			default: return null;
+			switch (i) {
+			case 0:
+				return this.ARTIST;
+			case 1:
+				return this.SONG;
+			case 2:
+				return this.EPISODE;
+			case 3:
+				return this.Genre;
+			case 4:
+				return this.COMMENT;
+			default:
+				return null;
 			}
 		}
-		
+
 		static Class<?> getColumnType(int column) {
-			switch(column) {
-			case 2: return Integer.class;
-			default: return String.class;		
+			switch (column) {
+			case 2:
+				return Integer.class;
+			default:
+				return String.class;
 			}
 		}
 
 		public int getROWID() {
 			return ROWID;
 		}
-		
+
 		public String getDate() {
 			return EPISODE_DATE;
 		}

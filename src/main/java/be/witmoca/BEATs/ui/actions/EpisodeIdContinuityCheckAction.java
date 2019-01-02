@@ -41,44 +41,47 @@ import be.witmoca.BEATs.utils.Lang;
 */
 public class EpisodeIdContinuityCheckAction implements ActionListener {
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JTextArea result = new JTextArea(10,80);
+		JTextArea result = new JTextArea(10, 80);
 		result.setEditable(false);
 		result.setLineWrap(true);
 		result.setWrapStyleWord(true);
-		
+
 		try {
 			List<Integer> missing = new ArrayList<Integer>();
 			Integer lastCorrectIndex = null;
-			for(int newIndex : CommonSQL.getEpisodes()) {				
+			for (int newIndex : CommonSQL.getEpisodes()) {
 				// lastCorrect null and we are not at the start of the episodeId List?
-				if(lastCorrectIndex == null && newIndex > 1) {
-					
-					for(int i = 1; i < newIndex; i++)
+				if (lastCorrectIndex == null && newIndex > 1) {
+
+					for (int i = 1; i < newIndex; i++)
 						missing.add(i);
-				} else if(lastCorrectIndex != null && lastCorrectIndex + 1 != newIndex) {
+				} else if (lastCorrectIndex != null && lastCorrectIndex + 1 != newIndex) {
 					// the newIndex is not the next one after LastCorrectIndex?
-					for(int i = lastCorrectIndex + 1; i < newIndex; i++)
+					for (int i = lastCorrectIndex + 1; i < newIndex; i++)
 						missing.add(i);
 				}
 				lastCorrectIndex = newIndex;
 			}
-			if(lastCorrectIndex == null)
+			if (lastCorrectIndex == null)
 				lastCorrectIndex = 0;
-			
+
 			// Compiled missing list
 			String message = Lang.getUI("continuity.start") + "\n";
 			message += Lang.getUI("continuity.recentEp") + ": " + lastCorrectIndex.intValue() + "\n";
 			message += Lang.getUI("continuity.missingEp") + ": " + missing.size() + "\n";
-			if(missing.size() == 0) {
+			if (missing.size() == 0) {
 				message += "\n" + Lang.getUI("continuity.perfect");
 			} else {
 				message += "\n" + Lang.getUI("continuity.missingEp") + ":\n";
-				for(Integer missed : missing)
+				for (Integer missed : missing)
 					message += missed + "\n";
 			}
 			result.setText(message);
@@ -87,13 +90,15 @@ public class EpisodeIdContinuityCheckAction implements ActionListener {
 			error += "SQL Error code: " + e1.getErrorCode() + "\n";
 			error += e1.getLocalizedMessage() + "\n";
 			error += "Stack trace:\n";
-			for(StackTraceElement el : e1.getStackTrace()) {
+			for (StackTraceElement el : e1.getStackTrace()) {
 				error += el.toString() + "\n";
 			}
 			result.setText(error);
 		}
-		
-		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), new JScrollPane(result, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), Lang.getUI("menu.tools.continuity"), JOptionPane.PLAIN_MESSAGE);
+
+		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
+				new JScrollPane(result, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
+				Lang.getUI("menu.tools.continuity"), JOptionPane.PLAIN_MESSAGE);
 	}
 
 }

@@ -38,18 +38,19 @@ import be.witmoca.BEATs.ui.t4j.RowNumberTable;
 
 public class ArchivePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	
+
 	private final ArchiveTable archiveTable = new ArchiveTable();
-	private final JScrollPane archiveScrollPane = new JScrollPane(archiveTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-	private final JPanel southPanel = new SouthPanel(archiveTable,0,1);
-	
+	private final JScrollPane archiveScrollPane = new JScrollPane(archiveTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	private final JPanel southPanel = new SouthPanel(archiveTable, 0, 1);
+
 	public ArchivePanel() {
 		super(new BorderLayout());
-		
+
 		this.add(new ArchiveToolbar(archiveTable), BorderLayout.NORTH);
 		this.add(archiveScrollPane, BorderLayout.CENTER);
 		this.add(southPanel, BorderLayout.SOUTH);
-		
+
 		List<SortKey> defaultSort = new ArrayList<SortKey>();
 		defaultSort.add(new SortKey(0, SortOrder.ASCENDING));
 		defaultSort.add(new SortKey(2, SortOrder.ASCENDING));

@@ -37,10 +37,9 @@ import javax.swing.SwingUtilities;
 class CurrentQueueList extends JList<String> {
 	private static final long serialVersionUID = 1L;
 
-	
 	public CurrentQueueList(ListModel<String> dataModel) {
 		super(dataModel);
-		
+
 		// add mouselistener: Rightclick (popupmenu open) also adjusts selector
 		this.addMouseListener(new MouseAdapter() {
 			@Override
@@ -60,13 +59,13 @@ class CurrentQueueList extends JList<String> {
 	public Point getPopupLocation(MouseEvent event) {
 		// calculate bottomleft corner of the selected item
 		int index = this.getSelectedIndex();
-		if(index < 0)
+		if (index < 0)
 			return null;
 		Point t = this.indexToLocation(index);
 		Rectangle bounds = this.getCellBounds(index, index);
-		if(bounds == null)
+		if (bounds == null)
 			return null;
 		return new Point(t.x, t.y + bounds.height);
-	}	
+	}
 
 }

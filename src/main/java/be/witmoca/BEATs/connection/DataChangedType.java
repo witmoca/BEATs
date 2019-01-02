@@ -28,9 +28,18 @@ import java.util.EnumSet;
 * Created: 2018
 */
 public enum DataChangedType {
-    ARTIST, SONG, PLAYLIST, EPISODE, GENRE, SONGS_IN_PLAYLIST, CURRENT_QUEUE, SONGS_IN_ARCHIVE, CCP, META_DATA;
-    public static final EnumSet<DataChangedType> ALL_OPTS = EnumSet.allOf(DataChangedType.class);
-    public static final EnumSet<DataChangedType> ARCHIVE_DATA_OPTS = EnumSet.of(ARTIST, SONG, EPISODE, GENRE, SONGS_IN_ARCHIVE);
-    public static final EnumSet<DataChangedType> PLAYLIST_DATA_OPTS = EnumSet.of(PLAYLIST, SONGS_IN_PLAYLIST);
+	ARTIST,
+	SONG,
+	PLAYLIST,
+	EPISODE,
+	GENRE,
+	SONGS_IN_PLAYLIST,
+	CURRENT_QUEUE,
+	SONGS_IN_ARCHIVE,
+	CCP,
+	META_DATA;
+	public static final EnumSet<DataChangedType> ALL_OPTS = EnumSet.allOf(DataChangedType.class);
+	public static final EnumSet<DataChangedType> ARCHIVE_DATA_OPTS = EnumSet.of(ARTIST, SONG, EPISODE, GENRE,
+			SONGS_IN_ARCHIVE);
+	public static final EnumSet<DataChangedType> PLAYLIST_DATA_OPTS = EnumSet.of(PLAYLIST, SONGS_IN_PLAYLIST);
 }
-

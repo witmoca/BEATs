@@ -28,10 +28,9 @@ import javax.swing.JTable;
 
 import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
 
-
 public class PlaylistPopupMenu extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
-	
+
 	public PlaylistPopupMenu(JTable assocTable) {
 		super();
 		this.add(new JMenuItem(ClipboardActionFactory.getCutAction(assocTable)));

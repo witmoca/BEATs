@@ -38,14 +38,15 @@ public class SongCatalog extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private final CatalogTable catalogTable = new CatalogTable();
-	private final JScrollPane scrollPane = new JScrollPane(catalogTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-	
+	private final JScrollPane scrollPane = new JScrollPane(catalogTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
 	public SongCatalog() {
 		super(new BorderLayout());
-		
-		//this.add(new ArchiveToolbar(archiveTable), BorderLayout.NORTH);
+
+		// this.add(new ArchiveToolbar(archiveTable), BorderLayout.NORTH);
 		this.add(scrollPane, BorderLayout.CENTER);
-		
+
 		List<SortKey> defaultSort = new ArrayList<SortKey>();
 		defaultSort.add(new SortKey(0, SortOrder.DESCENDING));
 		defaultSort.add(new SortKey(1, SortOrder.ASCENDING));

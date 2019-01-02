@@ -41,21 +41,26 @@ class AddGenreAction extends AbstractAction {
 	public AddGenreAction() {
 		super("+");
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() instanceof Component) {
+		if (e.getSource() instanceof Component) {
 			// input string for the name, sanitise & capitalise it
-			String newName = JOptionPane.showInputDialog((Component) e.getSource(), Lang.getUI("genreManager.new.dialog") + ": ").trim();
-			if(newName.isEmpty())
+			String newName = JOptionPane
+					.showInputDialog((Component) e.getSource(), Lang.getUI("genreManager.new.dialog") + ": ").trim();
+			if (newName.isEmpty())
 				return;
 			try {
 				// Already exists?
-				if(CommonSQL.getGenres().contains(newName)){
-					JOptionPane.showMessageDialog((Component) e.getSource(), Lang.getUI("genreManager.new.existsalready"), "", JOptionPane.WARNING_MESSAGE);
+				if (CommonSQL.getGenres().contains(newName)) {
+					JOptionPane.showMessageDialog((Component) e.getSource(),
+							Lang.getUI("genreManager.new.existsalready"), "", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 				// Create new genre

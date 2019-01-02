@@ -32,7 +32,7 @@ public class StaticSettings {
 	private static final int APP_VERSION_MAJOR;
 	private static final int APP_VERSION_MINOR;
 	private static final int APP_VERSION_PATCH;
-	
+
 	static {
 		Properties statics = new Properties();
 		try {
@@ -44,7 +44,7 @@ public class StaticSettings {
 		Pattern regex = Pattern.compile("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})(-([0-9A-Za-z-]*))?");
 		Matcher matcher = regex.matcher(versionString);
 
-		if(matcher.find()) {
+		if (matcher.find()) {
 			APP_VERSION_MAJOR = Integer.parseInt(matcher.group(1));
 			APP_VERSION_MINOR = Integer.parseInt(matcher.group(2));
 			APP_VERSION_PATCH = Integer.parseInt(matcher.group(3));
@@ -56,11 +56,12 @@ public class StaticSettings {
 			APP_VERSION_STRING = "0.0.0-TestVersion";
 		}
 	}
-	
-	private static final int APP_VERSION_INT = APP_VERSION_MAJOR * 1000000 + APP_VERSION_MINOR * 1000 + APP_VERSION_PATCH;
+
+	private static final int APP_VERSION_INT = APP_VERSION_MAJOR * 1000000 + APP_VERSION_MINOR * 1000
+			+ APP_VERSION_PATCH;
 
 	// GETTERS
-	
+
 	public static String getAppVersionString() {
 		return APP_VERSION_STRING;
 	}
@@ -68,7 +69,7 @@ public class StaticSettings {
 	public static int getAppVersionInt() {
 		return APP_VERSION_INT;
 	}
-	
+
 	public static int getAppVersionMajor() {
 		return APP_VERSION_MAJOR;
 	}

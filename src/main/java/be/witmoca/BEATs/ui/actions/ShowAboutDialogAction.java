@@ -39,6 +39,8 @@ public class ShowAboutDialogAction implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		List<String> lines = ResourceLoader.ReadResource("Text/About");
-		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), String.join("\n", lines) + "\n\nVersion: " + StaticSettings.getAppVersionString(), Lang.getUI("menu.about"), JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
+				String.join("\n", lines) + "\n\nVersion: " + StaticSettings.getAppVersionString(),
+				Lang.getUI("menu.about"), JOptionPane.PLAIN_MESSAGE);
 	}
 }

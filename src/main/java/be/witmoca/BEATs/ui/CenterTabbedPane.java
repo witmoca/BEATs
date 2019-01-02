@@ -30,11 +30,11 @@ import be.witmoca.BEATs.ui.songcatalog.SongCatalog;
 import be.witmoca.BEATs.utils.Lang;
 
 class CenterTabbedPane extends JTabbedPane {
-	private static final long serialVersionUID = 1L;	
+	private static final long serialVersionUID = 1L;
 
 	public CenterTabbedPane() {
 		super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
-		
+
 		this.addTab(Lang.getUI("center.archive"), new ArchivePanel());
 		this.addTab(Lang.getUI("center.playlists"), new PlaylistsTabbedPane());
 		this.addTab(Lang.getUI("center.artistcatalog"), new ArtistCatalog());

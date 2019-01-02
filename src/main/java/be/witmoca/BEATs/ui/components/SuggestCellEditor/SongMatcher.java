@@ -38,10 +38,12 @@ import be.witmoca.BEATs.connection.SQLConnection;
 
 class SongMatcher implements IMatcher {
 	private final int artistColumn;
-	
+
 	/**
 	 * 
-	 * @param artistColumn The column containing the matching ArtistName values of the SongTitle being edited in String format. 
+	 * @param artistColumn
+	 *            The column containing the matching ArtistName values of the
+	 *            SongTitle being edited in String format.
 	 */
 	SongMatcher(int artistColumn) {
 		this.artistColumn = artistColumn;

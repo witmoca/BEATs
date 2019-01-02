@@ -47,7 +47,7 @@ public class SingleInstanceManager implements Runnable {
 			return true; // This is the only instance
 		} catch (BindException b) {
 			// This is not the only instance => send data and exit
-			try (Socket s = new Socket((String) null, PORT)){
+			try (Socket s = new Socket((String) null, PORT)) {
 				PrintWriter pw = new PrintWriter(s.getOutputStream(), true);
 				pw.print(loadFile.getAbsolutePath());
 				pw.flush();
@@ -72,17 +72,18 @@ public class SingleInstanceManager implements Runnable {
 			try {
 				// socket object to receive incoming client requests
 				s = ss.accept();
-				 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-				 File f = new File(in.readLine());
-				 if(f.exists() && f.isFile()) {
-					 // Load the file that was send through
-					 SwingUtilities.invokeLater(new Runnable() {
+				BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+				File f = new File(in.readLine());
+				if (f.exists() && f.isFile()) {
+					// Load the file that was send through
+					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							LoadFileAction.getLoadFileAction(f).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "load"));
+							LoadFileAction.getLoadFileAction(f)
+									.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "load"));
 						}
-					 });
-				 }
+					});
+				}
 			} catch (Exception e) {
 				try {
 					s.close();

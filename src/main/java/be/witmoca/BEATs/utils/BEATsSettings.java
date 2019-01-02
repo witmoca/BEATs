@@ -35,42 +35,44 @@ import java.util.Properties;
 public enum BEATsSettings {
 	LANGUAGE,
 	COUNTRY;
-	
+
 	public String getValue() {
 		return userSettings.getProperty(this.name());
 	}
-	
+
 	public void setValue(String val) {
 		userSettings.setProperty(this.name(), val);
 	}
-	
+
 	// Statics
-	
+
 	private static Properties userSettings = null;
+
 	public static void loadPreferences() throws IOException {
 		// Load default settings
 		Properties defaultSettings = new Properties();
-		defaultSettings.load(BEATsSettings.class.getClassLoader().getResourceAsStream("Text/DefaultSettings.properties"));
-		
+		defaultSettings
+				.load(BEATsSettings.class.getClassLoader().getResourceAsStream("Text/DefaultSettings.properties"));
+
 		// Overwrite default settings with system defaults
 		defaultSettings.setProperty(LANGUAGE.name(), Locale.getDefault().getLanguage());
 		defaultSettings.setProperty(COUNTRY.name(), Locale.getDefault().getCountry());
-		
+
 		// Create user settings
 		userSettings = new Properties(defaultSettings);
 		// User preferences exist? Load
 		File userFile = new File(ResourceLoader.USER_SETTINGS_LOC);
-		if(userFile.exists()) {
+		if (userFile.exists()) {
 			userSettings.load(new FileInputStream(userFile));
 		}
-		
+
 		// Install settings
 		Locale.setDefault(new Locale(LANGUAGE.getValue(), COUNTRY.getValue()));
 	}
-	
+
 	public static void savePreferences() {
 		try {
-			userSettings.store(new FileOutputStream(new File(ResourceLoader.USER_SETTINGS_LOC)),null);
+			userSettings.store(new FileOutputStream(new File(ResourceLoader.USER_SETTINGS_LOC)), null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

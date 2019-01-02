@@ -84,23 +84,25 @@ class RenameSongAction extends AbstractAction {
 		// MAKE CHANGES
 
 		String renamed = StringUtils.ToUpperCamelCase(newName.getText());
-		if(title.equals(renamed))
+		if (title.equals(renamed))
 			return;
 
 		try {
-			// Updating is not enough (or a good idea) => PK errors when the new one already exists (eg joining 2 different spellings of the same word together)
-			
+			// Updating is not enough (or a good idea) => PK errors when the new one already
+			// exists (eg joining 2 different spellings of the same word together)
+
 			// create new song (old exists and new might exist => still returns the id)
 			int newSongId = CommonSQL.addSong(renamed, artist);
 			int oldSongId = CommonSQL.addSong(title, artist);
-			
+
 			// update all occurrences of oldSongId (currently: archive & currentqueue)
 			CommonSQL.updateAllSongIdReferences(oldSongId, newSongId);
-	
+
 			// delete old songId
-			CommonSQL.removeSong(oldSongId);		
-			
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONG, DataChangedType.CURRENT_QUEUE, DataChangedType.SONGS_IN_ARCHIVE));
+			CommonSQL.removeSong(oldSongId);
+
+			SQLConnection.getDbConn().commit(
+					EnumSet.of(DataChangedType.SONG, DataChangedType.CURRENT_QUEUE, DataChangedType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

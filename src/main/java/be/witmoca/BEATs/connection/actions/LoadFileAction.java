@@ -55,7 +55,7 @@ public class LoadFileAction implements ActionListener {
 	public static ActionListener getLoadFileActionWithUI() {
 		return new LoadFileAction(true, null);
 	}
-	
+
 	public static ActionListener getLoadFileActionWithUI(File suggestLocation) {
 		return new LoadFileAction(true, suggestLocation);
 	}
@@ -82,7 +82,7 @@ public class LoadFileAction implements ActionListener {
 			final JFileChooser fc = new JFileChooser();
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileFilter(new BEATsFileFilter());
-			if(this.loadFile == null)
+			if (this.loadFile == null)
 				fc.setCurrentDirectory(SQLConnection.getDbConn().getCurrentFile());
 			else
 				fc.setCurrentDirectory(this.loadFile);
@@ -98,10 +98,10 @@ public class LoadFileAction implements ActionListener {
 		} catch (ConnectionException e1) {
 			e1.printStackTrace();
 			String errorMessage = "";
-			if(SQLConnection.isRecoveredDb()) {
+			if (SQLConnection.isRecoveredDb()) {
 				errorMessage += "Database recovered!\nBurning Ember detected an unusual shutdown.\nAn error occurred while recovering database.\n\n";
 			}
-			
+
 			switch (e1.getState()) {
 			case APP_ID_INVALID:
 				errorMessage += "This file does not appear to be a valid file (Application Id is invalid).";
@@ -126,13 +126,14 @@ public class LoadFileAction implements ActionListener {
 				errorMessage += "An error occurred during VACUUM.\n\n" + e1.getCause().getLocalizedMessage();
 				break;
 			}
-			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), errorMessage, "Error",
+					JOptionPane.ERROR_MESSAGE);
 			// Designated unrecoverable error
 			System.exit(-1);
 		}
 
 		if (SQLConnection.isRecoveredDb()) {
-			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),Lang.getUI("loadFileAction.recoveredMsg"),
+			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("loadFileAction.recoveredMsg"),
 					Lang.getUI("loadFileAction.recovered"), JOptionPane.WARNING_MESSAGE);
 		}
 	}

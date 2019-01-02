@@ -45,22 +45,26 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 *  Creates an AutoCompletingEditor that tries to fill in known artists
+	 * Creates an AutoCompletingEditor that tries to fill in known artists
+	 * 
 	 * @return the desired CellEditor
 	 */
 	public static TableCellEditor createArtistEditor() {
 		return new AutoCompletingEditor(new ArtistMatcher());
 	}
-	
+
 	/**
 	 * Creates an AutoCompletingEditor that tries to fill in known song
-	 * @param column the column of the table that is holding the artist column (only songs from that artist will be shown)
+	 * 
+	 * @param column
+	 *            the column of the table that is holding the artist column (only
+	 *            songs from that artist will be shown)
 	 * @return the desired CellEditor
 	 */
 	public static TableCellEditor createSongEditor(int column) {
 		return new AutoCompletingEditor(new SongMatcher(column));
 	}
-	
+
 	private AutoCompletingEditor(IMatcher matcher) {
 		super(new CompletingTextField(matcher));
 	}

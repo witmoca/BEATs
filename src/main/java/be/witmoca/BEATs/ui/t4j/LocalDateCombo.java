@@ -61,19 +61,19 @@ public class LocalDateCombo extends JComboBox<LocalDate> {
 		this(LocalDate.now(), formatter);
 	}
 
-// UNUSED Constructor
-// 	/**
-// 	 * Constructs a LocalDateCombo with the date provided and no lower or upper
-// 	 * limits, formatted in a medium style.
-// 	 *
-// 	 * @param value
-// 	 *            The initial value
-// 	 *
-// 	 * @see FormatStyle#MEDIUM
-// 	 */
-// 	public LocalDateCombo(LocalDate value) {
-// 		this(value, DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
-// 	}
+	// UNUSED Constructor
+	// /**
+	// * Constructs a LocalDateCombo with the date provided and no lower or upper
+	// * limits, formatted in a medium style.
+	// *
+	// * @param value
+	// * The initial value
+	// *
+	// * @see FormatStyle#MEDIUM
+	// */
+	// public LocalDateCombo(LocalDate value) {
+	// this(value, DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+	// }
 
 	/**
 	 * Constructs a LocalDateCombo with the date provided and no lower or upper
@@ -88,28 +88,31 @@ public class LocalDateCombo extends JComboBox<LocalDate> {
 		this(value, null, null, formatter);
 	}
 
-// UNUSED Constructor
-// 	/**
-// 	 * Constructs a LocalDateCombo with the date, lower (earliest) and upper
-// 	 * (latest) limits provided, formatted in a medium style.
-// 	 * <P>
-// 	 * Dates outside the specified range are not displayed.
-// 	 * <P>
-// 	 * This class does not attempt to verify that minDate <= value <= maxDate. It is
-// 	 * the responsibility of client code to supply sane values.
-// 	 *
-// 	 * @param value
-// 	 *            The initial value
-// 	 * @param minDate
-// 	 *            The minimum value (earliest date); <CODE>null</CODE> for no limit.
-// 	 * @param maxDate
-// 	 *            The maximum value (latest date); <CODE>null</CODE> for no limit.
-// 	 *
-// 	 * @see FormatStyle#MEDIUM
-// 	 */
-// 	public LocalDateCombo(LocalDate value, LocalDate minDate, LocalDate maxDate) {
-// 		this(value, minDate, maxDate, DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
-// 	}
+	// UNUSED Constructor
+	// /**
+	// * Constructs a LocalDateCombo with the date, lower (earliest) and upper
+	// * (latest) limits provided, formatted in a medium style.
+	// * <P>
+	// * Dates outside the specified range are not displayed.
+	// * <P>
+	// * This class does not attempt to verify that minDate <= value <= maxDate. It
+	// is
+	// * the responsibility of client code to supply sane values.
+	// *
+	// * @param value
+	// * The initial value
+	// * @param minDate
+	// * The minimum value (earliest date); <CODE>null</CODE> for no limit.
+	// * @param maxDate
+	// * The maximum value (latest date); <CODE>null</CODE> for no limit.
+	// *
+	// * @see FormatStyle#MEDIUM
+	// */
+	// public LocalDateCombo(LocalDate value, LocalDate minDate, LocalDate maxDate)
+	// {
+	// this(value, minDate, maxDate,
+	// DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+	// }
 
 	/**
 	 * Constructs a LocalDateCombo with the date, lower (earliest) and upper

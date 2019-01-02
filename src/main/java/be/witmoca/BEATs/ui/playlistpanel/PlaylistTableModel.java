@@ -42,7 +42,8 @@ import be.witmoca.BEATs.utils.UiIcon;
 public class PlaylistTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
 	private String PlaylistName;
-	private static final String COLUMN_NAME[] = { Lang.getUI("col.artist"), Lang.getUI("col.song"), Lang.getUI("col.comment"), ""};
+	private static final String COLUMN_NAME[] = { Lang.getUI("col.artist"), Lang.getUI("col.song"),
+			Lang.getUI("col.comment"), "" };
 	private List<PlaylistEntry> playlistList = null;
 
 	PlaylistTableModel(String playlistName) {
@@ -56,12 +57,13 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 	@Override
 	public void tableChanged() {
 		playlistList = new ArrayList<PlaylistEntry>();
-		try (PreparedStatement getValue = SQLConnection.getDbConn()
-				.prepareStatement("SELECT rowid, Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = ? ORDER BY rowid")) {
+		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
+				"SELECT rowid, Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = ? ORDER BY rowid")) {
 			getValue.setString(1, PlaylistName);
 			ResultSet value = getValue.executeQuery();
 			while (value.next()) {
-				playlistList.add(new PlaylistEntry(value.getInt(1), value.getString(2), value.getString(3), value.getString(4)));
+				playlistList.add(
+						new PlaylistEntry(value.getInt(1), value.getString(2), value.getString(3), value.getString(4)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -81,7 +83,7 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		if(columnIndex == 3)
+		if (columnIndex == 3)
 			return rowIndex == playlistList.size() ? null : UiIcon.PLAY.getIcon();
 		try {
 			return playlistList.get(rowIndex).getColumn(columnIndex);
@@ -89,11 +91,10 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 			return "";
 		}
 	}
-	
+
 	int getRowId(int row) {
 		return playlistList.get(row).getROWID();
 	}
-	
 
 	@Override
 	public String getColumnName(int column) {
@@ -109,9 +110,9 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return true;
 	}
-	
+
 	public void deleteRow(int rowIndex) {
-		if(rowIndex >= this.getRowCount()-1)
+		if (rowIndex >= this.getRowCount() - 1)
 			return;
 		try {
 			CommonSQL.removeFromSongsInPlaylist(playlistList.get(rowIndex).getROWID());
@@ -123,12 +124,12 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		if(aValue == null || !(aValue instanceof String))
+		if (aValue == null || !(aValue instanceof String))
 			return;
-		String sValue = StringUtils.ToUpperCamelCase( (String) aValue);
-		if(columnIndex == 0)
+		String sValue = StringUtils.ToUpperCamelCase((String) aValue);
+		if (columnIndex == 0)
 			sValue = StringUtils.filterPrefix(sValue);
-		if(columnIndex == 3)
+		if (columnIndex == 3)
 			return;
 		try {
 			if (rowIndex >= playlistList.size()) {
@@ -151,7 +152,8 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 				if (String.join("", values).trim().isEmpty()) {
 					this.deleteRow(rowIndex);
 				} else {
-					CommonSQL.updateSongsInPlaylist(playlistList.get(rowIndex).getROWID(), values[0], values[1], values[2]);
+					CommonSQL.updateSongsInPlaylist(playlistList.get(rowIndex).getROWID(), values[0], values[1],
+							values[2]);
 				}
 
 			}
@@ -160,14 +162,13 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	private static class PlaylistEntry {
 		private final String ARTIST;
 		private final String SONG;
-		private final String COMMENT;	
+		private final String COMMENT;
 		private final int ROWID;
-		
+
 		PlaylistEntry(int rowid, String aRTIST, String sONG, String cOMMENT) {
 			super();
 			ARTIST = aRTIST;
@@ -175,17 +176,20 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 			COMMENT = cOMMENT;
 			ROWID = rowid;
 		}
-		
-		
+
 		String getColumn(int i) {
-			switch(i) {
-			case 0: return this.ARTIST;
-			case 1: return this.SONG;
-			case 2: return this.COMMENT;
-			default: return null;
+			switch (i) {
+			case 0:
+				return this.ARTIST;
+			case 1:
+				return this.SONG;
+			case 2:
+				return this.COMMENT;
+			default:
+				return null;
 			}
 		}
-		
+
 		public int getROWID() {
 			return ROWID;
 		}

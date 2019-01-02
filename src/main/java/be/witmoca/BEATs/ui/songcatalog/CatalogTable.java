@@ -36,7 +36,7 @@ public class CatalogTable extends SongTable {
 
 	public CatalogTable() {
 		super(new CatalogModel());
-		
+
 		// Set custom renderer for the episode column
 		this.getColumnModel().getColumn(3).setCellRenderer(new EpisodeColumnRenderer());
 		// Make the numberRender align left

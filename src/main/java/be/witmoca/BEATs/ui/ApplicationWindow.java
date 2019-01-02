@@ -44,18 +44,18 @@ import be.witmoca.BEATs.ui.currentqueue.CurrentQueuePanel;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
-public class ApplicationWindow extends JFrame implements WindowListener, DataChangedListener{
+public class ApplicationWindow extends JFrame implements WindowListener, DataChangedListener {
 	private static final long serialVersionUID = 1L;
-	
+
 	public static ApplicationWindow APP_WINDOW = null;
-	
+
 	private final JComponent eastPanel = new CurrentQueuePanel();
 	private final JComponent centerPanel = new CenterTabbedPane();
 
 	public static void createAndShowUi() {
 		APP_WINDOW = new ApplicationWindow();
 	}
-	
+
 	private ApplicationWindow() {
 		// Initialise frame
 		super(Lang.getUI("shortname"));
@@ -63,17 +63,17 @@ public class ApplicationWindow extends JFrame implements WindowListener, DataCha
 		this.setIconImages();
 		this.addWindowListener(this);
 		this.setLayout(new BorderLayout());
-		
+
 		// Components
 		this.add(eastPanel, BorderLayout.EAST);
 		this.add(centerPanel, BorderLayout.CENTER);
 		NotificationBar notify = new NotificationBar();
-		if(notify.holdsNotifications())
+		if (notify.holdsNotifications())
 			this.add(notify, BorderLayout.SOUTH);
-		
+
 		// Menu
 		this.setJMenuBar(new ApplicationMenubar());
-		
+
 		// Draw frame
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
@@ -92,14 +92,15 @@ public class ApplicationWindow extends JFrame implements WindowListener, DataCha
 		icons.add(UiIcon.LOGO_16.getIcon().getImage());
 		this.setIconImages(icons);
 	}
-	
+
 	@Override
-	public void windowOpened(WindowEvent e) {	
+	public void windowOpened(WindowEvent e) {
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		(new ExitApplicationAction()).actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, e.paramString()));
+		(new ExitApplicationAction())
+				.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, e.paramString()));
 	}
 
 	@Override
@@ -130,11 +131,11 @@ public class ApplicationWindow extends JFrame implements WindowListener, DataCha
 	public void tableChanged() {
 		// META_DATA has changed => reload title
 		String title = Lang.getUI("shortname");
-		
+
 		File currentFile = SQLConnection.getDbConn().getCurrentFile();
-		if(currentFile != null)
+		if (currentFile != null)
 			title = currentFile.getAbsolutePath() + " - " + title;
-		
+
 		this.setTitle(title);
 	}
 }

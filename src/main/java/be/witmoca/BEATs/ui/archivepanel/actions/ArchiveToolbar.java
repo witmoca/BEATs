@@ -38,12 +38,11 @@ public class ArchiveToolbar extends JToolBar {
 	private final JTextField searchTerm = new JTextField(20);
 	private final JButton searchSubmit = new JButton(Lang.getUI("action.search"), UiIcon.SEARCH.getIcon());
 
-	
 	public ArchiveToolbar(JTable table) {
 		super(JToolBar.HORIZONTAL);
-		
+
 		this.setFloatable(false);
-		
+
 		add(new ChangeDateAction(table));
 		add(new JButton(new RenameArtistAction(table)));
 		add(new JButton(new RenameSongAction(table)));
@@ -52,22 +51,22 @@ public class ArchiveToolbar extends JToolBar {
 		add(ClipboardActionFactory.getCopyAction(table));
 		add(UiUtils.SingleLineSeparator());
 		add(new DeleteEntryAction(table));
-		
+
 		// Beyond this point all goes on the right
 		add(Box.createHorizontalGlue());
-		
+
 		// Adhere to the given column count in the text fields constructor
 		searchTerm.setMaximumSize(searchTerm.getPreferredSize());
 		this.add(searchTerm);
 		this.addSeparator();
 		this.add(searchSubmit);
 		this.setFloatable(false);
-		
+
 		SortAction sa = new SortAction(table, searchTerm);
 		// Search on ENTER while in textfield
 		searchTerm.addActionListener(sa);
 		// search on buttonpress
 		searchSubmit.addActionListener(sa);
-		
+
 	}
 }

@@ -37,24 +37,25 @@ class NotificationBar extends JPanel {
 
 	public NotificationBar() {
 		this.setBorder(BorderFactory.createEtchedBorder());
-		
+
 		JLabel errorLabel = null;
-		
-		if(ResourceLoader.bytesOfErrorData > 0) {
-			errorLabel = new JLabel(Lang.getUI("notification.errorlogs") + " KBytes: " + ResourceLoader.bytesOfErrorData/1000);
+
+		if (ResourceLoader.bytesOfErrorData > 0) {
+			errorLabel = new JLabel(
+					Lang.getUI("notification.errorlogs") + " KBytes: " + ResourceLoader.bytesOfErrorData / 1000);
 		}
-		if(StaticSettings.getAppVersionInt() == 0) {
+		if (StaticSettings.getAppVersionInt() == 0) {
 			errorLabel = new JLabel(Lang.getUI("notification.development"));
 		}
-		
-		if(errorLabel != null) {
+
+		if (errorLabel != null) {
 			errorLabel.setForeground(Color.red);
 			this.add(errorLabel);
 			holdsNotifications = true;
 			return;
 		}
 	}
-	
+
 	boolean holdsNotifications() {
 		return holdsNotifications;
 	}

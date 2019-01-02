@@ -42,8 +42,11 @@ class SortAction implements ActionListener {
 
 	/**
 	 * Sorts a table when action is performed
-	 * @param table the table to sort
-	 * @param inputProvider the text component providing the (String) input to search for
+	 * 
+	 * @param table
+	 *            the table to sort
+	 * @param inputProvider
+	 *            the text component providing the (String) input to search for
 	 */
 	SortAction(JTable table, JTextComponent inputProvider) {
 		this.table = table;

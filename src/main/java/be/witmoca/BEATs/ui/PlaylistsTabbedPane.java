@@ -33,21 +33,21 @@ import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener{
+class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
 
 	public PlaylistsTabbedPane() {
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		
+
 		this.tableChanged();
 		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedType.PLAYLIST));
 	}
-	
+
 	@Override
 	public void tableChanged() {
 		this.removeAll();
 		try {
-			for(String playlist : CommonSQL.getPlaylists()) {
+			for (String playlist : CommonSQL.getPlaylists()) {
 				this.addTab(playlist, new PlaylistPanel(playlist));
 			}
 		} catch (SQLException e) {

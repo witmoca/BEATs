@@ -25,8 +25,8 @@ package be.witmoca.BEATs.ui.components;
 public interface ContainsEpisodeColumn {
 	/**
 	 * 
-	* @param row
-	* @return the episodeDate represented in a human readable string
+	 * @param row
+	 * @return the episodeDate represented in a human readable string
 	 */
 	public String getEpisodeDate(int row);
 }

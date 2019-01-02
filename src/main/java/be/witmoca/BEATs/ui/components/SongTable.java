@@ -48,25 +48,28 @@ public abstract class SongTable extends JTable {
 
 	public SongTable(TableModel model) {
 		super(model); // Just fabulous, a supermodel!
-		
+
 		this.getTableHeader().setReorderingAllowed(false);
-		
+
 		// the ccp model depends on a single line selection
 		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
+
 		// always fill viewport even when empty
 		this.setFillsViewportHeight(true);
-		
-		// CatWalk seems cosmically perfect. A super model & a mouse listener. This is getting a bit cringy though.
+
+		// CatWalk seems cosmically perfect. A super model & a mouse listener. This is
+		// getting a bit cringy though.
 		this.addMouseListener(new CatWalk());
-		
-		// This stops the cells from editing without actually clicking the cells (just typing)
+
+		// This stops the cells from editing without actually clicking the cells (just
+		// typing)
 		// Not a prefered method (especially the property), but no better one exists
 		this.setFocusable(false);
 		this.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-		
+
 		// Table look
-		this.setRowHeight(this.getRowHeight() +2); // Add 2 pixels to row height so all characters are visible when editing
+		this.setRowHeight(this.getRowHeight() + 2); // Add 2 pixels to row height so all characters are visible when
+													// editing
 	}
 
 	@Override
@@ -75,31 +78,31 @@ public abstract class SongTable extends JTable {
 		int row = this.getSelectedRow();
 		if (row < 0)
 			return null;
-		
+
 		int column = this.getSelectedColumn();
 		if (column < 0)
 			column = 2;
-		
+
 		// Calculate according to all rows
-		Rectangle cell = this.getCellRect(row, column, false);		
+		Rectangle cell = this.getCellRect(row, column, false);
 		return new Point(cell.x, cell.y + cell.height);
 	}
 
 	abstract public TransferableSong getSelectedSong();
 
 	private static class CatWalk extends MouseAdapter {
-		
+
 		// add mouselistener: Rightclick (popupmenu open) also adjusts selector
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (!(e.getSource() instanceof JTable))
 				return;
-			
+
 			JTable table = (JTable) e.getSource();
 			int row = table.rowAtPoint(e.getPoint());
 			int column = table.columnAtPoint(e.getPoint());
-			
-			if(row >= 0 && column >= 0 && SwingUtilities.isRightMouseButton(e)) {
+
+			if (row >= 0 && column >= 0 && SwingUtilities.isRightMouseButton(e)) {
 				table.changeSelection(row, column, false, false);
 			}
 		}

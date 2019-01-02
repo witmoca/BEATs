@@ -66,7 +66,7 @@ class YearMonthSpinner extends JPanel {
 	 * @param max
 	 *            the maximum (latest) value
 	 */
-	
+
 	public YearMonthSpinner(YearMonth value, YearMonth min, YearMonth max) {
 		super(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
@@ -134,21 +134,21 @@ class YearMonthSpinner extends JPanel {
 	 *            the <code>ChangeListeners</code> to add
 	 * @see #removeChangeListener
 	 */
-	
+
 	public void addChangeListener(ChangeListener listener) {
 		monthSpinner.addChangeListener(listener);
 	}
 
-// UNUSED CODE
-// 	/**
-// 	 * Removes a <code>ChangeListener</code>.
-// 	 *
-// 	 * @param listener
-// 	 *            the <code>ChangeListener</code> to remove
-// 	 */
-// 	public void removeChangeListener(ChangeListener listener) {
-// 		monthSpinner.removeChangeListener(listener);
-// 	}
+	// UNUSED CODE
+	// /**
+	// * Removes a <code>ChangeListener</code>.
+	// *
+	// * @param listener
+	// * the <code>ChangeListener</code> to remove
+	// */
+	// public void removeChangeListener(ChangeListener listener) {
+	// monthSpinner.removeChangeListener(listener);
+	// }
 
 	/**
 	 * {@inheritDoc }

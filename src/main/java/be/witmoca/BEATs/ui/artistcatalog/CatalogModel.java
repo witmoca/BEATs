@@ -38,7 +38,7 @@ import be.witmoca.BEATs.utils.Lang;
 
 public class CatalogModel extends AbstractTableModel implements DataChangedListener, ContainsEpisodeColumn {
 	private static final long serialVersionUID = 1L;
-	private static final String COLUMN_NAME[] = {Lang.getUI("col.count"), Lang.getUI("col.artist"),
+	private static final String COLUMN_NAME[] = { Lang.getUI("col.count"), Lang.getUI("col.artist"),
 			Lang.getUI("col.local"), Lang.getUI("catalog.lastEpisode") };
 	private final ArrayList<row> content = new ArrayList<row>();
 
@@ -50,12 +50,13 @@ public class CatalogModel extends AbstractTableModel implements DataChangedListe
 	@Override
 	public void tableChanged() {
 		content.clear(); // clear is (likely) faster
-		try (PreparedStatement getValue = SQLConnection.getDbConn()
-				.prepareStatement("SELECT Artist.ArtistName, local, count(*), SongsInArchive.EpisodeId, Max(EpisodeDate) FROM Artist, Song, SongsInArchive, Episode WHERE Song.SongId = SongsInArchive.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeID AND Artist.ArtistName = Song.ArtistName GROUP BY Artist.ArtistName")) {
+		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
+				"SELECT Artist.ArtistName, local, count(*), SongsInArchive.EpisodeId, Max(EpisodeDate) FROM Artist, Song, SongsInArchive, Episode WHERE Song.SongId = SongsInArchive.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeID AND Artist.ArtistName = Song.ArtistName GROUP BY Artist.ArtistName")) {
 			ResultSet value = getValue.executeQuery();
 			// For every artist
 			while (value.next()) {
-				content.add(new row(value.getString(1), value.getInt(3), value.getBoolean(2), value.getInt(4), LocalDate.ofEpochDay(value.getLong(5))));
+				content.add(new row(value.getString(1), value.getInt(3), value.getBoolean(2), value.getInt(4),
+						LocalDate.ofEpochDay(value.getLong(5))));
 			}
 			content.trimToSize();
 		} catch (SQLException e) {

@@ -84,45 +84,45 @@ class ApplicationMenubar extends JMenuBar {
 		fileMenu.add(exitApplication);
 
 		this.add(fileMenu);
-		
+
 		// TOOLS MENU
 		JMenu toolsMenu = new JMenu(Lang.getUI("menu.tools"));
 		toolsMenu.setMnemonic(KeyEvent.VK_T);
-		
+
 		JMenuItem playlistManager = new JMenuItem(Lang.getUI("menu.tools.playlistManager"), UiIcon.LIST.getIcon());
 		playlistManager.setMnemonic(KeyEvent.VK_P);
 		playlistManager.addActionListener(new PlaylistManagerShowAction());
 		toolsMenu.add(playlistManager);
-		
+
 		JMenuItem genreManager = new JMenuItem(Lang.getUI("menu.tools.genreManager"), UiIcon.LIST.getIcon());
 		genreManager.setMnemonic(KeyEvent.VK_G);
 		genreManager.addActionListener(new GenreManagerShowAction());
 		toolsMenu.add(genreManager);
-		
+
 		toolsMenu.addSeparator();
-		
+
 		JMenuItem episodeContinuityCheck = new JMenuItem(Lang.getUI("menu.tools.continuity"), UiIcon.CHECKED.getIcon());
 		episodeContinuityCheck.addActionListener(new EpisodeIdContinuityCheckAction());
 		toolsMenu.add(episodeContinuityCheck);
-		
+
 		toolsMenu.addSeparator();
-		
+
 		JMenuItem settings = new JMenuItem(Lang.getUI("menu.tools.settings"), UiIcon.SETTINGS.getIcon());
 		settings.addActionListener(new ShowSettingsDialogAction());
 		toolsMenu.add(settings);
-		
+
 		this.add(toolsMenu);
-		
+
 		// HELP
 		JMenu helpMenu = new JMenu(Lang.getUI("menu.help"));
 		helpMenu.setMnemonic(KeyEvent.VK_H);
-		
+
 		JMenuItem openLocal = new JMenuItem(Lang.getUI("menu.logdir"), UiIcon.FOLDER_OPEN.getIcon());
 		openLocal.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if(!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+					if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
 						openLocal.setEnabled(false);
 						return;
 					}
@@ -133,26 +133,27 @@ class ApplicationMenubar extends JMenuBar {
 			}
 		});
 		helpMenu.add(openLocal);
-		
+
 		JMenuItem loadBackup = new JMenuItem(Lang.getUI("menu.loadbackup"), UiIcon.FOLDER_OPEN.getIcon());
 		loadBackup.addActionListener(LoadFileAction.getLoadFileActionWithUI(new File(ResourceLoader.BACKUP_DIR)));
 		helpMenu.add(loadBackup);
-		
+
 		JMenuItem refreshScreen = new JMenuItem(Lang.getUI("menu.refresh"), UiIcon.SCREEN.getIcon());
 		refreshScreen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SQLConnection.getDbConn().announceDataRefresh(); // Notify all listeners that the data is 'changed' => reloads said data
+				SQLConnection.getDbConn().announceDataRefresh(); // Notify all listeners that the data is 'changed' =>
+																	// reloads said data
 			}
 		});
 		helpMenu.add(refreshScreen);
-		
+
 		helpMenu.addSeparator();
-		
+
 		JMenuItem about = new JMenuItem(Lang.getUI("menu.about"), UiIcon.INFO.getIcon());
 		about.addActionListener(new ShowAboutDialogAction());
 		helpMenu.add(about);
-		
+
 		this.add(helpMenu);
 	}
 

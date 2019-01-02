@@ -42,21 +42,26 @@ class AddPlaylistAction extends AbstractAction {
 	public AddPlaylistAction() {
 		super("+");
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() instanceof Component) {
+		if (e.getSource() instanceof Component) {
 			// input string for the name, sanitise & capitalise it
-			String newName = StringUtils.ToUpperCamelCase(JOptionPane.showInputDialog((Component) e.getSource(), Lang.getUI("playlistManager.new.dialog") + ": "));
-			if(newName.isEmpty())
+			String newName = StringUtils.ToUpperCamelCase(JOptionPane.showInputDialog((Component) e.getSource(),
+					Lang.getUI("playlistManager.new.dialog") + ": "));
+			if (newName.isEmpty())
 				return;
 			try {
 				// Already exists?
-				if(CommonSQL.getPlaylists().contains(newName)){
-					JOptionPane.showMessageDialog((Component) e.getSource(), Lang.getUI("playlistManager.new.existsalready"), "", JOptionPane.WARNING_MESSAGE);
+				if (CommonSQL.getPlaylists().contains(newName)) {
+					JOptionPane.showMessageDialog((Component) e.getSource(),
+							Lang.getUI("playlistManager.new.existsalready"), "", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 				// Create new playlist

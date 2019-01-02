@@ -31,9 +31,9 @@ import java.io.OutputStream;
 class DuplicateOutputStream extends OutputStream {
 	private final OutputStream out1;
 	private final OutputStream out2;
-	
+
 	DuplicateOutputStream(OutputStream o1, OutputStream o2) {
-		if(o1 == null || o2 == null)
+		if (o1 == null || o2 == null)
 			throw new NullPointerException();
 		out1 = o1;
 		out2 = o2;
@@ -66,14 +66,14 @@ class DuplicateOutputStream extends OutputStream {
 	@Override
 	public void close() throws IOException {
 		IOException e = null;
-		try{
+		try {
 			out1.close();
 		} catch (IOException e1) {
 			e = e1;
 		}
 		out2.close();
-		if(e != null)
+		if (e != null)
 			throw e;
 	}
-	
+
 }

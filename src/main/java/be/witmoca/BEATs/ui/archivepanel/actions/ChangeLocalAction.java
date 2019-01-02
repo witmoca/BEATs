@@ -84,9 +84,9 @@ class ChangeLocalAction extends AbstractAction {
 			return; // cancelled
 		}
 
-		if(localBox.isSelected() == local)
+		if (localBox.isSelected() == local)
 			return;
-		
+
 		// MAKE CHANGES
 		// update artist
 		try {

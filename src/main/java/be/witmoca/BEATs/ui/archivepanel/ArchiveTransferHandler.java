@@ -34,11 +34,10 @@ import be.witmoca.BEATs.ui.components.SongTable;
 */
 
 /**
- * Copy only TransferHandler
- * Translates data from an ArchiveTable into a Transferable
+ * Copy only TransferHandler Translates data from an ArchiveTable into a
+ * Transferable
  * 
-* File: ArchiveTransferHandler.java
-* Created: 2018
+ * File: ArchiveTransferHandler.java Created: 2018
  */
 class ArchiveTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
@@ -68,10 +67,9 @@ class ArchiveTransferHandler extends TransferHandler {
 		return TransferHandler.COPY;
 	}
 
-
 	@Override
 	protected Transferable createTransferable(JComponent c) {
-		if(c instanceof SongTable)
+		if (c instanceof SongTable)
 			return ((SongTable) c).getSelectedSong();
 		return null;
 	}

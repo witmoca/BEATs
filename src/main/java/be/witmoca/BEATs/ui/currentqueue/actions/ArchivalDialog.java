@@ -57,39 +57,41 @@ import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.t4j.LocalDateCombo;
 import be.witmoca.BEATs.utils.Lang;
 
-class ArchivalDialog extends JDialog implements ActionListener, PropertyChangeListener, ListDataListener{
+class ArchivalDialog extends JDialog implements ActionListener, PropertyChangeListener, ListDataListener {
 	private static final long serialVersionUID = 1L;
-	private static final String[] summeryColumnNames = { Lang.getUI("col.artist"), Lang.getUI("col.song"), Lang.getUI("col.comment") };
-	
-	private final JPanel cPane = new JPanel(new BorderLayout(10,10));
-	private final JPanel entryPanel = new JPanel(new GridLayout(2,3,5,5)) ;
-	private final JPanel episodeBorder = new JPanel(new GridLayout(1,1)); // It's recommended to only set borders on jpanels
-	private final JPanel genreBorder = new JPanel(new GridLayout(1,1));
+	private static final String[] summeryColumnNames = { Lang.getUI("col.artist"), Lang.getUI("col.song"),
+			Lang.getUI("col.comment") };
+
+	private final JPanel cPane = new JPanel(new BorderLayout(10, 10));
+	private final JPanel entryPanel = new JPanel(new GridLayout(2, 3, 5, 5));
+	private final JPanel episodeBorder = new JPanel(new GridLayout(1, 1)); // It's recommended to only set borders on
+																			// jpanels
+	private final JPanel genreBorder = new JPanel(new GridLayout(1, 1));
 	private final JFormattedTextField episodeId = new JFormattedTextField(NumberFormat.getIntegerInstance());
 	private final LocalDateCombo episodeDate = new LocalDateCombo(DateTimeFormatter.ofPattern("E d-MMM-uuuu"));
 	private final JComboBox<String> genreId;
 	private final JButton okButton = new JButton(Lang.getUI("action.ok"));
 	private final JButton cancelButton = new JButton(Lang.getUI("action.cancel"));
-	
+
 	private boolean valid = false;
-	
+
 	public ArchivalDialog() {
 		super(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("queue.archiving"), true);
-		
+
 		// LAYOUT
 		// create the entryPanel
 		// row 1
 		entryPanel.add(new JLabel(Lang.getUI("col.episode")));
-		entryPanel.add(new JLabel(Lang.getUI("col.date")));	
+		entryPanel.add(new JLabel(Lang.getUI("col.date")));
 		entryPanel.add(new JLabel(Lang.getUI("col.genre")));
-		
+
 		// row 2
 		episodeBorder.add(episodeId);
 		entryPanel.add(episodeBorder);
 		episodeDate.setEditable(false);
 		episodeDate.setEnabled(false);
 		entryPanel.add(episodeDate);
-		
+
 		List<String> Genres = null;
 		try {
 			Genres = CommonSQL.getGenres();
@@ -100,115 +102,116 @@ class ArchivalDialog extends JDialog implements ActionListener, PropertyChangeLi
 		genreId.setEditable(true);
 		genreBorder.add(genreId);
 		entryPanel.add(genreBorder);
-		
-		entryPanel.setBorder(BorderFactory.createEmptyBorder(0,10,10,10));
-		
+
+		entryPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+
 		// add the entryPanel
-		cPane.add(new JScrollPane(entryPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.NORTH);
-		 
+		cPane.add(new JScrollPane(entryPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.NORTH);
+
 		// add the summary view
-		cPane.add(new JScrollPane(constructSummary(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-		
+		cPane.add(new JScrollPane(constructSummary(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+
 		// add buttons to the panel
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(okButton);
 		buttonPanel.add(cancelButton);
 		cPane.add(buttonPanel, BorderLayout.SOUTH);
-		
+
 		cPane.setOpaque(true);
-		cPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		cPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		this.setContentPane(cPane);
-		
+
 		// FUNCTIONALITY
 		okButton.addActionListener(this);
 		cancelButton.addActionListener(this);
-		
+
 		// episodeDate should follow episodeId
-		episodeId.addPropertyChangeListener("value",this);
+		episodeId.addPropertyChangeListener("value", this);
 
 		// episodeId should follow episodeDate
 		episodeDate.getModel().addListDataListener(this);
-		
-		// set initial value of episode id 
+
+		// set initial value of episode id
 		try {
 			// Today's date is already associated with an episode?
 			int id = CommonSQL.getEpisodeByDate(episodeDate.getValue());
-			if(id < 0) {
+			if (id < 0) {
 				// No episode of today => set as new episode
 				List<Integer> epiL = CommonSQL.getEpisodes();
-				if(epiL.isEmpty()) {
+				if (epiL.isEmpty()) {
 					id = 1; // no previous existing => choose 1 as starting number
 				} else {
-					id = epiL.get(epiL.size()-1) +1; // equal to Max(EpisodeId) + 1
+					id = epiL.get(epiL.size() - 1) + 1; // equal to Max(EpisodeId) + 1
 				}
 			}
 			episodeId.setValue(id);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		// PREPARE FOR VIEW
 		this.pack();
 		this.setLocationRelativeTo(this.getParent());
 		// setVisible DOES NOT RETURN BEFORE dispose() WHEN MODAL!
 		this.setVisible(true);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if( cancelButton.equals(e.getSource()) ){
+		if (cancelButton.equals(e.getSource())) {
 			// cancelled
 			this.dispose();
-			return; 
+			return;
 		}
-		if( !okButton.equals(e.getSource()) )
+		if (!okButton.equals(e.getSource()))
 			return; // nothing interesting happened
-		
+
 		// Reset borders
 		episodeBorder.setBorder(BorderFactory.createEmptyBorder());
 		genreBorder.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		// Check if all fields are valid
-		// check episodeId	
-		if(episodeId.getValue() == null || !episodeId.isEditValid()) {
+		// check episodeId
+		if (episodeId.getValue() == null || !episodeId.isEditValid()) {
 			episodeBorder.setBorder(BorderFactory.createLineBorder(Color.red));
 			episodeId.requestFocusInWindow();
 			return;
 		}
-		
+
 		// check episodeDate (should be true)
-		if(episodeDate.getValue() == null)
+		if (episodeDate.getValue() == null)
 			return;
-		
-		if(genreId.getSelectedItem() == null || ((String) genreId.getSelectedItem()).trim().isEmpty() ) {
+
+		if (genreId.getSelectedItem() == null || ((String) genreId.getSelectedItem()).trim().isEmpty()) {
 			genreBorder.setBorder(BorderFactory.createLineBorder(Color.red));
 			genreId.requestFocusInWindow();
 			return;
 		}
-		
+
 		valid = true;
 		this.dispose();
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		// value of episodeId has changed		
-		if(!episodeId.isEditValid() || episodeId.getValue() == null) {
+		// value of episodeId has changed
+		if (!episodeId.isEditValid() || episodeId.getValue() == null) {
 			return;
 		}
-		
+
 		// Do not accept negatives
 		int value = this.getEpisodeId();
-		if(value < 0) {
+		if (value < 0) {
 			episodeId.setValue(Math.abs(value));
 			return;
 		}
-		
+
 		// set episodeDate accordingly
 		try {
 			LocalDate d = CommonSQL.getEpisodeDateById(value);
-			if(d == null) {
+			if (d == null) {
 				// this episode does not exist;
 				episodeDate.setEnabled(true); // set enabled first! (for listDatalistener)
 				episodeDate.setValue(LocalDate.now());
@@ -222,7 +225,7 @@ class ArchivalDialog extends JDialog implements ActionListener, PropertyChangeLi
 			return;
 		}
 	}
-	
+
 	@Override
 	public void intervalAdded(ListDataEvent e) {
 		contentsChanged(e);
@@ -236,12 +239,12 @@ class ArchivalDialog extends JDialog implements ActionListener, PropertyChangeLi
 	@Override
 	public void contentsChanged(ListDataEvent e) {
 		// episodeDate has been changed
-		if(!episodeDate.isEnabled() || episodeDate.getValue() == null)
+		if (!episodeDate.isEnabled() || episodeDate.getValue() == null)
 			return; // if not enabled or no value, then don't really care
-		
+
 		try {
 			int ep = CommonSQL.getEpisodeByDate(episodeDate.getValue());
-			if(ep < 0) {
+			if (ep < 0) {
 				return; // this is ok
 			} else {
 				// episode exists => change episodeId field accordingly
@@ -253,7 +256,8 @@ class ArchivalDialog extends JDialog implements ActionListener, PropertyChangeLi
 	}
 
 	/***
-	 *  Constructs a JTable containing a summary of the items in the currentQueue
+	 * Constructs a JTable containing a summary of the items in the currentQueue
+	 * 
 	 * @return constructed JTable
 	 */
 	private static JTable constructSummary() {
@@ -283,15 +287,16 @@ class ArchivalDialog extends JDialog implements ActionListener, PropertyChangeLi
 	public boolean isValid() {
 		return valid;
 	}
-	
+
 	public int getEpisodeId() {
-		return ((Number) episodeId.getValue()).intValue(); // For some weird reason this can return different number types (Long/Integer/int)
+		return ((Number) episodeId.getValue()).intValue(); // For some weird reason this can return different number
+															// types (Long/Integer/int)
 	}
-	
+
 	public LocalDate getEpisodeDate() {
 		return episodeDate.getValue();
 	}
-	
+
 	public String getGenre() {
 		return ((String) genreId.getSelectedItem()).trim();
 	}

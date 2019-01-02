@@ -40,27 +40,27 @@ import be.witmoca.BEATs.utils.UiIcon;
 class RenameGenreAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> model;
-	
+
 	RenameGenreAction(JList<String> model) {
 		super(null, UiIcon.EDIT.getIcon());
 		this.model = model;
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String gName = model.getSelectedValue();
-		if(gName == null)
+		if (gName == null)
 			return;
-		
-		String newName = JOptionPane.showInputDialog((Component) e.getSource(), Lang.getUI("genreManager.rename.dialog") + ": ").trim();
-		if(newName == null || newName.isEmpty())
+
+		String newName = JOptionPane
+				.showInputDialog((Component) e.getSource(), Lang.getUI("genreManager.rename.dialog") + ": ").trim();
+		if (newName == null || newName.isEmpty())
 			return;
-		
-		
+
 		try {
 			CommonSQL.addGenre(newName);
 			CommonSQL.updateAllGenreReferences(gName, newName);
-			CommonSQL.removeGenre(gName);	
+			CommonSQL.removeGenre(gName);
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.GENRE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();

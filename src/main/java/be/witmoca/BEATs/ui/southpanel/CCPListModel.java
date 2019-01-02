@@ -41,50 +41,52 @@ import be.witmoca.BEATs.connection.SQLConnection;
 * File: CCPListModel.java
 * Created: 2018
 */
-class CCPListModel implements ListModel<String>, DataChangedListener{
+class CCPListModel implements ListModel<String>, DataChangedListener {
 	private final List<TransferableSong> content = new ArrayList<TransferableSong>();
 	private final List<ListDataListener> ldlList = new ArrayList<ListDataListener>();
-	
+
 	public CCPListModel() {
 		this.tableChanged();
 		SQLConnection.getDbConn().addDataChangedListener(this, EnumSet.of(DataChangedType.CCP));
 	}
-	
+
 	@Override
 	public int getSize() {
 		return content.size();
 	}
+
 	@Override
 	public String getElementAt(int index) {
 		return content.get(index).toString();
 	}
-	
+
 	@Override
 	public void addListDataListener(ListDataListener l) {
-		ldlList.add(l);	
+		ldlList.add(l);
 	}
+
 	@Override
 	public void removeListDataListener(ListDataListener l) {
-		ldlList.remove(l);	
+		ldlList.remove(l);
 	}
-	
+
 	@Override
 	public void tableChanged() {
-		try (PreparedStatement selCCP = SQLConnection.getDbConn().prepareStatement("SELECT Artist, Song FROM ccp ORDER BY rowid")) {
+		try (PreparedStatement selCCP = SQLConnection.getDbConn()
+				.prepareStatement("SELECT Artist, Song FROM ccp ORDER BY rowid")) {
 			ResultSet rs = selCCP.executeQuery();
-			
+
 			content.clear();
-			while(rs.next()) {
+			while (rs.next()) {
 				content.add(new TransferableSong(rs.getString(1), rs.getString(2), 0));
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		
-		
+
 		// inform ListDataListeners
 		ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize());
-		for(ListDataListener ldl : ldlList) {
+		for (ListDataListener ldl : ldlList) {
 			ldl.contentsChanged(e);
 		}
 	}

@@ -30,12 +30,11 @@ public class CurrentQueueToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> queue;
 
-	
 	public CurrentQueueToolbar(JList<String> Queue) {
 		super(JToolBar.HORIZONTAL);
 		this.setFloatable(false);
 		queue = Queue;
-		
+
 		this.add(new JButton(new RevertToPlaylistFromQueueAction(queue)));
 		this.add(new JButton(new ShowInfoAction(queue)));
 		this.add(new JButton(new ArchiveAction(queue)));

@@ -34,6 +34,6 @@ public class CurrentQueuePopupMenu extends JPopupMenu {
 
 	public CurrentQueuePopupMenu(JList<String> Queue) {
 		this.add(new JMenuItem(new RevertToPlaylistFromQueueAction(Queue)));
-		this.add(new JMenuItem(new ShowInfoAction(Queue)));	
+		this.add(new JMenuItem(new ShowInfoAction(Queue)));
 	}
 }

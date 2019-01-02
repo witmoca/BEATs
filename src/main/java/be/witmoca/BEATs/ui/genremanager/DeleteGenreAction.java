@@ -41,29 +41,33 @@ class DeleteGenreAction extends AbstractAction {
 	private final JList<String> model;
 
 	DeleteGenreAction(JList<String> model) {
-		super(null,UiIcon.DELETE.getIcon());
+		super(null, UiIcon.DELETE.getIcon());
 		this.model = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(!(e.getSource() instanceof Component))
+		if (!(e.getSource() instanceof Component))
 			return;
 		try {
 			// Prepare for deletion
 			String pName = model.getSelectedValue();
-			if(pName == null)
+			if (pName == null)
 				return;
 			int count = CommonSQL.countGenreInArchive(pName);
 			// Confirm if genre is referenced
-			if(count > 0) {
-				JOptionPane.showMessageDialog((Component) e.getSource(), Lang.getUI("genreManager.delete.stillreferenced"), "", JOptionPane.WARNING_MESSAGE);
+			if (count > 0) {
+				JOptionPane.showMessageDialog((Component) e.getSource(),
+						Lang.getUI("genreManager.delete.stillreferenced"), "", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			
+
 			// Delete genre
 			CommonSQL.removeGenre(pName);
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.GENRE));

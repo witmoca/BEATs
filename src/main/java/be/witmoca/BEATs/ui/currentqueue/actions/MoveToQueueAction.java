@@ -52,10 +52,10 @@ public class MoveToQueueAction extends AbstractAction {
 		String rawSong = (String) source.getModel().getValueAt(row, 1);
 		String rawComment = "";
 		try {
-			 rawComment = ((String) source.getModel().getValueAt(row, 2)).trim();
+			rawComment = ((String) source.getModel().getValueAt(row, 2)).trim();
 		} catch (NullPointerException e1) {
 		}
-		if(rawArtist.isEmpty() || rawSong.isEmpty()) {
+		if (rawArtist.isEmpty() || rawSong.isEmpty()) {
 			return;
 		}
 		try {
@@ -77,33 +77,38 @@ public class MoveToQueueAction extends AbstractAction {
 					findSong.setString(1, rawArtist);
 					findSong.setString(2, rawSong);
 					ResultSet rs = findSong.executeQuery();
-					if (rs.next() )
+					if (rs.next())
 						songId = rs.getInt(1);
 				}
 			} else {
 				// create new artist if he doesn't exist
 				// ask if artist is local
-				String options[] = {Lang.getUI("queue.moveToQueue.local"), Lang.getUI("queue.moveToQueue.notlocal"), Lang.getUI("action.cancel")};
-				int answerLocal = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(), rawArtist + " " + Lang.getUI("queue.moveToQueue.newArtist"), Lang.getUI("queue.moveToQueue.newArtistTitle"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 2);
-				if(answerLocal == JOptionPane.CANCEL_OPTION || answerLocal == JOptionPane.CLOSED_OPTION) {
+				String options[] = { Lang.getUI("queue.moveToQueue.local"), Lang.getUI("queue.moveToQueue.notlocal"),
+						Lang.getUI("action.cancel") };
+				int answerLocal = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(),
+						rawArtist + " " + Lang.getUI("queue.moveToQueue.newArtist"),
+						Lang.getUI("queue.moveToQueue.newArtistTitle"), JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, 2);
+				if (answerLocal == JOptionPane.CANCEL_OPTION || answerLocal == JOptionPane.CLOSED_OPTION) {
 					return; // CANCEL
 				}
 				CommonSQL.addArtist(rawArtist, (answerLocal == 0));
 			}
-			
+
 			// create song if it doesn't exist
-			if(songId < 0) {
+			if (songId < 0) {
 				songId = CommonSQL.addSong(rawSong, rawArtist);
 			}
-			
+
 			// Add the new set to the currentQueue
 			CommonSQL.addCurrentQueue(songId, rawComment);
-			
+
 			// delete row
 			((PlaylistTableModel) source.getModel()).deleteRow(row);
 
 			// commit
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST, DataChangedType.CURRENT_QUEUE));
+			SQLConnection.getDbConn()
+					.commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST, DataChangedType.CURRENT_QUEUE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

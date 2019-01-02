@@ -39,9 +39,10 @@ class ChangeOrderAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final int movement;
 	private final JList<String> model;
-	
+
 	/**
-	 * @param up {@code true} if up, {@code false} if down
+	 * @param up
+	 *            {@code true} if up, {@code false} if down
 	 */
 	ChangeOrderAction(boolean up, JList<String> model) {
 		super(null, up ? UiIcon.UP.getIcon() : UiIcon.DOWN.getIcon());
@@ -49,37 +50,40 @@ class ChangeOrderAction extends AbstractAction {
 		this.model = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {
 			// Make sure tab orders are perfect
 			(new OptimiseTabOrderAction()).actionPerformed(null);
-			
+
 			// Get necessary values
 			String pName = model.getSelectedValue();
-			if(pName == null)
+			if (pName == null)
 				return;
 			List<String> pNames = CommonSQL.getPlaylists();
 			int order = pNames.indexOf(pName) + 1;
-			if(order == -1)
+			if (order == -1)
 				throw new SQLException("Invalid value");
 			// Check if we are trying to go beyond the max or min
-			if(order - this.movement > pNames.size() || order - this.movement < 1)
+			if (order - this.movement > pNames.size() || order - this.movement < 1)
 				return;
-			
-			
+
 			// Do a switcharoo (a => c, b => a, c => a)
-			// With a as the position of pName, b as the position above/below, c as position -1
+			// With a as the position of pName, b as the position above/below, c as position
+			// -1
 			CommonSQL.updatePlaylistOrder(pName, -1);
-			CommonSQL.updatePlaylistOrder(pNames.get(order -1 -this.movement), order);
+			CommonSQL.updatePlaylistOrder(pNames.get(order - 1 - this.movement), order);
 			CommonSQL.updatePlaylistOrder(pName, order - this.movement);
-			
+
 			// Reset the selection now that order has changed
-			model.setSelectedIndex(order -1 - this.movement);
-			
+			model.setSelectedIndex(order - 1 - this.movement);
+
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.PLAYLIST));
 		} catch (SQLException e1) {
 			e1.printStackTrace();

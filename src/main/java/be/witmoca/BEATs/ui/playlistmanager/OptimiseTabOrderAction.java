@@ -30,8 +30,11 @@ import java.util.List;
 import be.witmoca.BEATs.connection.CommonSQL;
 
 class OptimiseTabOrderAction implements ActionListener {
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -39,11 +42,11 @@ class OptimiseTabOrderAction implements ActionListener {
 			List<String> pNames = CommonSQL.getPlaylists();
 			int maxTab = CommonSQL.getMaxTabOrderFromPlaylist();
 			// Already optimal
-			if(pNames.size() == maxTab)
+			if (pNames.size() == maxTab)
 				return;
-			
-			for(int i = 0; i < pNames.size(); i++) {
-				CommonSQL.updatePlaylistOrder(pNames.get(i), i+1);
+
+			for (int i = 0; i < pNames.size(); i++) {
+				CommonSQL.updatePlaylistOrder(pNames.get(i), i + 1);
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();

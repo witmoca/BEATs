@@ -32,11 +32,11 @@ import java.io.IOException;
 */
 public class TransferableSong implements Transferable {
 	public static final DataFlavor FLAVOR = new DataFlavor(TransferableSong.class, "Transferable Song");
-	
+
 	private final String ARTIST;
 	private final String SONG;
 	private final int ROWID;
-	
+
 	public TransferableSong(String aRTIST, String sONG, int rOWID) {
 		ARTIST = aRTIST;
 		SONG = sONG;
@@ -55,7 +55,9 @@ public class TransferableSong implements Transferable {
 		return ROWID;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
 	 */
 	@Override
@@ -65,24 +67,31 @@ public class TransferableSong implements Transferable {
 		return df;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.
+	 * datatransfer.DataFlavor)
 	 */
 	@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		return flavor.equals(FLAVOR);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.
+	 * DataFlavor)
 	 */
 	@Override
 	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-		if(!this.isDataFlavorSupported(flavor))
-			return null;		
+		if (!this.isDataFlavorSupported(flavor))
+			return null;
 		return this;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ARTIST + " - " + SONG;

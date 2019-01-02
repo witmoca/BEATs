@@ -53,7 +53,7 @@ public class CurrentQueueListModel extends AbstractListModel<String> implements 
 	public String getElementAt(int index) {
 		return internalMap.get(this.getSongOrderAt(index));
 	}
-	
+
 	public int getSongOrderAt(int index) {
 		return (int) internalMap.keySet().toArray()[index];
 	}
@@ -62,18 +62,18 @@ public class CurrentQueueListModel extends AbstractListModel<String> implements 
 	public void tableChanged() {
 		// Commit happend that changed the currentqueue => reload
 		internalMap.clear();
-		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement("SELECT SongOrder, (ArtistName || ' - ' || Title) FROM CurrentQueue, Song WHERE CurrentQueue.SongId = Song.SongId ORDER BY SongOrder ASC")) {
+		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
+				"SELECT SongOrder, (ArtistName || ' - ' || Title) FROM CurrentQueue, Song WHERE CurrentQueue.SongId = Song.SongId ORDER BY SongOrder ASC")) {
 			ResultSet value = getValue.executeQuery();
-			while(value.next()) {
-				internalMap.put(value.getInt(1) ,value.getString(2));
+			while (value.next()) {
+				internalMap.put(value.getInt(1), value.getString(2));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		// notify listeners
 		this.fireContentsChanged(this, 0, this.getSize());
 	}
-
 
 }

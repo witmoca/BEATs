@@ -45,30 +45,34 @@ import be.witmoca.BEATs.utils.UiIcon;
 class DeleteEntryAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JTable archive;
-	
+
 	DeleteEntryAction(JTable table) {
 		super(Lang.getUI("action.delete"));
 		this.putValue(Action.SMALL_ICON, UiIcon.DELETE.getIcon());
 		archive = table;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		int index = archive.getSelectedRow();
-		if(index < 0)
+		if (index < 0)
 			return;
-		if(archive.getRowSorter() != null)
+		if (archive.getRowSorter() != null)
 			index = archive.getRowSorter().convertRowIndexToModel(index);
-		
-		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("deleteAction.confirm"), Lang.getUI("deleteAction.confirmTitle"),
-				 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
+
+		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("deleteAction.confirm"),
+				Lang.getUI("deleteAction.confirmTitle"), JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
 			return;
-		
+
 		int rowid = ((ArchiveTableModel) archive.getModel()).getRowId(index);
-		
+
 		try {
 			CommonSQL.removeFromSongsInArchive(rowid);
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_ARCHIVE));

@@ -42,7 +42,7 @@ import be.witmoca.BEATs.utils.Lang;
 
 public class GenreManagerShowAction implements ActionListener {
 	private final JList<String> gList = new JList<String>(new GenreListModel());
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -51,27 +51,30 @@ public class GenreManagerShowAction implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JPanel contentPanel = new JPanel(new BorderLayout(10,10));
-		
+		JPanel contentPanel = new JPanel(new BorderLayout(10, 10));
+
 		// listing of genres
-		contentPanel.add(new JScrollPane(gList,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+		contentPanel.add(
+				new JScrollPane(gList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
+				BorderLayout.CENTER);
 		gList.setVisibleRowCount(5);
-		
+
 		// button panel
-		JPanel buttonPanel = new JPanel(new GridLayout(0,1));
+		JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
 		buttonPanel.setBorder(BorderFactory.createEtchedBorder());
 		buttonPanel.add(wrapAction(new AddGenreAction()));
 		buttonPanel.add(wrapAction(new RenameGenreAction(gList)));
 		buttonPanel.add(wrapAction(new DeleteGenreAction(gList)));
 		contentPanel.add(buttonPanel, BorderLayout.EAST);
-		
-		JOptionPane.showMessageDialog(ApplicationWindow.APP_WINDOW, contentPanel, Lang.getUI("menu.tools.genreManager"), JOptionPane.PLAIN_MESSAGE, null);
+
+		JOptionPane.showMessageDialog(ApplicationWindow.APP_WINDOW, contentPanel, Lang.getUI("menu.tools.genreManager"),
+				JOptionPane.PLAIN_MESSAGE, null);
 	}
-	
+
 	private JComponent wrapAction(Action a) {
 		JPanel p = new JPanel();
 		JButton b = new JButton(a);
-		b.setPreferredSize(new Dimension(60,25));
+		b.setPreferredSize(new Dimension(60, 25));
 		p.add(b);
 		return p;
 	}

@@ -37,12 +37,13 @@ public class PlaylistPanel extends JPanel {
 	private final JScrollPane playlistScrollPane;
 	private final JPanel southPanel;
 
-	public PlaylistPanel( String title) {
+	public PlaylistPanel(String title) {
 		super(new BorderLayout());
 
 		playlistTable = new PlaylistTable(title);
-		southPanel = new SouthPanel(playlistTable,0,1);
-		playlistScrollPane = new JScrollPane(playlistTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		southPanel = new SouthPanel(playlistTable, 0, 1);
+		playlistScrollPane = new JScrollPane(playlistTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		this.add(new PlaylistToolbar(playlistTable), BorderLayout.NORTH);
 		this.add(playlistScrollPane, BorderLayout.CENTER);

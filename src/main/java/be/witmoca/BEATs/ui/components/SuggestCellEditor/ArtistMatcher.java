@@ -37,21 +37,25 @@ import be.witmoca.BEATs.connection.SQLConnection;
 */
 class ArtistMatcher implements IMatcher {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see be.witmoca.BEATs.ui.SuggestCellEditor.IMatcher#match(java.lang.String)
 	 */
 	@Override
 	public List<String> match(String search, boolean forwardOnly, JTable table, int row, int col) {
-		// Does not support % or _ characters (special characters from the SQLite LIKE function)
-		if(search.contains("%") || search.contains("_"))
+		// Does not support % or _ characters (special characters from the SQLite LIKE
+		// function)
+		if (search.contains("%") || search.contains("_"))
 			return null;
-		
-		try (PreparedStatement selMatches = SQLConnection.getDbConn().prepareStatement("SELECT ArtistName FROM Artist WHERE ArtistName LIKE ? ORDER BY ArtistName ASC")) {
-			selMatches.setString(1, (forwardOnly ? "" : "%" )+search+"%");
-			List<String> result = new ArrayList<String>();	
+
+		try (PreparedStatement selMatches = SQLConnection.getDbConn()
+				.prepareStatement("SELECT ArtistName FROM Artist WHERE ArtistName LIKE ? ORDER BY ArtistName ASC")) {
+			selMatches.setString(1, (forwardOnly ? "" : "%") + search + "%");
+			List<String> result = new ArrayList<String>();
 			ResultSet rs = selMatches.executeQuery();
-			
-			while(rs.next()) {
+
+			while (rs.next()) {
 				result.add(rs.getString(1));
 			}
 			return result;

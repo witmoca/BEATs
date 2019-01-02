@@ -41,32 +41,33 @@ import be.witmoca.BEATs.utils.UiIcon;
 class RenamePlaylistAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> model;
-	
+
 	RenamePlaylistAction(JList<String> model) {
 		super(null, UiIcon.EDIT.getIcon());
 		this.model = model;
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String pName = model.getSelectedValue();
-		if(pName == null)
+		if (pName == null)
 			return;
-		
-		String newName = StringUtils.ToUpperCamelCase(JOptionPane.showInputDialog((Component) e.getSource(), Lang.getUI("playlistManager.rename.dialog") + ": "));
-		if(newName == null || newName.isEmpty())
+
+		String newName = StringUtils.ToUpperCamelCase(JOptionPane.showInputDialog((Component) e.getSource(),
+				Lang.getUI("playlistManager.rename.dialog") + ": "));
+		if (newName == null || newName.isEmpty())
 			return;
-		
+
 		// Make sure tab orders are perfect
 		(new OptimiseTabOrderAction()).actionPerformed(null);
-		
+
 		try {
-			int order = CommonSQL.getPlaylists().indexOf(pName)+1;
-			if(order < 0)
+			int order = CommonSQL.getPlaylists().indexOf(pName) + 1;
+			if (order < 0)
 				throw new SQLException("Invalid value");
 			CommonSQL.addPlaylist(newName, -1);
 			CommonSQL.updatePlaylistReferences(newName, pName);
-			CommonSQL.removePlaylist(pName);	
+			CommonSQL.removePlaylist(pName);
 			CommonSQL.updatePlaylistOrder(newName, order);
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.PLAYLIST));
 		} catch (SQLException e1) {

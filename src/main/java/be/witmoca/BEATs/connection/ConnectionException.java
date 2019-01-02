@@ -27,24 +27,24 @@ package be.witmoca.BEATs.connection;
 */
 public class ConnectionException extends Exception {
 	private static final long serialVersionUID = 1L;
-	
+
 	private final ConnState state;
-	
+
 	public static enum ConnState {
-		DB_ALREADY_LOCKED, 			// Another instance has locked the db
-		GENERAL_EXCEPTION, 			// General statement exception (usually sql syntax error)
-		APP_ID_INVALID, 			// Db Application id does not match application
-		APP_OUTDATED, 				// Db version is higher than the application version
-		DB_OUTDATED,				// Major version of the DB is lower then Major of the application (suggest import instead)
-		FOREIGN_KEYS_CONSTRAINTS,	// Foreign key constraints failed
-		INTEGRITY_FAILED,			// Db failed the integrity check
-		VACUUM_FAILED;				// Db VACUUM failed
+		DB_ALREADY_LOCKED, // Another instance has locked the db
+		GENERAL_EXCEPTION, // General statement exception (usually sql syntax error)
+		APP_ID_INVALID, // Db Application id does not match application
+		APP_OUTDATED, // Db version is higher than the application version
+		DB_OUTDATED, // Major version of the DB is lower then Major of the application (suggest
+						// import instead)
+		FOREIGN_KEYS_CONSTRAINTS, // Foreign key constraints failed
+		INTEGRITY_FAILED, // Db failed the integrity check
+		VACUUM_FAILED; // Db VACUUM failed
 	}
-	
-	
+
 	ConnectionException(ConnState state, Throwable t) {
 		super(t);
-		if(state == null)
+		if (state == null)
 			throw new IllegalArgumentException("state can't be null");
 		this.state = state;
 	}
@@ -55,8 +55,7 @@ public class ConnectionException extends Exception {
 
 	@Override
 	public String getLocalizedMessage() {
-		return super.getLocalizedMessage() +  "{" + this.getState().name() + "}";
+		return super.getLocalizedMessage() + "{" + this.getState().name() + "}";
 	}
-	
-	
+
 }

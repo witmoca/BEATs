@@ -45,7 +45,7 @@ public class ClipboardActionFactory {
 	public static Action getCopyAction(JComponent source) {
 		return new CutCopyAction(source, false);
 	}
-	
+
 	public static Action getPasteAction(JComponent source) {
 		return new PasteAction(source);
 	}
@@ -82,7 +82,7 @@ public class ClipboardActionFactory {
 	private static final class PasteAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 		private final JComponent source;
-		
+
 		private PasteAction(JComponent source) {
 			super(Lang.getUI("action.paste"));
 			this.putValue(Action.SMALL_ICON, UiIcon.PASTE.getIcon());

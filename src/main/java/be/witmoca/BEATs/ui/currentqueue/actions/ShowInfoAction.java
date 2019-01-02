@@ -47,8 +47,7 @@ import be.witmoca.BEATs.utils.UiIcon;
 class ShowInfoAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> queue;
-	
-	
+
 	public ShowInfoAction(JList<String> queue) {
 		super(Lang.getUI("queue.info"));
 		this.putValue(Action.SMALL_ICON, UiIcon.INFO.getIcon());
@@ -66,7 +65,7 @@ class ShowInfoAction extends AbstractAction {
 		int selIndex = queue.getSelectedIndex();
 		if (selIndex < 0)
 			return;
-		
+
 		// songOrder is the primary key for a song in the CurrentQueue
 		int songOrder = ((CurrentQueueListModel) queue.getModel()).getSongOrderAt(selIndex);
 
@@ -88,23 +87,25 @@ class ShowInfoAction extends AbstractAction {
 				song.setText(rs.getString(2));
 				comment.setText(rs.getString(3));
 			}
-			
+
 			// get artist count
-			try (PreparedStatement selArtist = SQLConnection.getDbConn().prepareStatement("SELECT count(*) FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId AND ArtistName = ?")){
+			try (PreparedStatement selArtist = SQLConnection.getDbConn().prepareStatement(
+					"SELECT count(*) FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId AND ArtistName = ?")) {
 				selArtist.setString(1, artist.getText());
 				ResultSet rs = selArtist.executeQuery();
-				if(!rs.next())
+				if (!rs.next())
 					artistCount.setText("0");
 				else
 					artistCount.setText("" + rs.getInt(1));
 			}
-			
+
 			// get song count
-			try (PreparedStatement selSong = SQLConnection.getDbConn().prepareStatement("SELECT count(*) FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId AND ArtistName = ? AND Title = ?")){
+			try (PreparedStatement selSong = SQLConnection.getDbConn().prepareStatement(
+					"SELECT count(*) FROM SongsInArchive,Song WHERE SongsInArchive.SongId = Song.SongId AND ArtistName = ? AND Title = ?")) {
 				selSong.setString(1, artist.getText());
 				selSong.setString(2, song.getText());
 				ResultSet rs = selSong.executeQuery();
-				if(!rs.next())
+				if (!rs.next())
 					songCount.setText("0");
 				else
 					songCount.setText("" + rs.getInt(1));
@@ -113,8 +114,8 @@ class ShowInfoAction extends AbstractAction {
 			e1.printStackTrace();
 			return;
 		}
-		
-		JPanel message = new JPanel(new GridLayout(0,2));
+
+		JPanel message = new JPanel(new GridLayout(0, 2));
 		message.add(new JLabel(Lang.getUI("col.artist") + ": "));
 		message.add(artist);
 		message.add(new JLabel(Lang.getUI("col.song") + ": "));
@@ -125,7 +126,8 @@ class ShowInfoAction extends AbstractAction {
 		message.add(artistCount);
 		message.add(new JLabel(Lang.getUI("queue.info.songTimes") + ": "));
 		message.add(songCount);
-		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), message, Lang.getUI("queue.info"), JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), message, Lang.getUI("queue.info"),
+				JOptionPane.PLAIN_MESSAGE);
 	}
 
 }

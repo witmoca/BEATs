@@ -136,7 +136,7 @@ class MonthView extends JPanel {
 	 * @param showtoday
 	 *            true to show a link to the current date, false otherwise
 	 */
-	
+
 	public MonthView(LocalDate initialDate, LocalDate minDate, LocalDate maxDate, boolean showtoday) {
 		super(new BorderLayout());
 		min = minDate;
@@ -510,7 +510,8 @@ class MonthView extends JPanel {
 		}
 
 		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row, int column) {
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
 			LocalDate dateValue = (LocalDate) value;
 			boolean isSunday = dateValue.getDayOfWeek() == DayOfWeek.SUNDAY;
 			boolean isSaturday = dateValue.getDayOfWeek() == DayOfWeek.SATURDAY;

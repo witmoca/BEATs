@@ -90,7 +90,7 @@ public class SQLConnection implements AutoCloseable {
 			// Start backups
 			BackupHandler.StartBackups();
 		} catch (ConnectionException e) {
-			if(DbConn != null)
+			if (DbConn != null)
 				DbConn.close();
 			throw e;
 		}

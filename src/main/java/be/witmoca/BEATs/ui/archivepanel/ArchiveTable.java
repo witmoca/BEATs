@@ -35,7 +35,7 @@ class ArchiveTable extends SongTable {
 
 	public ArchiveTable() {
 		super(new ArchiveTableModel());
-		
+
 		// Set custom renderer for the episode column
 		this.getColumnModel().getColumn(2).setCellRenderer(new EpisodeColumnRenderer());
 
@@ -44,12 +44,11 @@ class ArchiveTable extends SongTable {
 		sorter.setSortsOnUpdates(true);
 		sorter.setMaxSortKeys(2);
 		this.setRowSorter(sorter);
-		
 
 		this.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
-		
+
 		this.setComponentPopupMenu(new ArchivePopupMenu(this));
-		
+
 		// Drag and drop logic (no drag and drop, just Cut/Cop/Paste)
 		this.setTransferHandler(new ArchiveTransferHandler());
 	}
@@ -57,15 +56,16 @@ class ArchiveTable extends SongTable {
 	@Override
 	public TransferableSong getSelectedSong() {
 		int rowIndex = this.getSelectedRow();
-		if(rowIndex < 0)
+		if (rowIndex < 0)
 			return null;
-		if(this.getRowSorter() != null)
+		if (this.getRowSorter() != null)
 			rowIndex = this.getRowSorter().convertRowIndexToModel(rowIndex);
-		
-		if(!(this.getModel() instanceof ArchiveTableModel))
+
+		if (!(this.getModel() instanceof ArchiveTableModel))
 			return null;
 		ArchiveTableModel model = (ArchiveTableModel) this.getModel();
 
-		return new TransferableSong((String) model.getValueAt(rowIndex, 0),(String) model.getValueAt(rowIndex, 1), model.getRowId(rowIndex));
+		return new TransferableSong((String) model.getValueAt(rowIndex, 0), (String) model.getValueAt(rowIndex, 1),
+				model.getRowId(rowIndex));
 	}
 }

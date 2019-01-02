@@ -44,9 +44,10 @@ public class CommonSQL {
 			return artist;
 		}
 	}
-	
+
 	public static boolean isArtistLocal(String artistName) throws SQLException {
-		try (PreparedStatement selLocal = SQLConnection.getDbConn().prepareStatement("SELECT local FROM Artist WHERE ArtistName = ?")) {
+		try (PreparedStatement selLocal = SQLConnection.getDbConn()
+				.prepareStatement("SELECT local FROM Artist WHERE ArtistName = ?")) {
 			selLocal.setString(1, artistName);
 			ResultSet rs = selLocal.executeQuery();
 			if (!rs.next())
@@ -54,7 +55,7 @@ public class CommonSQL {
 			return rs.getBoolean(1);
 		}
 	}
-	
+
 	public static void updateLocalityOfArtist(boolean local, String artist) throws SQLException {
 		try (PreparedStatement updateLocal = SQLConnection.getDbConn()
 				.prepareStatement("UPDATE Artist SET local = ? WHERE ArtistName = ?")) {
@@ -63,7 +64,7 @@ public class CommonSQL {
 			updateLocal.executeUpdate();
 		}
 	}
-	
+
 	public static void removeArtist(String artist) throws SQLException {
 		try (PreparedStatement delArtist = SQLConnection.getDbConn()
 				.prepareStatement("DELETE FROM Artist WHERE ArtistName = ?")) {
@@ -93,49 +94,54 @@ public class CommonSQL {
 			return rs.getInt(1);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param artist
 	 * @return list of song titles from said artist, ordered alphabetically
 	 * @throws SQLException
 	 */
-	public static List<String> getAllSongTitlesOfArtist(String artist) throws SQLException{
+	public static List<String> getAllSongTitlesOfArtist(String artist) throws SQLException {
 		List<String> result = new ArrayList<String>();
-		try (PreparedStatement selSongs = SQLConnection.getDbConn().prepareStatement("SELECT Title FROM Song WHERE ArtistName = ? ORDER BY Title")) {
+		try (PreparedStatement selSongs = SQLConnection.getDbConn()
+				.prepareStatement("SELECT Title FROM Song WHERE ArtistName = ? ORDER BY Title")) {
 			selSongs.setString(1, artist);
 			ResultSet rs = selSongs.executeQuery();
-			while(rs.next())
+			while (rs.next())
 				result.add(rs.getString(1));
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Changes all references from oldSongId to newSongId
+	 * 
 	 * @param oldSongId
 	 * @param newSongId
 	 * @throws SQLException
 	 */
 	public static void updateAllSongIdReferences(int oldSongId, int newSongId) throws SQLException {
-		try (PreparedStatement updateArchive = SQLConnection.getDbConn().prepareStatement("UPDATE SongsInArchive SET SongId = ? WHERE SongId = ?")) {
+		try (PreparedStatement updateArchive = SQLConnection.getDbConn()
+				.prepareStatement("UPDATE SongsInArchive SET SongId = ? WHERE SongId = ?")) {
 			updateArchive.setInt(1, newSongId);
 			updateArchive.setInt(2, oldSongId);
 			updateArchive.executeUpdate();
 		}
-		
-		try (PreparedStatement updateQueue = SQLConnection.getDbConn().prepareStatement("UPDATE CurrentQueue SET SongId = ? WHERE SongId = ?")) {
+
+		try (PreparedStatement updateQueue = SQLConnection.getDbConn()
+				.prepareStatement("UPDATE CurrentQueue SET SongId = ? WHERE SongId = ?")) {
 			updateQueue.setInt(1, newSongId);
 			updateQueue.setInt(2, oldSongId);
 			updateQueue.executeUpdate();
 		}
 	}
-	
+
 	public static void removeSong(int songid) throws SQLException {
-		try (PreparedStatement delSong = SQLConnection.getDbConn().prepareStatement("DELETE FROM Song WHERE SongId = ?")) {
+		try (PreparedStatement delSong = SQLConnection.getDbConn()
+				.prepareStatement("DELETE FROM Song WHERE SongId = ?")) {
 			delSong.setInt(1, songid);
 			delSong.executeUpdate();
-		}	
+		}
 	}
 
 	public static void addGenre(String Genre) throws SQLException {
@@ -162,27 +168,30 @@ public class CommonSQL {
 		}
 		return result;
 	}
-	
+
 	public static int countGenreInArchive(String genreName) throws SQLException {
-		try (PreparedStatement sel = SQLConnection.getDbConn().prepareStatement("SELECT count(*) FROM SongsInArchive WHERE GenreName = ?")) {
+		try (PreparedStatement sel = SQLConnection.getDbConn()
+				.prepareStatement("SELECT count(*) FROM SongsInArchive WHERE GenreName = ?")) {
 			sel.setString(1, genreName);
 			ResultSet rs = sel.executeQuery();
-			if(rs.next())
+			if (rs.next())
 				return rs.getInt(1);
 		}
 		return 0;
 	}
-	
+
 	public static void updateAllGenreReferences(String oldGenre, String newGenre) throws SQLException {
-		try (PreparedStatement update = SQLConnection.getDbConn().prepareStatement("UPDATE SongsInArchive SET GenreName = ? WHERE GenreName = ?")) {
+		try (PreparedStatement update = SQLConnection.getDbConn()
+				.prepareStatement("UPDATE SongsInArchive SET GenreName = ? WHERE GenreName = ?")) {
 			update.setString(1, newGenre);
 			update.setString(2, oldGenre);
 			update.executeUpdate();
 		}
 	}
-	
+
 	public static void removeGenre(String genreName) throws SQLException {
-		try (PreparedStatement delLine = SQLConnection.getDbConn().prepareStatement("DELETE FROM Genre WHERE GenreName = ?")) {
+		try (PreparedStatement delLine = SQLConnection.getDbConn()
+				.prepareStatement("DELETE FROM Genre WHERE GenreName = ?")) {
 			delLine.setString(1, genreName);
 			delLine.executeUpdate();
 		}
@@ -231,19 +240,21 @@ public class CommonSQL {
 			return rs.getInt(1);
 		}
 	}
-	
+
 	public static LocalDate getEpisodeDateById(int id) throws SQLException {
-		try (PreparedStatement selDate = SQLConnection.getDbConn().prepareStatement("SELECT episodeDate FROM episode WHERE episodeId = ?")) {
+		try (PreparedStatement selDate = SQLConnection.getDbConn()
+				.prepareStatement("SELECT episodeDate FROM episode WHERE episodeId = ?")) {
 			selDate.setInt(1, id);
 			ResultSet rs = selDate.executeQuery();
-			if(!rs.next())
+			if (!rs.next())
 				return null;
 			return LocalDate.ofEpochDay(rs.getInt(1));
-		} 
+		}
 	}
-	
+
 	public static void updateEpisodeDate(int episodeId, LocalDate newDate) throws SQLException {
-		try (PreparedStatement upDate = SQLConnection.getDbConn().prepareStatement("UPDATE OR IGNORE episode SET episodeDate = ? WHERE episodeId = ?")) {
+		try (PreparedStatement upDate = SQLConnection.getDbConn()
+				.prepareStatement("UPDATE OR IGNORE episode SET episodeDate = ? WHERE episodeId = ?")) {
 			upDate.setLong(1, newDate.toEpochDay());
 			upDate.setInt(2, episodeId);
 			upDate.executeUpdate();
@@ -261,9 +272,10 @@ public class CommonSQL {
 			add.executeUpdate();
 		}
 	}
-	
+
 	public static void removeFromSongsInArchive(int rowid) throws SQLException {
-		try (PreparedStatement delLine = SQLConnection.getDbConn().prepareStatement("DELETE FROM SongsInArchive WHERE rowid = ?")) {
+		try (PreparedStatement delLine = SQLConnection.getDbConn()
+				.prepareStatement("DELETE FROM SongsInArchive WHERE rowid = ?")) {
 			delLine.setInt(1, rowid);
 			delLine.executeUpdate();
 		}
@@ -272,8 +284,9 @@ public class CommonSQL {
 	/**
 	 * 
 	 * @param playlistName
-	 * @param tabOrder     Integer representing the taborder. Must be unique (-1
-	 *                     automatically assigns max+1)
+	 * @param tabOrder
+	 *            Integer representing the taborder. Must be unique (-1
+	 *            automatically assigns max+1)
 	 * @throws SQLException
 	 */
 	public static void addPlaylist(String playlistName, int tabOrder) throws SQLException {
@@ -320,9 +333,10 @@ public class CommonSQL {
 		}
 		return result;
 	}
-	
+
 	public static void updatePlaylistOrder(String playlistName, int tabOrder) throws SQLException {
-		try (PreparedStatement upT = SQLConnection.getDbConn().prepareStatement("UPDATE Playlist SET TabOrder = ? WHERE PlaylistName = ?")) {
+		try (PreparedStatement upT = SQLConnection.getDbConn()
+				.prepareStatement("UPDATE Playlist SET TabOrder = ? WHERE PlaylistName = ?")) {
 			upT.setInt(1, tabOrder);
 			upT.setString(2, playlistName);
 			upT.executeUpdate();
@@ -360,20 +374,22 @@ public class CommonSQL {
 			updateVal.executeUpdate();
 		}
 	}
-	
+
 	public static void updatePlaylistReferences(String newName, String oldName) throws SQLException {
-		try (PreparedStatement updateVal = SQLConnection.getDbConn().prepareStatement("UPDATE SongsInPlaylist SET PlaylistName = ? WHERE PlaylistName = ?")) {
+		try (PreparedStatement updateVal = SQLConnection.getDbConn()
+				.prepareStatement("UPDATE SongsInPlaylist SET PlaylistName = ? WHERE PlaylistName = ?")) {
 			updateVal.setString(1, newName);
 			updateVal.setString(2, oldName);
 			updateVal.executeUpdate();
 		}
 	}
-	
+
 	public static int countSongsInPlaylist(String playlistName) throws SQLException {
-		try (PreparedStatement selSong = SQLConnection.getDbConn().prepareStatement("SELECT count(*) FROM SongsInPlaylist WHERE PlaylistName = ?")) {
+		try (PreparedStatement selSong = SQLConnection.getDbConn()
+				.prepareStatement("SELECT count(*) FROM SongsInPlaylist WHERE PlaylistName = ?")) {
 			selSong.setString(1, playlistName);
 			ResultSet rs = selSong.executeQuery();
-			if(rs.next())
+			if (rs.next())
 				return rs.getInt(1);
 		}
 		return 0;

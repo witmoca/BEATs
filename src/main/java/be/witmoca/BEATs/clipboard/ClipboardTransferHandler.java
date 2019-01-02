@@ -47,9 +47,8 @@ import be.witmoca.BEATs.connection.SQLConnection;
 public class ClipboardTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
 	private static final List<ListSelectionListener> listeners = new ArrayList<ListSelectionListener>();
-	
+
 	private static int selected = -1;
-	
 
 	@Override
 	public boolean canImport(TransferSupport support) {
@@ -78,7 +77,8 @@ public class ClipboardTransferHandler extends TransferHandler {
 				throw new ClassCastException("TransferableSong");
 			}
 			TransferableSong ts = (TransferableSong) o;
-			try (PreparedStatement insertCCP = SQLConnection.getDbConn().prepareStatement("INSERT INTO ccp (Artist, Song) VALUES (?,?)")) {
+			try (PreparedStatement insertCCP = SQLConnection.getDbConn()
+					.prepareStatement("INSERT INTO ccp (Artist, Song) VALUES (?,?)")) {
 				insertCCP.setString(1, ts.getARTIST());
 				insertCCP.setString(2, ts.getSONG());
 				insertCCP.executeUpdate();
@@ -103,12 +103,13 @@ public class ClipboardTransferHandler extends TransferHandler {
 
 	@Override
 	protected Transferable createTransferable(JComponent c) {
-		if(selected < 0)
+		if (selected < 0)
 			return null;
-		try (PreparedStatement selRow = SQLConnection.getDbConn().prepareStatement("SELECT rowid, artist, song FROM CCP ORDER BY rowid ASC")) {
+		try (PreparedStatement selRow = SQLConnection.getDbConn()
+				.prepareStatement("SELECT rowid, artist, song FROM CCP ORDER BY rowid ASC")) {
 			ResultSet rs = selRow.executeQuery();
-			for(int i = 0; i <= selected; i++) {
-				if(!rs.next())
+			for (int i = 0; i <= selected; i++) {
+				if (!rs.next())
 					return null;
 			}
 			return new TransferableSong(rs.getString(2), rs.getString(3), rs.getInt(1));
@@ -130,7 +131,8 @@ public class ClipboardTransferHandler extends TransferHandler {
 			}
 			TransferableSong ts = (TransferableSong) o;
 
-			try (PreparedStatement delRow = SQLConnection.getDbConn().prepareStatement("DELETE FROM CCP WHERE rowid = ?")) {
+			try (PreparedStatement delRow = SQLConnection.getDbConn()
+					.prepareStatement("DELETE FROM CCP WHERE rowid = ?")) {
 				delRow.setInt(1, ts.getROWID());
 				delRow.executeUpdate();
 			}
@@ -140,18 +142,18 @@ public class ClipboardTransferHandler extends TransferHandler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void setSelected(int selected) {
-		if(ClipboardTransferHandler.selected == selected)
+		if (ClipboardTransferHandler.selected == selected)
 			return;
-		
+
 		ClipboardTransferHandler.selected = selected;
-		
-		for(ListSelectionListener l : listeners) {
+
+		for (ListSelectionListener l : listeners) {
 			l.valueChanged(new ListSelectionEvent(ClipboardTransferHandler.class, selected, selected, false));
 		}
 	}
-	
+
 	public static void addListSelectionListener(ListSelectionListener l) {
 		listeners.add(l);
 	}

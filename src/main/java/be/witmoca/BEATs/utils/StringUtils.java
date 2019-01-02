@@ -27,18 +27,20 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StringUtils {
-	private static String prefixes[] = {"the","de"}; // Prefixes from the different languages (lowercase)
-	
+	private static String prefixes[] = { "the", "de" }; // Prefixes from the different languages (lowercase)
+
 	/**
-	 *  Filters (a possible prefix) from the given string (while maintaining lower/upper case)
-	* @param artist
-	* @return
+	 * Filters (a possible prefix) from the given string (while maintaining
+	 * lower/upper case)
+	 * 
+	 * @param artist
+	 * @return
 	 */
 	public static String filterPrefix(String artist) {
 		String result = artist;
 		artist = artist.toLowerCase();
-		for(String prefix : prefixes) {
-			if(artist.startsWith(prefix + " ")) {
+		for (String prefix : prefixes) {
+			if (artist.startsWith(prefix + " ")) {
 				try {
 					result = result.substring(prefix.length());
 				} catch (IndexOutOfBoundsException e) {
@@ -48,27 +50,29 @@ public class StringUtils {
 		}
 		return result.trim();
 	}
-	
+
 	/**
 	 * Transforms a string into a sanitized Upper CamelCase string
-	* @param s String to transform
-	* @return Sanitized and transformed string
+	 * 
+	 * @param s
+	 *            String to transform
+	 * @return Sanitized and transformed string
 	 */
 	public static String ToUpperCamelCase(String s) {
-		if(s == null)
+		if (s == null)
 			return s;
 		s = s.trim();
-		if(s.isEmpty())
+		if (s.isEmpty())
 			return s;
-		List<String> words = Arrays.asList(s.split(" ")); //immutable list
+		List<String> words = Arrays.asList(s.split(" ")); // immutable list
 		List<String> returnWords = new ArrayList<String>();
-		
+
 		for (String word : words) {
 			word = word.trim().toLowerCase();
-			
-			if(word.isEmpty())
+
+			if (word.isEmpty())
 				continue;
-			else if(word.length() == 1) {
+			else if (word.length() == 1) {
 				returnWords.add(word.toUpperCase());
 			} else {
 				returnWords.add(word.substring(0, 1).toUpperCase() + word.substring(1));

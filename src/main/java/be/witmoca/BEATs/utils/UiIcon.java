@@ -29,14 +29,14 @@ import javax.swing.UIManager;
 * File: UiIcon.java
 * Created: 2018
 */
-public enum UiIcon {	
+public enum UiIcon {
 	// File icons
 	NEW("BasicUi/document"),
 	OPEN("BasicUi/folder"),
 	SAVE("BasicUi/save"),
 	IMPORT(UIManager.getIcon("Table.ascendingSortIcon")),
 	CLOSE_APP("BasicUi/home"),
-	
+
 	// Tool icons
 	LIST("BasicUi/list-mark"),
 	SEARCH("BasicUi/search"),
@@ -46,7 +46,7 @@ public enum UiIcon {
 	EDIT_W("BasicUi/edit-write"),
 	FOLDER_OPEN("BasicUi/folder-open"),
 	SETTINGS("BasicUi/gear-setting"),
-	
+
 	// Item operations
 	DELETE("BasicUi/garbage"),
 	REVERT("BasicUi/arrow-backward"),
@@ -60,7 +60,7 @@ public enum UiIcon {
 	PRINT("BasicUi/printer"),
 	UP(UIManager.getIcon("Table.ascendingSortIcon")),
 	DOWN(UIManager.getIcon("Table.descendingSortIcon")),
-	
+
 	// Logo's
 	LOGO_256("Logo/logo-0"),
 	LOGO_128("Logo/logo-1"),
@@ -68,42 +68,41 @@ public enum UiIcon {
 	LOGO_48("Logo/logo-3"),
 	LOGO_32("Logo/logo-4"),
 	LOGO_16("Logo/logo-5");
-	
+
 	// Unused
 	// status
-//	WARNING_RND("exclamation-mark-round-sign"),
-//	WARNING_TRI("exclamation-mark-triangle-sign"),
-//	
-//	// tools
-//	OPTIONS("option-menu"),
-//	CHART("fold-chart"),
-//	
-//	// item operations
-//	LOCKED("lock-locked"),
-//	UNLOCKED("lock-unlocked"),
-//	STICKY("pricker"),
-//	BACK("sign-backward"),
-//	FORWARD("sign-forward"),
-//	ZOOM_IN("zoom-in"),
-//	ZOOM_OUT("zoom-out");
-	
-	
+	// WARNING_RND("exclamation-mark-round-sign"),
+	// WARNING_TRI("exclamation-mark-triangle-sign"),
+	//
+	// // tools
+	// OPTIONS("option-menu"),
+	// CHART("fold-chart"),
+	//
+	// // item operations
+	// LOCKED("lock-locked"),
+	// UNLOCKED("lock-unlocked"),
+	// STICKY("pricker"),
+	// BACK("sign-backward"),
+	// FORWARD("sign-forward"),
+	// ZOOM_IN("zoom-in"),
+	// ZOOM_OUT("zoom-out");
+
 	private static final String FOLDER = "Icons/";
 	private static final String EXT = ".png";
 	private final ImageIcon icon;
-	
+
 	private UiIcon(String name) {
 		icon = new ImageIcon(getClass().getClassLoader().getResource(FOLDER + name + EXT));
 	}
-	
+
 	private UiIcon(Icon icon) {
-		if(icon instanceof ImageIcon) {
+		if (icon instanceof ImageIcon) {
 			this.icon = (ImageIcon) icon;
 			return;
 		}
 		this.icon = null; // Icon not supported
 	}
-	
+
 	public final ImageIcon getIcon() {
 		return icon;
 	}

@@ -48,76 +48,83 @@ import be.witmoca.BEATs.utils.Lang;
 */
 public class ShowSettingsDialogAction implements ActionListener {
 	private JComboBox<LocaleWrapper> localePicker = new JComboBox<LocaleWrapper>();
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// Construct and show dialog
-		JPanel content = new JPanel(new GridLayout(0,1));
-		
+		JPanel content = new JPanel(new GridLayout(0, 1));
+
 		// Construct localePicker
 		List<LocaleWrapper> locales = new ArrayList<LocaleWrapper>();
-		for(Locale l : Lang.getPossibleLocales()) {
-			if(!l.getLanguage().isEmpty()) {
+		for (Locale l : Lang.getPossibleLocales()) {
+			if (!l.getLanguage().isEmpty()) {
 				locales.add(new LocaleWrapper(l));
 			}
 		}
 		localePicker.setModel(new DefaultComboBoxModel<LocaleWrapper>(locales.toArray(new LocaleWrapper[0])));
 		// Set current as selected
 		Locale currentL = new Locale(BEATsSettings.LANGUAGE.getValue(), BEATsSettings.COUNTRY.getValue());
-		for(LocaleWrapper lw : locales) {
-			if(lw.getLocale().equals(currentL))
+		for (LocaleWrapper lw : locales) {
+			if (lw.getLocale().equals(currentL))
 				localePicker.getModel().setSelectedItem(lw);
-		}		
+		}
 		localePicker.getModel().addListDataListener(new ListDataListener() {
 			@Override
-			public void intervalAdded(ListDataEvent e) {}
+			public void intervalAdded(ListDataEvent e) {
+			}
+
 			@Override
-			public void intervalRemoved(ListDataEvent e) {}
+			public void intervalRemoved(ListDataEvent e) {
+			}
+
 			@Override
 			public void contentsChanged(ListDataEvent e) {
 				Locale l = ((LocaleWrapper) localePicker.getSelectedItem()).getLocale();
 				BEATsSettings.LANGUAGE.setValue(l.getLanguage());
 				BEATsSettings.COUNTRY.setValue(l.getCountry());
 				BEATsSettings.savePreferences();
-			}	
+			}
 		});
 		content.add(localePicker);
-		
+
 		// Warning label
 		JPanel descr = new JPanel();
 		descr.setBorder(BorderFactory.createLineBorder(Color.red));
 		descr.add(new JLabel(Lang.getUI("settings.descr")));
 		content.add(descr);
-		
-		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), content, Lang.getUI("menu.tools.settings"), JOptionPane.PLAIN_MESSAGE);
+
+		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), content, Lang.getUI("menu.tools.settings"),
+				JOptionPane.PLAIN_MESSAGE);
 	}
-	
+
 	private static class LocaleWrapper {
 		private final Locale locale; // Locale is a final class (wrapper for convenience)
+
 		private LocaleWrapper(Locale l) {
 			locale = l;
 		}
-		
+
 		@Override
 		public String toString() {
-			// Display the language and country in the locale belonging to them (so they are always readable)
+			// Display the language and country in the locale belonging to them (so they are
+			// always readable)
 			String s = locale.getDisplayLanguage(locale);
-			if(!locale.getCountry().isEmpty()) {
+			if (!locale.getCountry().isEmpty()) {
 				s += " (" + locale.getDisplayCountry(locale) + ")";
 			}
 			return s;
 		}
-		
+
 		public Locale getLocale() {
 			return locale;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if(obj instanceof LocaleWrapper) {
+			if (obj instanceof LocaleWrapper) {
 				return (((LocaleWrapper) obj).getLocale().equals(locale));
 			}
 			return super.equals(obj);
-		}		
+		}
 	}
 }

@@ -33,7 +33,9 @@ public class BEATsFileFilter extends FileFilter {
 	public BEATsFileFilter() {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
 	 */
 	@Override
@@ -41,7 +43,9 @@ public class BEATsFileFilter extends FileFilter {
 		return (f.getName().endsWith(".beats") || f.isDirectory());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.filechooser.FileFilter#getDescription()
 	 */
 	@Override

@@ -32,17 +32,21 @@ import be.witmoca.BEATs.ui.components.SongTable;
 */
 public class SouthPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	
 
 	/**
 	 * 
-	 * @param trackingTable The table to track for the InfoPanel
-	 * @param infoArtistColumn column of the table that holds the artist (artist should be in String format)
-	 * @param infoSongTitleColumn column of the table that holds the song title (title should be in String format)
+	 * @param trackingTable
+	 *            The table to track for the InfoPanel
+	 * @param infoArtistColumn
+	 *            column of the table that holds the artist (artist should be in
+	 *            String format)
+	 * @param infoSongTitleColumn
+	 *            column of the table that holds the song title (title should be in
+	 *            String format)
 	 */
 	public SouthPanel(SongTable trackingTable, int infoArtistColumn, int infoSongTitleColumn) {
-		super(new GridLayout(0,2));	
-		
+		super(new GridLayout(0, 2));
+
 		this.add(new CCPPanel());
 		this.add(new InfoPanel(trackingTable, infoArtistColumn, infoSongTitleColumn));
 	}

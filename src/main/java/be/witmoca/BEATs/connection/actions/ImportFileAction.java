@@ -95,7 +95,8 @@ public class ImportFileAction implements ActionListener {
 		}
 	}
 
-	private void importV1WWDBFile(File source) throws IOException, SAXException, ParserConfigurationException, SQLException {
+	private void importV1WWDBFile(File source)
+			throws IOException, SAXException, ParserConfigurationException, SQLException {
 		if (!source.isFile()) {
 			throw new IOException("Not a file!");
 		} else if (!source.canRead()) {
@@ -116,7 +117,6 @@ public class ImportFileAction implements ActionListener {
 
 		NodeList archiveList = sourceTree.getElementsByTagName("archief");
 		NodeList playlistList = sourceTree.getElementsByTagName("playlist");
-		
 
 		// Archive
 		// For every archive item
@@ -149,7 +149,8 @@ public class ImportFileAction implements ActionListener {
 				case "aflDatum":
 					Calendar cdar = Calendar.getInstance();
 					cdar.setTime(new Date(Long.parseLong(item.getTextContent())));
-					aflDatum = LocalDate.of(cdar.get(Calendar.YEAR),cdar.get(Calendar.MONTH)+1,cdar.get(Calendar.DAY_OF_MONTH));
+					aflDatum = LocalDate.of(cdar.get(Calendar.YEAR), cdar.get(Calendar.MONTH) + 1,
+							cdar.get(Calendar.DAY_OF_MONTH));
 					break;
 				case "belgisch":
 					belgisch = item.getTextContent().startsWith("1");
@@ -173,7 +174,7 @@ public class ImportFileAction implements ActionListener {
 			int songId = CommonSQL.addSong(titel, artiest);
 			CommonSQL.addSongInArchive(songId, aflNr, aflCode, commentaar);
 		}
-		
+
 		// Playlists
 		// For every playlistItem
 		for (int playlistIndex = 0; playlistIndex < playlistList.getLength(); playlistIndex++) {
@@ -214,7 +215,7 @@ public class ImportFileAction implements ActionListener {
 				CommonSQL.addSongInPlaylist(playlistName, artist, song, comment);
 			}
 		}
-		
+
 		SQLConnection.getDbConn().commit(DataChangedType.ALL_OPTS);
 	}
 }

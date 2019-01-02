@@ -92,17 +92,19 @@ class RenameArtistAction extends AbstractAction {
 			if (artist.equals(renamed))
 				return;
 
-			// updating references might lead to uniqueness errors => recreate new songs (or return their id's if they already exist) & update the archive and queue
-			for(String title : CommonSQL.getAllSongTitlesOfArtist(artist)){
+			// updating references might lead to uniqueness errors => recreate new songs (or
+			// return their id's if they already exist) & update the archive and queue
+			for (String title : CommonSQL.getAllSongTitlesOfArtist(artist)) {
 				// for every song
-				// create a new song with the new artistname (on conflict return existing songid)
+				// create a new song with the new artistname (on conflict return existing
+				// songid)
 				int newSongId = CommonSQL.addSong(title, renamed);
 				// get the id of the oldsong
 				int oldSongId = CommonSQL.addSong(title, artist);
-				
+
 				// update references
 				CommonSQL.updateAllSongIdReferences(oldSongId, newSongId);
-				
+
 				// delete old songId
 				CommonSQL.removeSong(oldSongId);
 			}
@@ -110,7 +112,8 @@ class RenameArtistAction extends AbstractAction {
 			// delete old artist
 			CommonSQL.removeArtist(artist);
 
-			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.ARTIST,DataChangedType.SONG, DataChangedType.CURRENT_QUEUE,DataChangedType.SONGS_IN_ARCHIVE));
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.ARTIST, DataChangedType.SONG,
+					DataChangedType.CURRENT_QUEUE, DataChangedType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;

@@ -42,7 +42,7 @@ import be.witmoca.BEATs.utils.Lang;
 
 public class PlaylistManagerShowAction implements ActionListener {
 	private final JList<String> plList = new JList<String>(new PMListModel());
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -51,14 +51,16 @@ public class PlaylistManagerShowAction implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JPanel contentPanel = new JPanel(new BorderLayout(10,10));
-		
+		JPanel contentPanel = new JPanel(new BorderLayout(10, 10));
+
 		// listing of playlists
-		contentPanel.add(new JScrollPane(plList,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+		contentPanel.add(
+				new JScrollPane(plList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
+				BorderLayout.CENTER);
 		plList.setVisibleRowCount(10);
-		
+
 		// button panel
-		JPanel buttonPanel = new JPanel(new GridLayout(0,1));
+		JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
 		buttonPanel.setBorder(BorderFactory.createEtchedBorder());
 		buttonPanel.add(wrapAction(new AddPlaylistAction()));
 		buttonPanel.add(wrapAction(new ChangeOrderAction(true, plList)));
@@ -66,14 +68,15 @@ public class PlaylistManagerShowAction implements ActionListener {
 		buttonPanel.add(wrapAction(new RenamePlaylistAction(plList)));
 		buttonPanel.add(wrapAction(new DeletePlaylistAction(plList)));
 		contentPanel.add(buttonPanel, BorderLayout.EAST);
-		
-		JOptionPane.showMessageDialog(ApplicationWindow.APP_WINDOW, contentPanel, Lang.getUI("menu.tools.playlistManager"), JOptionPane.PLAIN_MESSAGE, null);
+
+		JOptionPane.showMessageDialog(ApplicationWindow.APP_WINDOW, contentPanel,
+				Lang.getUI("menu.tools.playlistManager"), JOptionPane.PLAIN_MESSAGE, null);
 	}
-	
+
 	private JComponent wrapAction(Action a) {
 		JPanel p = new JPanel();
 		JButton b = new JButton(a);
-		b.setPreferredSize(new Dimension(60,25));
+		b.setPreferredSize(new Dimension(60, 25));
 		p.add(b);
 		return p;
 	}

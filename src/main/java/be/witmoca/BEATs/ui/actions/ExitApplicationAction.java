@@ -30,8 +30,11 @@ import be.witmoca.BEATs.connection.actions.CheckFileSavedAction;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 
 public class ExitApplicationAction implements ActionListener {
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -39,12 +42,11 @@ public class ExitApplicationAction implements ActionListener {
 		CheckFileSavedAction check = new CheckFileSavedAction();
 		check.actionPerformed(e);
 		// check if action is cancelled or allowed to continue
-		if(!check.hasSucceeded())
+		if (!check.hasSucceeded())
 			return;
-			
-		
+
 		// Exit Application
-		
+
 		// KILL DB Connection
 		try {
 			SQLConnection.getDbConn().close();

@@ -45,7 +45,7 @@ class SpinnerTemporalEditor extends JSpinner.DefaultEditor {
 	 * @param formatter
 	 *            A formatter suited to the temporal type
 	 */
-	
+
 	public SpinnerTemporalEditor(JSpinner spinner, DateTimeFormatter formatter) {
 		super(spinner);
 		this.model = (SpinnerTemporalModel) spinner.getModel();

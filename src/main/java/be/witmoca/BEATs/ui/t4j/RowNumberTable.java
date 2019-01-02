@@ -22,15 +22,18 @@ import javax.swing.table.*;
  */
 public class RowNumberTable extends JTable implements ChangeListener, PropertyChangeListener, TableModelListener {
 	private static final long serialVersionUID = 1L;
-	
+
 	private final List<? extends SortKey> defaultKeys;
-	
+
 	private JTable main;
 
 	/**
 	 * 
-	 * @param table The table to extend the row numbers to
-	 * @param defaultKeys Pressing the left header sets the sortingkeys to this parameter (NULL = turn off sort when this cell is pressed)
+	 * @param table
+	 *            The table to extend the row numbers to
+	 * @param defaultKeys
+	 *            Pressing the left header sets the sortingkeys to this parameter
+	 *            (NULL = turn off sort when this cell is pressed)
 	 */
 	public RowNumberTable(JTable table, List<? extends SortKey> defaultKeys) {
 		main = table;
@@ -51,7 +54,8 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		setPreferredScrollableViewportSize(getPreferredSize());
 		tableHeader.setReorderingAllowed(false);
 
-		// If the table has a rowsorter => track it for changes (and set the defaultsortkeys)
+		// If the table has a rowsorter => track it for changes (and set the
+		// defaultsortkeys)
 		if (table.getRowSorter() != null) {
 			table.getRowSorter().addRowSorterListener(new RowSorterPainter());
 			table.getRowSorter().setSortKeys(defaultKeys);
@@ -81,23 +85,23 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 	public int getRowCount() {
 		return main.getRowCount();
 	}
-	
-	
 
 	@Override
 	public int getRowHeight(int row) {
 		// Note: Individual row height becomes too slow after a few thousand entries
-		// Height rendering will suffer and possibly render incorrectly on fast movement (eg, scrolling really fast)
+		// Height rendering will suffer and possibly render incorrectly on fast movement
+		// (eg, scrolling really fast)
 		// For this reason, speed was improved (by Witmoca) when row height is universal
 		int rowHeight = main.getRowHeight(row);
-		
-		if(rowHeight == main.getRowHeight()) {
+
+		if (rowHeight == main.getRowHeight()) {
 			// Universal row height
 			if (rowHeight != super.getRowHeight()) {
 				super.setRowHeight(rowHeight);
 			}
 		} else {
-			// Row dependent height (this creates a SizeSequence, making rendering a lot slower)
+			// Row dependent height (this creates a SizeSequence, making rendering a lot
+			// slower)
 			if (rowHeight != super.getRowHeight(row)) {
 				super.setRowHeight(rowHeight, row);
 			}
@@ -205,9 +209,8 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 	}
 
 	/**
-	 * When the sorter gets changed, the table updates
-	 * The rownumbers could possible be dirty (or the amount changed, etc)
-	 * => revalidate and repaint
+	 * When the sorter gets changed, the table updates The rownumbers could possible
+	 * be dirty (or the amount changed, etc) => revalidate and repaint
 	 */
 	private class RowSorterPainter implements RowSorterListener {
 		@Override

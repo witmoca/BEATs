@@ -33,7 +33,9 @@ public class WWDB1FileFilter extends FileFilter {
 	public WWDB1FileFilter() {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
 	 */
 	@Override
@@ -41,7 +43,9 @@ public class WWDB1FileFilter extends FileFilter {
 		return (f.getName().endsWith(".wwdb") || f.isDirectory());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.filechooser.FileFilter#getDescription()
 	 */
 	@Override

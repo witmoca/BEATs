@@ -44,7 +44,7 @@ public class CatalogTable extends SongTable {
 		if (numberR instanceof JLabel) {
 			((JLabel) numberR).setHorizontalAlignment(JLabel.LEFT);
 		}
-		
+
 		// Add a rowsorter and render icons at the top to indicate sorting order
 		TableRowSorter<?> sorter = new TableRowSorter<>(this.getModel());
 		sorter.setSortsOnUpdates(true);
