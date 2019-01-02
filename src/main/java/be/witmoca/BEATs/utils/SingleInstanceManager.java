@@ -46,14 +46,16 @@ public class SingleInstanceManager implements Runnable {
 			(new Thread(new SingleInstanceManager(socket))).start();
 			return true; // This is the only instance
 		} catch (BindException b) {
-			// This is not the only instance => send data and exit
-			try (Socket s = new Socket((String) null, PORT)) {
-				PrintWriter pw = new PrintWriter(s.getOutputStream(), true);
-				pw.print(loadFile.getAbsolutePath());
-				pw.flush();
-				pw.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (loadFile != null) {
+				// This is not the only instance => send data and exit
+				try (Socket s = new Socket((String) null, PORT)) {
+					PrintWriter pw = new PrintWriter(s.getOutputStream(), true);
+					pw.print(loadFile.getAbsolutePath());
+					pw.flush();
+					pw.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
