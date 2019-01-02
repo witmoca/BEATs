@@ -26,6 +26,7 @@ import javax.swing.JTabbedPane;
 
 import be.witmoca.BEATs.ui.archivepanel.ArchivePanel;
 import be.witmoca.BEATs.ui.artistcatalog.ArtistCatalog;
+import be.witmoca.BEATs.ui.songcatalog.SongCatalog;
 import be.witmoca.BEATs.utils.Lang;
 
 class CenterTabbedPane extends JTabbedPane {
@@ -37,5 +38,6 @@ class CenterTabbedPane extends JTabbedPane {
 		this.addTab(Lang.getUI("center.archive"), new ArchivePanel());
 		this.addTab(Lang.getUI("center.playlists"), new PlaylistsTabbedPane());
 		this.addTab(Lang.getUI("center.artistcatalog"), new ArtistCatalog());
+		this.addTab(Lang.getUI("center.songcatalog"), new SongCatalog());
 	}
 }
