@@ -22,6 +22,8 @@
 */
 package be.witmoca.BEATs.ui.artistcatalog;
 
+import javax.swing.JLabel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 import be.witmoca.BEATs.clipboard.TransferableSong;
@@ -34,10 +36,15 @@ public class CatalogTable extends SongTable {
 
 	public CatalogTable() {
 		super(new CatalogModel());
-		
+
 		// Set custom renderer for the episode column
 		this.getColumnModel().getColumn(3).setCellRenderer(new EpisodeColumnRenderer());
-
+		// Make the numberRender align left
+		TableCellRenderer numberR = this.getDefaultRenderer(Number.class);
+		if (numberR instanceof JLabel) {
+			((JLabel) numberR).setHorizontalAlignment(JLabel.LEFT);
+		}
+		
 		// Add a rowsorter and render icons at the top to indicate sorting order
 		TableRowSorter<?> sorter = new TableRowSorter<>(this.getModel());
 		sorter.setSortsOnUpdates(true);

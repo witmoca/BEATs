@@ -38,7 +38,7 @@ import be.witmoca.BEATs.utils.Lang;
 
 public class CatalogModel extends AbstractTableModel implements DataChangedListener, ContainsEpisodeColumn {
 	private static final long serialVersionUID = 1L;
-	private static final String COLUMN_NAME[] = { Lang.getUI("col.artist"), Lang.getUI("col.count"),
+	private static final String COLUMN_NAME[] = {Lang.getUI("col.count"), Lang.getUI("col.artist"),
 			Lang.getUI("col.local"), Lang.getUI("catalog.lastEpisode") };
 	private final ArrayList<row> content = new ArrayList<row>();
 
@@ -133,9 +133,9 @@ public class CatalogModel extends AbstractTableModel implements DataChangedListe
 		public Object getColumn(int i) {
 			switch (i) {
 			case 0:
-				return artist;
-			case 1:
 				return count;
+			case 1:
+				return artist;
 			case 2:
 				return local;
 			case 3:
@@ -150,9 +150,9 @@ public class CatalogModel extends AbstractTableModel implements DataChangedListe
 
 		static public Class<?> getColumnClass(int i) {
 			switch (i) {
-			case 0:
-				return String.class;
 			case 1:
+				return String.class;
+			case 0:
 			case 3:
 				return Integer.class;
 			case 2:

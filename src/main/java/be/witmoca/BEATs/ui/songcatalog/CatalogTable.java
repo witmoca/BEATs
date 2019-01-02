@@ -41,7 +41,7 @@ public class CatalogTable extends SongTable {
 		this.getColumnModel().getColumn(3).setCellRenderer(new EpisodeColumnRenderer());
 		// Make the numberRender align left
 		TableCellRenderer numberR = this.getDefaultRenderer(Number.class);
-		if(numberR instanceof JLabel) {
+		if (numberR instanceof JLabel) {
 			((JLabel) numberR).setHorizontalAlignment(JLabel.LEFT);
 		}
 

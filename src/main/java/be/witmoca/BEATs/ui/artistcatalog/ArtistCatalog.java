@@ -47,8 +47,8 @@ public class ArtistCatalog extends JPanel {
 		this.add(scrollPane, BorderLayout.CENTER);
 		
 		List<SortKey> defaultSort = new ArrayList<SortKey>();
-		defaultSort.add(new SortKey(1, SortOrder.DESCENDING));
-		defaultSort.add(new SortKey(0, SortOrder.ASCENDING));
+		defaultSort.add(new SortKey(0, SortOrder.DESCENDING));
+		defaultSort.add(new SortKey(1, SortOrder.ASCENDING));
 		JTable rowTable = new RowNumberTable(catalogTable, defaultSort);
 		scrollPane.setRowHeaderView(rowTable);
 		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
