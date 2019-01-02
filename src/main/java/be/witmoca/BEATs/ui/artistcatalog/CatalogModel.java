@@ -28,8 +28,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
@@ -40,8 +38,9 @@ import be.witmoca.BEATs.utils.Lang;
 
 public class CatalogModel extends AbstractTableModel implements DataChangedListener, ContainsEpisodeColumn {
 	private static final long serialVersionUID = 1L;
-	private static final String COLUMN_NAME[] = {Lang.getUI("col.artist"), Lang.getUI("col.count"), Lang.getUI("col.local"), Lang.getUI("catalog.lastEpisode")};
-	private final List<row> content = new ArrayList<row>();
+	private static final String COLUMN_NAME[] = { Lang.getUI("col.artist"), Lang.getUI("col.count"),
+			Lang.getUI("col.local"), Lang.getUI("catalog.lastEpisode") };
+	private final ArrayList<row> content = new ArrayList<row>();
 
 	public CatalogModel() {
 		SQLConnection.getDbConn().addDataChangedListener(this, DataChangedType.ARCHIVE_DATA_OPTS);
@@ -50,49 +49,25 @@ public class CatalogModel extends AbstractTableModel implements DataChangedListe
 
 	@Override
 	public void tableChanged() {
-		content.clear(); // clear() is (probably) faster as the backing array doesn't get resized (just turned into null values), so reinserting goes fast
-		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement("SELECT ArtistName, local FROM artist ORDER BY ArtistName")) {
+		content.clear(); // clear is (likely) faster
+		try (PreparedStatement getValue = SQLConnection.getDbConn()
+				.prepareStatement("SELECT Artist.ArtistName, local, count(*), SongsInArchive.EpisodeId, Max(EpisodeDate) FROM Artist, Song, SongsInArchive, Episode WHERE Song.SongId = SongsInArchive.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeID AND Artist.ArtistName = Song.ArtistName GROUP BY Artist.ArtistName")) {
 			ResultSet value = getValue.executeQuery();
 			// For every artist
-			while(value.next()) {
-				String artist = value.getString(1);
-				boolean local = value.getBoolean(2);
-				// Count frequency
-				int count = 0;
-				try (PreparedStatement getCount = SQLConnection.getDbConn().prepareStatement("SELECT count(*) FROM Artist, Song, SongsInArchive WHERE Artist.ArtistName = Song.ArtistName AND Song.SongId = SongsInArchive.SongId AND Artist.ArtistName = ?")) {
-					getCount.setString(1, artist);
-					ResultSet rs = getCount.executeQuery();
-					if(rs.next())
-						count = rs.getInt(1);
-				}
-				// Get last episode & date
-				int episode = 0;
-				LocalDate episodeDate = null;
-				try (PreparedStatement getEpisode = SQLConnection.getDbConn().prepareStatement("SELECT SongsInArchive.EpisodeId, Max(EpisodeDate) FROM SongsInArchive, Song, Episode WHERE SongsInArchive.songId = Song.songId AND SongsInArchive.EpisodeId = Episode.EpisodeID AND ArtistName = ?")) {
-					getEpisode.setString(1, artist);
-					ResultSet rs = getEpisode.executeQuery();
-					if(rs.next()) {
-						episode = rs.getInt(1);
-						episodeDate = LocalDate.ofEpochDay(rs.getLong(2));
-					}
-				}
-				
-				content.add(new row(artist, count, local, episode, episodeDate));
+			while (value.next()) {
+				content.add(new row(value.getString(1), value.getInt(3), value.getBoolean(2), value.getInt(4), LocalDate.ofEpochDay(value.getLong(5))));
 			}
+			content.trimToSize();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		this.fireTableDataChanged();
 	}
-	
-	
 
 	@Override
 	public String getColumnName(int column) {
 		return COLUMN_NAME[column];
 	}
-	
-	
 
 	/*
 	 * (non-Javadoc)
@@ -133,7 +108,7 @@ public class CatalogModel extends AbstractTableModel implements DataChangedListe
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return false;
 	}
-	
+
 	@Override
 	public String getEpisodeDate(int row) {
 		return content.get(row).getEpisodeDate();
