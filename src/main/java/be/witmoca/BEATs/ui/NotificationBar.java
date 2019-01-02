@@ -41,7 +41,7 @@ class NotificationBar extends JPanel {
 		JLabel errorLabel = null;
 		
 		if(ResourceLoader.bytesOfErrorData > 0) {
-			errorLabel = new JLabel(Lang.getUI("notification.errorlogs") + " Bytes: " + ResourceLoader.bytesOfErrorData);
+			errorLabel = new JLabel(Lang.getUI("notification.errorlogs") + " KBytes: " + ResourceLoader.bytesOfErrorData/1000);
 		}
 		if(StaticSettings.getAppVersionInt() == 0) {
 			errorLabel = new JLabel(Lang.getUI("notification.development"));
