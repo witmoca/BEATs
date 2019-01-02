@@ -22,13 +22,11 @@
 */
 package be.witmoca.BEATs.ui.archivepanel;
 
-import java.awt.Component;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.ui.archivepanel.actions.ArchivePopupMenu;
+import be.witmoca.BEATs.ui.components.EpisodeColumnRenderer;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
 
@@ -39,7 +37,7 @@ class ArchiveTable extends SongTable {
 		super(new ArchiveTableModel());
 		
 		// Set custom renderer for the episode column
-		this.getColumnModel().getColumn(2).setCellRenderer(new EpisodeRenderer());
+		this.getColumnModel().getColumn(2).setCellRenderer(new EpisodeColumnRenderer());
 
 		// Add a rowsorter and render icons at the top to indicate sorting order
 		TableRowSorter<?> sorter = new TableRowSorter<>(this.getModel());
@@ -69,20 +67,5 @@ class ArchiveTable extends SongTable {
 		ArchiveTableModel model = (ArchiveTableModel) this.getModel();
 
 		return new TransferableSong((String) model.getValueAt(rowIndex, 0),(String) model.getValueAt(rowIndex, 1), model.getRowId(rowIndex));
-	}
-	
-	private static class EpisodeRenderer extends DefaultTableCellRenderer {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			if(table == null || !(table.getModel() instanceof ArchiveTableModel) )
-				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			
-			if(table.getRowSorter() != null)
-				row = table.getRowSorter().convertRowIndexToModel(row);
-			
-			return super.getTableCellRendererComponent(table, value + " (" +  ((ArchiveTableModel) table.getModel()).getEpisodeDate(row) + ")", isSelected, hasFocus, row, column);
-		}
 	}
 }

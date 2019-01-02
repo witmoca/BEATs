@@ -2,7 +2,7 @@
 *
 +===============================================================================+
 |    BEATs (Burning Ember Archival Tool suite)                                  |
-|    Copyright 2018 Jente Heremans                                              |
+|    Copyright 2019 Jente Heremans                                              |
 |                                                                               |
 |    Licensed under the Apache License, Version 2.0 (the "License");            |
 |    you may not use this file except in compliance with the License.           |
@@ -17,25 +17,27 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: CenterTabbedPane.java
-* Created: 2018
+* File: EpisodeColumnRenderer.java
+* Created: 2019
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.components;
 
-import javax.swing.JTabbedPane;
+import java.awt.Component;
 
-import be.witmoca.BEATs.ui.archivepanel.ArchivePanel;
-import be.witmoca.BEATs.ui.artistcatalog.ArtistCatalog;
-import be.witmoca.BEATs.utils.Lang;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 
-class CenterTabbedPane extends JTabbedPane {
-	private static final long serialVersionUID = 1L;	
+public class EpisodeColumnRenderer extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1L;
 
-	public CenterTabbedPane() {
-		super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
+	@Override
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		if(table == null || !(table.getModel() instanceof ContainsEpisodeColumn) )
+			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		
-		this.addTab(Lang.getUI("center.archive"), new ArchivePanel());
-		this.addTab(Lang.getUI("center.playlists"), new PlaylistsTabbedPane());
-		this.addTab(Lang.getUI("center.artistcatalog"), new ArtistCatalog());
+		if(table.getRowSorter() != null)
+			row = table.getRowSorter().convertRowIndexToModel(row);
+		
+		return super.getTableCellRendererComponent(table, value + " (" +  ((ContainsEpisodeColumn) table.getModel()).getEpisodeDate(row) + ")", isSelected, hasFocus, row, column);
 	}
 }

@@ -2,7 +2,7 @@
 *
 +===============================================================================+
 |    BEATs (Burning Ember Archival Tool suite)                                  |
-|    Copyright 2018 Jente Heremans                                              |
+|    Copyright 2019 Jente Heremans                                              |
 |                                                                               |
 |    Licensed under the Apache License, Version 2.0 (the "License");            |
 |    you may not use this file except in compliance with the License.           |
@@ -17,25 +17,16 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: CenterTabbedPane.java
-* Created: 2018
+* File: ContainsEpisodeColumn.java
+* Created: 2019
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.components;
 
-import javax.swing.JTabbedPane;
-
-import be.witmoca.BEATs.ui.archivepanel.ArchivePanel;
-import be.witmoca.BEATs.ui.artistcatalog.ArtistCatalog;
-import be.witmoca.BEATs.utils.Lang;
-
-class CenterTabbedPane extends JTabbedPane {
-	private static final long serialVersionUID = 1L;	
-
-	public CenterTabbedPane() {
-		super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
-		
-		this.addTab(Lang.getUI("center.archive"), new ArchivePanel());
-		this.addTab(Lang.getUI("center.playlists"), new PlaylistsTabbedPane());
-		this.addTab(Lang.getUI("center.artistcatalog"), new ArtistCatalog());
-	}
+public interface ContainsEpisodeColumn {
+	/**
+	 * 
+	* @param row
+	* @return the episodeDate represented in a human readable string
+	 */
+	public String getEpisodeDate(int row);
 }

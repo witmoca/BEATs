@@ -35,9 +35,10 @@ import javax.swing.table.AbstractTableModel;
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.components.ContainsEpisodeColumn;
 import be.witmoca.BEATs.utils.Lang;
 
-public class ArchiveTableModel extends AbstractTableModel implements DataChangedListener {
+public class ArchiveTableModel extends AbstractTableModel implements DataChangedListener, ContainsEpisodeColumn {
 	private static final long serialVersionUID = 1L;
 	private static final String COLUMN_NAME[] = {Lang.getUI("col.artist"), Lang.getUI("col.song"), Lang.getUI("col.episode"), Lang.getUI("col.genre"), Lang.getUI("col.comment")};
 	private List<ArchiveEntry> archive = new ArrayList<ArchiveEntry>();
@@ -82,7 +83,8 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 		return archive.get(row).getROWID();
 	}
 	
-	String getEpisodeDate(int row) {
+	@Override
+	public String getEpisodeDate(int row) {
 		return archive.get(row).getDate();
 	}
 	
