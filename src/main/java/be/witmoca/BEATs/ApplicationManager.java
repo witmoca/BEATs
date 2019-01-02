@@ -55,7 +55,7 @@ public class ApplicationManager {
 			BEATsSettings.loadPreferences();
 		} catch (IOException e) {
 			fatalError(e);
-			return;
+			System.exit(-1);
 		}
 
 		// Create the GUI on the EDT
