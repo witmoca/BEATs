@@ -40,7 +40,7 @@ import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.actions.ExitApplicationAction;
-import be.witmoca.BEATs.ui.currentqueue.CurrentQueuePanel;
+import be.witmoca.BEATs.ui.eastpanel.EastPanel;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -49,7 +49,7 @@ public class ApplicationWindow extends JFrame implements WindowListener, DataCha
 
 	public static ApplicationWindow APP_WINDOW = null;
 
-	private final JComponent eastPanel = new CurrentQueuePanel();
+	private final JComponent eastPanel = new EastPanel();
 	private final JComponent centerPanel = new CenterTabbedPane();
 
 	public static void createAndShowUi() {

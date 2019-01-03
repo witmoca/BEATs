@@ -20,7 +20,7 @@
 * File: ArchivalDialog.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.currentqueue.actions;
+package be.witmoca.BEATs.ui.eastpanel.currentqueue.actions;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

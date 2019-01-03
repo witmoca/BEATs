@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.southpanel;
+package be.witmoca.BEATs.ui.eastpanel.ccp;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

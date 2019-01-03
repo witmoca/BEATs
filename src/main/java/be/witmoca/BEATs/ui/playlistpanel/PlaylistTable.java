@@ -27,7 +27,7 @@ import javax.swing.table.TableRowSorter;
 import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.components.SuggestCellEditor.AutoCompletingEditor;
-import be.witmoca.BEATs.ui.currentqueue.actions.MoveToQueueAction;
+import be.witmoca.BEATs.ui.eastpanel.currentqueue.actions.MoveToQueueAction;
 import be.witmoca.BEATs.ui.playlistpanel.actions.PlaylistPopupMenu;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
 

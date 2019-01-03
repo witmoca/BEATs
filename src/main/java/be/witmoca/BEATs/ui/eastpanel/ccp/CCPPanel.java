@@ -1,13 +1,10 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.southpanel;
+package be.witmoca.BEATs.ui.eastpanel.ccp;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
-import javax.swing.BorderFactory;
+import java.awt.BorderLayout;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -15,6 +12,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import be.witmoca.BEATs.clipboard.ClipboardTransferHandler;
+import be.witmoca.BEATs.utils.Lang;
 
 /*
 *
@@ -42,24 +40,24 @@ import be.witmoca.BEATs.clipboard.ClipboardTransferHandler;
 /**
  * UI representation of the Cut/Copy/Paste container for songs
  */
-class CCPPanel extends JPanel {
+public class CCPPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	public CCPPanel() {
-		super(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
+		super(new BorderLayout());
+		
+		final JButton title = new JButton(Lang.getUI("ccp.titleLabel"));
+		title.setFont(title.getFont().deriveFont(22F));
+		title.setEnabled(false);
+		add(title, BorderLayout.NORTH);
 
 		JList<String> ccpList = new JList<>(new CCPListModel());
-
 		ccpList.getSelectionModel().addListSelectionListener(new CCPUpdater(ccpList));
+		ccpList.setVisibleRowCount(10);
 
-		add(new JScrollPane(ccpList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
-				gbc);
-
-		this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		final JScrollPane sPane = new JScrollPane(ccpList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		sPane.setPreferredSize(ccpList.getPreferredScrollableViewportSize());
+		add(sPane, BorderLayout.CENTER);
 	}
 
 	private static class CCPUpdater implements ListSelectionListener {

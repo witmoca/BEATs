@@ -20,7 +20,7 @@
 * File: CurrentQueueListModel.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.currentqueue;
+package be.witmoca.BEATs.ui.eastpanel.currentqueue;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

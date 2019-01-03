@@ -100,7 +100,9 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 		right.gridy += 1;
 		right.weighty = 1; // The last box (the most south one) takes all the whitespace (and postions the
 							// element in the north-west
+		left.insets = new Insets(0, 10, 5, 10); // only the bottom one needs a bottom inset
 		add(new JLabel(Lang.getUI("infoPanel.local") + ":"), left);
+		right.insets = new Insets(0, 10, 5, 10); // only the bottom one needs a bottom inset
 		add(artistLocal, right);
 
 		tracking = trackingTable;

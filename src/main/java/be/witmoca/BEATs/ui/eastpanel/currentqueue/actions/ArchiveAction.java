@@ -17,89 +17,70 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: RevertToPlaylistFromQueueAction.java
+* File: ArchiveAction.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.currentqueue.actions;
+package be.witmoca.BEATs.ui.eastpanel.currentqueue.actions;
 
 import java.awt.event.ActionEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedType;
-import be.witmoca.BEATs.ui.ApplicationWindow;
-import be.witmoca.BEATs.ui.currentqueue.CurrentQueueListModel;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
-class RevertToPlaylistFromQueueAction extends AbstractAction {
+class ArchiveAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> queue;
 
-	protected RevertToPlaylistFromQueueAction(JList<String> Queue) {
-		super(Lang.getUI("queue.revert"));
-		this.putValue(Action.SMALL_ICON, UiIcon.REVERT.getIcon());
+	ArchiveAction(JList<String> Queue) {
+		super(Lang.getUI("queue.archive"));
+		this.putValue(Action.SMALL_ICON, UiIcon.PROCEED.getIcon());
 		queue = Queue;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		int songOrder = -1;
-		try {
-			songOrder = ((CurrentQueueListModel) queue.getModel()).getSongOrderAt(queue.getSelectedIndex());
-		} catch (ArrayIndexOutOfBoundsException e1) {
+		if (queue.getModel().getSize() == 0)
 			return;
-		}
+		ArchivalDialog ad = new ArchivalDialog();
+		// Archive action cancelled
+		if (!ad.isValid())
+			return;
+
+		int episodeId = ad.getEpisodeId();
+		String Genre = ad.getGenre();
 
 		try {
-			List<String> playlists = CommonSQL.getPlaylists();
+			// Make sure that the episode & genre exist
+			CommonSQL.addEpisode(episodeId, ad.getEpisodeDate());
+			CommonSQL.addGenre(Genre);
 
-			String[] options = playlists.toArray(new String[0]);
-			String playlistName = (String) JOptionPane.showInputDialog(ApplicationWindow.getAPP_WINDOW(),
-					Lang.getUI("queue.revert.to"), Lang.getUI("queue.revert.title"), JOptionPane.QUESTION_MESSAGE, null,
-					options, options[0]);
-			if (playlistName == null)
-				return;
-
-			String artist;
-			String song;
-			String comment;
-			try (PreparedStatement sel = SQLConnection.getDbConn().prepareStatement(
-					"SELECT ArtistName, Title, Comment FROM CurrentQueue,Song WHERE CurrentQueue.songId = Song.SongId AND SongOrder = ?")) {
-				sel.setInt(1, songOrder);
-				ResultSet rs = sel.executeQuery();
-				if (!rs.next())
-					throw new SQLException("No CurrentQueue entry found matching the Song Order " + songOrder);
-				artist = rs.getString(1);
-				song = rs.getString(2);
-				comment = rs.getString(3);
+			// Add songs from Queue to Archive
+			try (PreparedStatement listCQ = SQLConnection.getDbConn()
+					.prepareStatement("SELECT SongId, Comment FROM CurrentQueue ORDER BY SongOrder ASC")) {
+				ResultSet rs = listCQ.executeQuery();
+				while (rs.next())
+					CommonSQL.addSongInArchive(rs.getInt(1), episodeId, Genre, rs.getString(2));
 			}
 
-			CommonSQL.addSongInPlaylist(playlistName, artist, song, comment);
-			CommonSQL.removeFromCurrentQueue(songOrder);
+			// Clear the queue
+			CommonSQL.clearCurrentQueue();
 
-			SQLConnection.getDbConn()
-					.commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST, DataChangedType.CURRENT_QUEUE));
+			// Commit changes
+			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_ARCHIVE, DataChangedType.CURRENT_QUEUE,
+					DataChangedType.EPISODE, DataChangedType.GENRE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-
 	}
-
 }

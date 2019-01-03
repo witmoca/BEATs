@@ -1,3 +1,17 @@
+/**
+ * 
+ */
+package be.witmoca.BEATs.ui.eastpanel.currentqueue;
+
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JList;
+import javax.swing.ListModel;
+import javax.swing.SwingUtilities;
+
 /*
 *
 +===============================================================================+
@@ -17,26 +31,41 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: CurrentQueueToolbar.java
+* File: CurrentQueueList.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.currentqueue.actions;
-
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JToolBar;
-
-public class CurrentQueueToolbar extends JToolBar {
+class CurrentQueueList extends JList<String> {
 	private static final long serialVersionUID = 1L;
-	private final JList<String> queue;
 
-	public CurrentQueueToolbar(JList<String> Queue) {
-		super(JToolBar.HORIZONTAL);
-		this.setFloatable(false);
-		queue = Queue;
+	public CurrentQueueList(ListModel<String> dataModel) {
+		super(dataModel);
 
-		this.add(new JButton(new RevertToPlaylistFromQueueAction(queue)));
-		this.add(new JButton(new ShowInfoAction(queue)));
-		this.add(new JButton(new ArchiveAction(queue)));
+		// add mouselistener: Rightclick (popupmenu open) also adjusts selector
+		this.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (SwingUtilities.isRightMouseButton(e)) {
+					JList<?> list = (JList<?>) e.getSource();
+					int index = list.locationToIndex(e.getPoint());
+					if (index < 0)
+						return;
+					list.setSelectedIndex(index);
+				}
+			}
+		});
 	}
+
+	@Override
+	public Point getPopupLocation(MouseEvent event) {
+		// calculate bottomleft corner of the selected item
+		int index = this.getSelectedIndex();
+		if (index < 0)
+			return null;
+		Point t = this.indexToLocation(index);
+		Rectangle bounds = this.getCellBounds(index, index);
+		if (bounds == null)
+			return null;
+		return new Point(t.x, t.y + bounds.height);
+	}
+
 }

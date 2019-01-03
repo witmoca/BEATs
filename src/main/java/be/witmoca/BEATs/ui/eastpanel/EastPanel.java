@@ -1,18 +1,8 @@
-/**
- * 
- */
-package be.witmoca.BEATs.ui.southpanel;
-
-import java.awt.GridLayout;
-import javax.swing.JPanel;
-
-import be.witmoca.BEATs.ui.components.SongTable;
-
 /*
 *
 +===============================================================================+
 |    BEATs (Burning Ember Archival Tool suite)                                  |
-|    Copyright 2018 Jente Heremans                                              |
+|    Copyright 2019 Jente Heremans                                              |
 |                                                                               |
 |    Licensed under the Apache License, Version 2.0 (the "License");            |
 |    you may not use this file except in compliance with the License.           |
@@ -27,26 +17,23 @@ import be.witmoca.BEATs.ui.components.SongTable;
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: SouthPanel.java
-* Created: 2018
+* File: EastPanel.java
+* Created: 2019
 */
-public class SouthPanel extends JPanel {
+package be.witmoca.BEATs.ui.eastpanel;
+
+import java.awt.BorderLayout;
+import javax.swing.JPanel;
+
+import be.witmoca.BEATs.ui.eastpanel.ccp.CCPPanel;
+import be.witmoca.BEATs.ui.eastpanel.currentqueue.CurrentQueuePanel;
+
+public class EastPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 * @param trackingTable
-	 *            The table to track for the InfoPanel
-	 * @param infoArtistColumn
-	 *            column of the table that holds the artist (artist should be in
-	 *            String format)
-	 * @param infoSongTitleColumn
-	 *            column of the table that holds the song title (title should be in
-	 *            String format)
-	 */
-	public SouthPanel(SongTable trackingTable, int infoArtistColumn, int infoSongTitleColumn) {
-		super(new GridLayout(0, 1));
-
-		this.add(new InfoPanel(trackingTable, infoArtistColumn, infoSongTitleColumn));
+	public EastPanel() {
+		super(new BorderLayout());
+		add(new CCPPanel(), BorderLayout.NORTH);
+		add(new CurrentQueuePanel(), BorderLayout.CENTER);
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.currentqueue.actions;
+package be.witmoca.BEATs.ui.eastpanel.currentqueue.actions;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
-import be.witmoca.BEATs.ui.currentqueue.CurrentQueueListModel;
+import be.witmoca.BEATs.ui.eastpanel.currentqueue.CurrentQueueListModel;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 

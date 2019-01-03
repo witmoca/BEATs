@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.currentqueue.actions;
+package be.witmoca.BEATs.ui.eastpanel.currentqueue.actions;
 
 import javax.swing.JList;
 import javax.swing.JMenuItem;

@@ -20,9 +20,11 @@
 * File: CurrentQueuePanel.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.currentqueue;
+package be.witmoca.BEATs.ui.eastpanel.currentqueue;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -30,22 +32,25 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import be.witmoca.BEATs.ui.currentqueue.actions.CurrentQueuePopupMenu;
-import be.witmoca.BEATs.ui.currentqueue.actions.CurrentQueueToolbar;
+import be.witmoca.BEATs.ui.eastpanel.currentqueue.actions.CurrentQueuePopupMenu;
+import be.witmoca.BEATs.ui.eastpanel.currentqueue.actions.CurrentQueueToolbar;
 import be.witmoca.BEATs.utils.Lang;
 
 public class CurrentQueuePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private final JList<String> Queue = new CurrentQueueList(new CurrentQueueListModel());
-	private final JButton title = new JButton(Lang.getUI("queue.titleLabel"));
 
 	public CurrentQueuePanel() {
 		super(new BorderLayout());
+		
+		final JButton title = new JButton(Lang.getUI("queue.titleLabel"));
 		title.setFont(title.getFont().deriveFont(22F));
 		title.setEnabled(false);
-		this.add(title, BorderLayout.NORTH);
-		this.add(new JScrollPane(Queue, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
-				BorderLayout.CENTER);
+		add(title, BorderLayout.NORTH);
+		
+		final JScrollPane sPane = new JScrollPane(Queue, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		sPane.setPreferredSize(new Dimension(0, Integer.MAX_VALUE));
+		add(sPane, BorderLayout.CENTER);
 
 		// Update the view if the contents should become to big to display
 		Queue.getModel().addListDataListener(new ListDataListener() {
@@ -69,6 +74,6 @@ public class CurrentQueuePanel extends JPanel {
 		Queue.setComponentPopupMenu(new CurrentQueuePopupMenu(Queue));
 
 		// Add the toolbar
-		this.add(new CurrentQueueToolbar(Queue), BorderLayout.SOUTH);
+		add(new CurrentQueueToolbar(Queue), BorderLayout.SOUTH);
 	}
 }
