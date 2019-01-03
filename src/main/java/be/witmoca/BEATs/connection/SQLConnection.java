@@ -140,7 +140,7 @@ public class SQLConnection implements AutoCloseable {
 		}
 		if (loadFile != null) {
 			try (Statement load = Db.createStatement()) {
-				load.executeUpdate("restore from " + loadFile.getAbsolutePath());
+				load.executeUpdate("restore from \"" + loadFile.getAbsolutePath() + "\"");
 			} catch (SQLException e) {
 				this.close();
 				throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e);
@@ -160,7 +160,7 @@ public class SQLConnection implements AutoCloseable {
 		}
 
 		try (Statement save = Db.createStatement()) {
-			save.executeUpdate("backup to " + saveFile.getPath());
+			save.executeUpdate("backup to \"" + saveFile.getPath() + "\"");
 		}
 		if (isBackup) {
 			this.setBackedUp();
