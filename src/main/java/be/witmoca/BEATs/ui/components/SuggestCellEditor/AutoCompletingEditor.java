@@ -3,9 +3,12 @@
  */
 package be.witmoca.BEATs.ui.components.SuggestCellEditor;
 
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 
 /*
@@ -33,6 +36,7 @@ import javax.swing.table.TableCellEditor;
 public class AutoCompletingEditor extends DefaultCellEditor {
 	private static final long serialVersionUID = 1L;
 
+	private final TextFieldUpdater updater;
 	/**
 	 * Creates an AutoCompletingEditor that tries to fill in known artists
 	 * 
@@ -54,17 +58,22 @@ public class AutoCompletingEditor extends DefaultCellEditor {
 		return new AutoCompletingEditor(new SongMatcher(column));
 	}
 
-	private AutoCompletingEditor(IMatcher matcher) {
-		super(new CompletingTextField(matcher));
+	protected AutoCompletingEditor(IMatcher matcher) {
+		super(new JTextField());
+		JTextField jtf = ((JTextField) this.getComponent());
+		jtf.setBorder(new LineBorder(Color.black));
+		
+		
+		updater = new TextFieldUpdater(matcher, jtf);
+		jtf.getDocument().addDocumentListener(updater);
 	}
 
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		if (table == null)
 			return null;
-		CompletingTextField editor = (CompletingTextField) super.getTableCellEditorComponent(table, value, isSelected,
-				row, column);
-		editor.setFocusOn(table, row, column);
-		return editor;
+		
+		updater.setCellInfo(table, row, column);
+		return super.getTableCellEditorComponent(table, value, isSelected,row, column);
 	}
 }
