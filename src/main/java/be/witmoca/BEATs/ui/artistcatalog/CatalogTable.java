@@ -31,7 +31,7 @@ import be.witmoca.BEATs.ui.components.EpisodeColumnRenderer;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
 
-public class CatalogTable extends SongTable {
+class CatalogTable extends SongTable {
 	private static final long serialVersionUID = 1L;
 
 	public CatalogTable() {

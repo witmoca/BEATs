@@ -42,13 +42,14 @@ public class CurrentQueuePanel extends JPanel {
 
 	public CurrentQueuePanel() {
 		super(new BorderLayout());
-		
+
 		final JButton title = new JButton(Lang.getUI("queue.titleLabel"));
 		title.setFont(title.getFont().deriveFont(22F));
 		title.setEnabled(false);
 		add(title, BorderLayout.NORTH);
-		
-		final JScrollPane sPane = new JScrollPane(Queue, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		final JScrollPane sPane = new JScrollPane(Queue, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		sPane.setPreferredSize(new Dimension(0, Integer.MAX_VALUE));
 		add(sPane, BorderLayout.CENTER);
 

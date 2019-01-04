@@ -32,11 +32,11 @@ import javax.swing.table.TableColumnModel;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
-public class PrintTableAction extends AbstractAction {
+class PrintTableAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	private final JTable table;
 
-	public PrintTableAction(JTable table) {
+	PrintTableAction(JTable table) {
 		super(Lang.getUI("action.print"), UiIcon.PRINT.getIcon());
 		this.table = table;
 	}

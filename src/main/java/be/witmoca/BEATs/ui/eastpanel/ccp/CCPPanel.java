@@ -45,7 +45,7 @@ public class CCPPanel extends JPanel {
 
 	public CCPPanel() {
 		super(new BorderLayout());
-		
+
 		final JButton title = new JButton(Lang.getUI("ccp.titleLabel"));
 		title.setFont(title.getFont().deriveFont(22F));
 		title.setEnabled(false);
@@ -55,7 +55,8 @@ public class CCPPanel extends JPanel {
 		ccpList.getSelectionModel().addListSelectionListener(new CCPUpdater(ccpList));
 		ccpList.setVisibleRowCount(10);
 
-		final JScrollPane sPane = new JScrollPane(ccpList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		final JScrollPane sPane = new JScrollPane(ccpList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		sPane.setPreferredSize(ccpList.getPreferredScrollableViewportSize());
 		add(sPane, BorderLayout.CENTER);
 	}

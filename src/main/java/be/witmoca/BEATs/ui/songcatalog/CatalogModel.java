@@ -36,7 +36,7 @@ import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.components.ContainsEpisodeColumn;
 import be.witmoca.BEATs.utils.Lang;
 
-public class CatalogModel extends AbstractTableModel implements DataChangedListener, ContainsEpisodeColumn {
+class CatalogModel extends AbstractTableModel implements DataChangedListener, ContainsEpisodeColumn {
 	private static final long serialVersionUID = 1L;
 	private static final String COLUMN_NAME[] = { Lang.getUI("col.count"), Lang.getUI("col.artist"),
 			Lang.getUI("col.song"), Lang.getUI("catalog.lastEpisode") };
