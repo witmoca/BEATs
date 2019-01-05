@@ -26,7 +26,7 @@ import javax.swing.table.TableRowSorter;
 
 import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.ui.components.SongTable;
-import be.witmoca.BEATs.ui.components.SuggestCellEditor.AutoCompletingEditor;
+import be.witmoca.BEATs.ui.components.SuggestCellEditor.AutoSuggestEditor;
 import be.witmoca.BEATs.ui.eastpanel.currentqueue.actions.MoveToQueueAction;
 import be.witmoca.BEATs.ui.playlistpanel.actions.PlaylistPopupMenu;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
@@ -57,8 +57,8 @@ class PlaylistTable extends SongTable {
 		this.setTransferHandler(new PlaylistTransferHandler());
 
 		// Suggest support for artist and song column
-		this.getColumnModel().getColumn(0).setCellEditor(AutoCompletingEditor.createArtistEditor());
-		this.getColumnModel().getColumn(1).setCellEditor(AutoCompletingEditor.createSongEditor(0));
+		this.getColumnModel().getColumn(0).setCellEditor(AutoSuggestEditor.createArtistEditor());
+		this.getColumnModel().getColumn(1).setCellEditor(AutoSuggestEditor.createSongEditor(0));
 	}
 
 	@Override
