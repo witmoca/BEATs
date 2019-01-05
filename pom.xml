@@ -57,6 +57,7 @@
 	<build>
 		<resources>
 			<resource>
+				<!-- Keep 'legal' files -->
 				<directory>${basedir}</directory>
 				<includes>
 					<include>LICENSE</include>
@@ -65,12 +66,15 @@
 				</includes>
 			</resource>
 
+			<!-- Blind copy for all resource folders except /Filtered/* -->
 			<resource>
 				<directory>src/main/resources</directory>
 				<excludes>
 					<exclude>**/Filtered/**</exclude>
 				</excludes>
 			</resource>
+
+			<!-- Copy /Filtered/* after filtering -->
 			<resource>
 				<directory>src/main/resources/Filtered</directory>
 				<targetPath>Filtered</targetPath>
@@ -79,23 +83,7 @@
 		</resources>
 
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.6.0</version>
-				<executions>
-					<execution>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>java</goal>
-						</goals>
-						<configuration>
-							<mainClass>be.witmoca.BEATs.ApplicationManager</mainClass>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
+			<!-- Maven compiler -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
@@ -105,12 +93,13 @@
 				</configuration>
 			</plugin>
 
+			<!-- Assemble everything into a stand-alone package (not including jre's) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>create-standalone</id> <!-- make standalone version that includes all dependencies -->
+						<id>create-standalone</id>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
@@ -124,28 +113,31 @@
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
+							<!-- Do not change name of jar by adding the assemblyId to it -->
 							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 
+			<!-- Copy resources on the correct phase -->
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
 				<executions>
-					<execution>
-						<id>default-testResources</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>testResources</goal>
-						</goals>
-					</execution>
+					<!-- Copy main resources -->
 					<execution>
 						<id>default-resources</id>
 						<phase>process-resources</phase>
 						<goals>
 							<goal>resources</goal>
+						</goals>
+					</execution>
+					<!-- Copy test resources -->
+					<execution>
+						<id>default-testResources</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>testResources</goal>
 						</goals>
 					</execution>
 				</executions>
