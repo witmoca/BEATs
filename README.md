@@ -1,5 +1,5 @@
 # Burning Ember (BEATs)
-*Burning Ember* is a CMS-like application meant as a playlist creation system backed up by an archive of previously played tracks. Opposed to a 'real' Content Management System, Burning Ember is **offline** and **fairly simple**. Making it easy for podcasters, dj's, radio show hosts and the like to have a **highly reliable** way to create playlists and keep track of them during a show. 
+*Burning Ember* is a CMS-like application meant as a playlist creation system backed by an archive of previously played tracks. Opposed to a 'real' Content Management System, Burning Ember is **offline** and **fairly simple**. Making it easy for podcasters, dj's, radio show hosts and the like to have a **highly reliable** way to create playlists and keep track of them during a show. 
 
 **More importantly, it's entirely free**. And i do really mean free. For those of you that have heard of FOSS: *Burning Ember* is both **Free-as-in-beer AND Free-as-in-speech**.
 
