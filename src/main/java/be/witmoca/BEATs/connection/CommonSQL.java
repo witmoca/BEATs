@@ -273,6 +273,15 @@ public class CommonSQL {
 		}
 	}
 
+	public static void updateCommentInArchive(int rowid, String newComment) throws SQLException {
+		try (PreparedStatement upCom = SQLConnection.getDbConn()
+				.prepareStatement("UPDATE SongsInArchive SET Comment = ? WHERE rowid = ?")) {
+			upCom.setString(1, newComment);
+			upCom.setInt(2, rowid);
+			upCom.executeUpdate();
+		}
+	}
+
 	public static void removeFromSongsInArchive(int rowid) throws SQLException {
 		try (PreparedStatement delLine = SQLConnection.getDbConn()
 				.prepareStatement("DELETE FROM SongsInArchive WHERE rowid = ?")) {

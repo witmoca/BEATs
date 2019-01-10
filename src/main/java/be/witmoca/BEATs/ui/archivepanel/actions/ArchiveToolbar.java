@@ -47,6 +47,7 @@ public class ArchiveToolbar extends JToolBar {
 		add(new JButton(new RenameArtistAction(table)));
 		add(new JButton(new RenameSongAction(table)));
 		add(new JButton(new ChangeLocalAction(table)));
+		add(new JButton(new ChangeCommentAction(table)));
 		add(UiUtils.SingleLineSeparator());
 		add(ClipboardActionFactory.getCopyAction(table));
 		add(UiUtils.SingleLineSeparator());
