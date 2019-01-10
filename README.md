@@ -26,8 +26,6 @@ It was specifically designed for a local radio station who needed such an applic
 *Burning Ember* as a successor is build with the same idea in mind.  
 As a considerable amount of users ran the program on old and crash prone hardware,
 the goals and underlying structure changed when work on *Burning Ember* began.
-The wiki contains some information on how to get started in experimenting with the code.
-[See the getting started page for more info](https://github.com/witmoca/BurningEmber/wiki/Getting-Started)
 
 ## A long text, because sometimes I like to write weird things:
 The archive ensures that your next playlist has some **consistency**. Whether you want to make sure you're not always playing that same band/song or even the opposite, making sure that a featured artist doesn't get forgotten.  
@@ -38,8 +36,8 @@ On top of being portable, the system is also **lightweight**. Meaning that even 
 
 The interface and tools are fairly **simplistic** by design. Making it easy for non-technical users to use, reducing or eliminating user error. More knowledgeable users aren't left out though. A set of advanced tools are just a few clicks away, separated from the more standard functions.
 
-The back-end is also engineered in such a way that **prevents loss of data**. Even frequently occurring power outages or crash-prone systems can safely use *Burning Ember*. The database ensures data always reaches the disk first, before continuing with other operations. This means that it doesn't matter what you were doing when a sudden crash or power outage occurred. Only if you were making a change at the exact moment of failure will you lose that particular (part of a) change. On restart, you'll just start again where you left off. 
+The back-end is also engineered in such a way that **prevents loss of data**. Even frequently occurring power outages or crash-prone systems can safely use *Burning Ember*. The database ensures data always reaches the disk first, before continuing with other operations. This means that it doesn't matter what you were doing when a sudden crash or power outage occurred. Only if you were making a change at the exact moment of failure will you lose that particular (part of a) change. On restart, you'll just continue where you left off. 
 
-The previous item essentially removes the need for backups. Yet *Burning Ember* still contains **a backup system in case of hardware faults**. The backups happen on a regular schedule, while keeping the user unaware of them. The system incorporates a little intelligence that decides whether a backup is necessary and acts accordingly. The online backup system doesn't even hinder most users, even on very slow system or with large file sizes.
+The previous item essentially removes the need for backups. Yet *Burning Ember* still contains **a backup system in case of hardware faults**. The backups happen on a regular schedule, while keeping the user unaware of them. The system incorporates a little intelligence that decides whether a backup is necessary and acts accordingly. The online backup system doesn't hinder most users, even on very slow system or with large file sizes.
 
-## If you've read everything up untill this point, please send me a message. I don't care how much you like to read, if you managed to get this far, then you are a serious lunatic. I like you!
+## If you've read everything up until this point, please send me a message. I don't care how much you like to read, nobody makes it this far. I like you, you lunatic!
