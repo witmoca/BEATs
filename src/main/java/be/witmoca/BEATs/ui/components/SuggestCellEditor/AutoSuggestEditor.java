@@ -38,11 +38,11 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.table.TableCellEditor;
 
-public class AutoSuggestEditor extends DefaultCellEditor{
+public class AutoSuggestEditor extends DefaultCellEditor {
 	private static final long serialVersionUID = 1L;
 	private final JPopupMenu suggestions = new JPopupMenu();
 	private final SuggestionUpdater updater;
-	
+
 	/**
 	 * Creates an AutoSuggestEditor that tries to fill in known artists
 	 * 
@@ -63,13 +63,13 @@ public class AutoSuggestEditor extends DefaultCellEditor{
 	public static TableCellEditor createSongEditor(int column) {
 		return new AutoSuggestEditor(new SongMatcher(column));
 	}
-	
-	private AutoSuggestEditor(IMatcher matcher) {		
+
+	private AutoSuggestEditor(IMatcher matcher) {
 		super(new JTextField());
-		
+
 		JTextField jtf = ((JTextField) this.getComponent());
-		jtf.setBorder(new LineBorder(Color.black));	
-		
+		jtf.setBorder(new LineBorder(Color.black));
+
 		updater = new SuggestionUpdater(matcher, jtf, suggestions);
 		jtf.getDocument().addDocumentListener(updater);
 	}
@@ -78,16 +78,16 @@ public class AutoSuggestEditor extends DefaultCellEditor{
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		if (table == null)
 			return null;
-		
+
 		updater.setCellInfo(table, row, column);
-		JTextField jtf = (JTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);	
-		
+		JTextField jtf = (JTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);
+
 		ShowListener sl = new ShowListener(suggestions, table, row, column);
 		jtf.addFocusListener(sl);
-		jtf.addAncestorListener(sl);		
+		jtf.addAncestorListener(sl);
 		return jtf;
 	}
-	
+
 	/**
 	 * Shows/Hides the popupmenu depending on focus
 	 */
@@ -95,15 +95,15 @@ public class AutoSuggestEditor extends DefaultCellEditor{
 		private final JPopupMenu menu;
 		private final JTable table;
 		private final Point location;
-		
+
 		private ShowListener(JPopupMenu menu, JTable table, int row, int col) {
 			this.menu = menu;
 			this.table = table;
-			
+
 			Rectangle r = table.getCellRect(row, col, true);
 			location = new Point(r.x, r.y + r.height);
 		}
-		
+
 		@Override
 		public void focusGained(FocusEvent e) {
 			Point p = new Point(location);

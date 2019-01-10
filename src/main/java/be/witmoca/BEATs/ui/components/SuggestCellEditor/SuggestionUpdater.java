@@ -44,7 +44,7 @@ public class SuggestionUpdater implements Runnable, DocumentListener {
 	private final IMatcher matcher;
 	private final JTextComponent parentField;
 	private final JPopupMenu parentMenu;
-	
+
 	private JTable table;
 	private int row;
 	private int col;
@@ -75,19 +75,19 @@ public class SuggestionUpdater implements Runnable, DocumentListener {
 			String topSuggestion = lastMatches.get(0).toLowerCase();
 			if (topSuggestion == null || original.length() >= topSuggestion.length())
 				return;
-			
+
 			// SelectionMenu Items
 			// Empty menu
 			parentMenu.removeAll();
 			// Load items (max 7)
 			SuggestMenuListener listener = new SuggestMenuListener(source);
-			for(int i = 0; i < Math.min(7, lastMatches.size()) ; i++) {
+			for (int i = 0; i < Math.min(7, lastMatches.size()); i++) {
 				JMenuItem mi = new JMenuItem(lastMatches.get(i));
 				mi.addActionListener(listener);
 				parentMenu.add(mi);
 			}
 			parentMenu.pack();
-			
+
 			// Update parent TextField
 			source.insertString(original.length(), topSuggestion.substring(original.length()), null);
 			parentField.select(original.length(), topSuggestion.length());
@@ -128,14 +128,14 @@ public class SuggestionUpdater implements Runnable, DocumentListener {
 		this.row = row;
 		this.col = column;
 	}
-	
-	private static class SuggestMenuListener implements ActionListener {		
+
+	private static class SuggestMenuListener implements ActionListener {
 		private final Document doc;
-		
+
 		private SuggestMenuListener(Document d) {
 			doc = d;
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
