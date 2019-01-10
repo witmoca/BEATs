@@ -40,12 +40,12 @@ import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.StringUtils;
 import be.witmoca.BEATs.utils.UiIcon;
 
-public class ChangeCommentAction extends AbstractAction {
+class ChangeCommentAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 
 	private final JTable archive;
 
-	public ChangeCommentAction(JTable table) {
+	ChangeCommentAction(JTable table) {
 		super(Lang.getUI("col.comment"));
 		this.putValue(Action.SMALL_ICON, UiIcon.EDIT_W.getIcon());
 		archive = table;
@@ -83,12 +83,13 @@ public class ChangeCommentAction extends AbstractAction {
 
 		// MAKE CHANGES
 		String newString = StringUtils.ToUpperCamelCase(newComment.getText());
-		if(comment.equalsIgnoreCase(newString))
+		if (comment.equalsIgnoreCase(newString))
 			return;
 		try {
 			CommonSQL.updateCommentInArchive(rowid, newString);
-			// Commit archive changes= Not exactly true, but true enough for our purposes. We'll take the overhead as is.
-			SQLConnection.getDbConn().commit(DataChangedType.ARCHIVE_DATA_OPTS); 
+			// Commit archive changes= Not exactly true, but true enough for our purposes.
+			// We'll take the overhead as is.
+			SQLConnection.getDbConn().commit(DataChangedType.ARCHIVE_DATA_OPTS);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

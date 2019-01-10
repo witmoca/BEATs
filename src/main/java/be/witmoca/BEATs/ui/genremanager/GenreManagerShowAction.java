@@ -67,8 +67,8 @@ public class GenreManagerShowAction implements ActionListener {
 		buttonPanel.add(wrapAction(new DeleteGenreAction(gList)));
 		contentPanel.add(buttonPanel, BorderLayout.EAST);
 
-		JOptionPane.showMessageDialog(ApplicationWindow.APP_WINDOW, contentPanel, Lang.getUI("menu.tools.genreManager"),
-				JOptionPane.PLAIN_MESSAGE, null);
+		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), contentPanel,
+				Lang.getUI("menu.tools.genreManager"), JOptionPane.PLAIN_MESSAGE, null);
 	}
 
 	private JComponent wrapAction(Action a) {

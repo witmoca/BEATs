@@ -40,7 +40,7 @@ import javax.swing.text.JTextComponent;
  * Listens to the document and when necessary adds itself to the EDT for
  * execution
  */
-public class SuggestionUpdater implements Runnable, DocumentListener {
+class SuggestionUpdater implements Runnable, DocumentListener {
 	private final IMatcher matcher;
 	private final JTextComponent parentField;
 	private final JPopupMenu parentMenu;
@@ -51,7 +51,7 @@ public class SuggestionUpdater implements Runnable, DocumentListener {
 	private Document source;
 	private List<String> lastMatches;
 
-	public SuggestionUpdater(IMatcher match, JTextComponent parentField, JPopupMenu parentMenu) {
+	SuggestionUpdater(IMatcher match, JTextComponent parentField, JPopupMenu parentMenu) {
 		this.matcher = match;
 		this.parentField = parentField;
 		this.parentMenu = parentMenu;
@@ -123,7 +123,7 @@ public class SuggestionUpdater implements Runnable, DocumentListener {
 	public void changedUpdate(DocumentEvent e) {
 	}
 
-	public void setCellInfo(JTable table, int row, int column) {
+	void setCellInfo(JTable table, int row, int column) {
 		this.table = table;
 		this.row = row;
 		this.col = column;

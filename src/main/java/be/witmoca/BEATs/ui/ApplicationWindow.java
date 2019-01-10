@@ -47,7 +47,7 @@ import be.witmoca.BEATs.utils.UiIcon;
 public class ApplicationWindow extends JFrame implements WindowListener, DataChangedListener {
 	private static final long serialVersionUID = 1L;
 
-	public static ApplicationWindow APP_WINDOW = null;
+	private static ApplicationWindow APP_WINDOW = null;
 
 	private final JComponent eastPanel = new EastPanel();
 	private final JComponent centerPanel = new CenterTabbedPane();

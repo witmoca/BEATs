@@ -69,7 +69,7 @@ public class PlaylistManagerShowAction implements ActionListener {
 		buttonPanel.add(wrapAction(new DeletePlaylistAction(plList)));
 		contentPanel.add(buttonPanel, BorderLayout.EAST);
 
-		JOptionPane.showMessageDialog(ApplicationWindow.APP_WINDOW, contentPanel,
+		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), contentPanel,
 				Lang.getUI("menu.tools.playlistManager"), JOptionPane.PLAIN_MESSAGE, null);
 	}
 
