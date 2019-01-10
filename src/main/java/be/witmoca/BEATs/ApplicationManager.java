@@ -36,6 +36,7 @@ import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.ResourceLoader;
 import be.witmoca.BEATs.utils.SingleInstanceManager;
+import be.witmoca.BEATs.utils.VersionChecker;
 import be.witmoca.BEATs.utils.BEATsSettings;
 
 public class ApplicationManager {
@@ -57,6 +58,9 @@ public class ApplicationManager {
 			fatalError(e);
 			System.exit(-1);
 		}
+
+		// Start the versionchecker
+		VersionChecker.Run();
 
 		// Create the GUI on the EDT
 		SwingUtilities.invokeLater(new Runnable() {
