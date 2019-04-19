@@ -69,7 +69,7 @@ class PlaylistTable extends SongTable {
 		if (this.getRowSorter() != null)
 			rowIndex = this.getRowSorter().convertRowIndexToModel(rowIndex);
 
-		if (!(this.getModel() instanceof PlaylistTableModel) || rowIndex >= this.getRowCount())
+		if (!(this.getModel() instanceof PlaylistTableModel) || (rowIndex+1) >= this.getRowCount())
 			return null;
 		PlaylistTableModel model = (PlaylistTableModel) this.getModel();
 
