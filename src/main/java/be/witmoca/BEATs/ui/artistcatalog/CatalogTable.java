@@ -27,8 +27,10 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 import be.witmoca.BEATs.clipboard.TransferableSong;
+import be.witmoca.BEATs.ui.artistcatalog.actions.ArtistCatalogPopupMenu;
 import be.witmoca.BEATs.ui.components.EpisodeColumnRenderer;
 import be.witmoca.BEATs.ui.components.SongTable;
+import be.witmoca.BEATs.ui.components.SongTableCopyOnlyTransferHandler;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
 
 class CatalogTable extends SongTable {
@@ -36,6 +38,12 @@ class CatalogTable extends SongTable {
 
 	public CatalogTable() {
 		super(new CatalogModel());
+
+		// right click menu
+		this.setComponentPopupMenu(new ArtistCatalogPopupMenu(this));
+
+		// CCP Handler
+		this.setTransferHandler(new SongTableCopyOnlyTransferHandler());
 
 		// Set custom renderer for the episode column
 		this.getColumnModel().getColumn(3).setCellRenderer(new EpisodeColumnRenderer());
@@ -56,7 +64,18 @@ class CatalogTable extends SongTable {
 
 	@Override
 	public TransferableSong getSelectedSong() {
-		return null; // Nothing to transfer here
+		int rowIndex = this.getSelectedRow();
+		if (rowIndex < 0)
+			return null;
+		if (this.getRowSorter() != null)
+			rowIndex = this.getRowSorter().convertRowIndexToModel(rowIndex);
+
+		if (!(this.getModel() instanceof CatalogModel) || (rowIndex+1) >= this.getRowCount())
+			return null;
+		CatalogModel model = (CatalogModel) this.getModel();
+
+		// Copy only, so RowID can be anything (0 here); SongID is empty as there are no songIds
+		return new TransferableSong((String) model.getValueAt(rowIndex, 1), "",0);
 	}
 
 }
