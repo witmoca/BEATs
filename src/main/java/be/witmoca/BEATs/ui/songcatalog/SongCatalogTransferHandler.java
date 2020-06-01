@@ -1,14 +1,20 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.archivepanel;
+package be.witmoca.BEATs.ui.songcatalog;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
-
-import be.witmoca.BEATs.ui.components.SongTable;
+import be.witmoca.BEATs.clipboard.TransferableSong;
+import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.connection.CommonSQL;
+import be.witmoca.BEATs.connection.DataChangedType;
 
 /*
 *
@@ -29,26 +35,14 @@ import be.witmoca.BEATs.ui.components.SongTable;
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: ArchiveTransferHandler.java
+* File: PlaylistTransferHandler.java
 * Created: 2018
 */
-
-/**
- * Copy only TransferHandler Translates data from an ArchiveTable into a
- * Transferable
- * 
- * File: ArchiveTransferHandler.java Created: 2018
- */
-class ArchiveTransferHandler extends TransferHandler {
+class SongCatalogTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public boolean importData(TransferSupport support) {
-		return false;
-	}
-
-	@Override
-	public boolean importData(JComponent comp, Transferable t) {
+	public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
 		return false;
 	}
 
@@ -58,7 +52,12 @@ class ArchiveTransferHandler extends TransferHandler {
 	}
 
 	@Override
-	public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+	public boolean importData(JComponent comp, Transferable t) {
+		return false;
+	}
+
+	@Override
+	public boolean importData(TransferSupport support) {
 		return false;
 	}
 
@@ -69,13 +68,14 @@ class ArchiveTransferHandler extends TransferHandler {
 
 	@Override
 	protected Transferable createTransferable(JComponent c) {
-		if (c instanceof SongTable)
-			return ((SongTable) c).getSelectedSong();
-		return null;
+		if (!(c instanceof CatalogTable))
+			return null;
+		return ((CatalogTable) c).getSelectedSong();
 	}
 
 	@Override
 	protected void exportDone(JComponent source, Transferable data, int action) {
 		return;
 	}
+
 }

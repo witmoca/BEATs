@@ -2,7 +2,7 @@
 *
 +===============================================================================+
 |    BEATs (Burning Ember Archival Tool suite)                                  |
-|    Copyright 2019 Jente Heremans                                              |
+|    Copyright 2018 Jente Heremans                                              |
 |                                                                               |
 |    Licensed under the Apache License, Version 2.0 (the "License");            |
 |    you may not use this file except in compliance with the License.           |
@@ -17,42 +17,27 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: SongCatalog.java
-* Created: 2019
+* File: PlaylistToolbar.java
+* Created: 2018
 */
-package be.witmoca.BEATs.ui.songcatalog;
+package be.witmoca.BEATs.ui.songcatalog.actions;
 
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.Box;
 import javax.swing.JTable;
-import javax.swing.SortOrder;
-import javax.swing.RowSorter.SortKey;
+import javax.swing.JToolBar;
 
-import be.witmoca.BEATs.ui.songcatalog.actions.SongCatalogToolbar;
-import be.witmoca.BEATs.ui.t4j.RowNumberTable;
+import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
 
-public class SongCatalog extends JPanel {
+public class SongCatalogToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
-	private final CatalogTable catalogTable = new CatalogTable();
-	private final JScrollPane scrollPane = new JScrollPane(catalogTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	public SongCatalogToolbar(JTable table) {
+		super(JToolBar.HORIZONTAL);
 
-	public SongCatalog() {
-		super(new BorderLayout());
+		this.setFloatable(false);
+		this.add(ClipboardActionFactory.getCopyAction(table));
 
-		this.add(new SongCatalogToolbar(catalogTable), BorderLayout.NORTH);
-		this.add(scrollPane, BorderLayout.CENTER);
-
-		List<SortKey> defaultSort = new ArrayList<SortKey>();
-		defaultSort.add(new SortKey(0, SortOrder.DESCENDING));
-		defaultSort.add(new SortKey(1, SortOrder.ASCENDING));
-		JTable rowTable = new RowNumberTable(catalogTable, defaultSort);
-		scrollPane.setRowHeaderView(rowTable);
-		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
+		// Beyond this point all goes on the right
+		add(Box.createHorizontalGlue());
 	}
 }

@@ -28,6 +28,7 @@ import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.ui.archivepanel.actions.ArchivePopupMenu;
 import be.witmoca.BEATs.ui.components.EpisodeColumnRenderer;
 import be.witmoca.BEATs.ui.components.SongTable;
+import be.witmoca.BEATs.ui.components.SongTableCopyOnlyTransferHandler;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
 
 class ArchiveTable extends SongTable {
@@ -50,7 +51,7 @@ class ArchiveTable extends SongTable {
 		this.setComponentPopupMenu(new ArchivePopupMenu(this));
 
 		// Drag and drop logic (no drag and drop, just Cut/Cop/Paste)
-		this.setTransferHandler(new ArchiveTransferHandler());
+		this.setTransferHandler(new SongTableCopyOnlyTransferHandler());
 	}
 
 	@Override
@@ -65,7 +66,7 @@ class ArchiveTable extends SongTable {
 			return null;
 		ArchiveTableModel model = (ArchiveTableModel) this.getModel();
 
-		return new TransferableSong((String) model.getValueAt(rowIndex, 0), (String) model.getValueAt(rowIndex, 1),
-				model.getRowId(rowIndex));
+		// Since this is a copy only table, the RowID can be anything (0 here)
+		return new TransferableSong((String) model.getValueAt(rowIndex, 0), (String) model.getValueAt(rowIndex, 1), 0);
 	}
 }
