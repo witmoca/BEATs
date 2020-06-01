@@ -138,6 +138,7 @@ public class ClipboardTransferHandler extends TransferHandler {
 			}
 
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.CCP));
+			setSelected(ClipboardTransferHandler.selected > 1 ? ClipboardTransferHandler.selected - 1 : 0);
 		} catch (SQLException | UnsupportedFlavorException | IOException e) {
 			e.printStackTrace();
 		}
