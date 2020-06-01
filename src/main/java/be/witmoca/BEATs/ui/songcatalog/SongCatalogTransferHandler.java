@@ -5,16 +5,8 @@ package be.witmoca.BEATs.ui.songcatalog;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
-import be.witmoca.BEATs.clipboard.TransferableSong;
-import be.witmoca.BEATs.connection.SQLConnection;
-import be.witmoca.BEATs.connection.CommonSQL;
-import be.witmoca.BEATs.connection.DataChangedType;
 
 /*
 *
