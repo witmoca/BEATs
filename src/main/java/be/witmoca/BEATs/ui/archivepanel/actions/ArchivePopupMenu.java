@@ -35,6 +35,7 @@ public class ArchivePopupMenu extends JPopupMenu {
 		add(new JMenuItem(new RenameArtistAction(table)));
 		add(new JMenuItem(new RenameSongAction(table)));
 		add(new JMenuItem(new ChangeLocalAction(table)));
+		add(new JMenuItem(new ChangeGenreAction(table)));
 		add(new JMenuItem(new ChangeCommentAction(table)));
 		addSeparator();
 		add(new JMenuItem(ClipboardActionFactory.getCopyAction(table)));

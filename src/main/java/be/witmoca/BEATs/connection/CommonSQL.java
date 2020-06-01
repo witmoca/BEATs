@@ -272,6 +272,15 @@ public class CommonSQL {
 			add.executeUpdate();
 		}
 	}
+	
+	public static void updateGenreInArchive(int rowid, String newGenre) throws SQLException {
+		try (PreparedStatement upCom = SQLConnection.getDbConn()
+				.prepareStatement("UPDATE SongsInArchive SET GenreName = ? WHERE rowid = ?")) {
+			upCom.setString(1, newGenre);
+			upCom.setInt(2, rowid);
+			upCom.executeUpdate();
+		}
+	}
 
 	public static void updateCommentInArchive(int rowid, String newComment) throws SQLException {
 		try (PreparedStatement upCom = SQLConnection.getDbConn()
