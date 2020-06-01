@@ -150,6 +150,10 @@ class ApplicationMenubar extends JMenuBar {
 
 		helpMenu.addSeparator();
 
+		JMenuItem checkUpdates = new JMenuItem(Lang.getUI("menu.update"), UiIcon.SEARCH.getIcon());
+		checkUpdates.addActionListener(new ShowUpdateCheckDialogAction());
+		helpMenu.add(checkUpdates);
+		
 		JMenuItem about = new JMenuItem(Lang.getUI("menu.about"), UiIcon.INFO.getIcon());
 		about.addActionListener(new ShowAboutDialogAction());
 		helpMenu.add(about);

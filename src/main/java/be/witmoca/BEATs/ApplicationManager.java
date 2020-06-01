@@ -60,7 +60,7 @@ public class ApplicationManager {
 		}
 
 		// Start the versionchecker
-		VersionChecker.Run();
+		VersionChecker.CheckVersion();
 
 		// Create the GUI on the EDT
 		SwingUtilities.invokeLater(new Runnable() {
