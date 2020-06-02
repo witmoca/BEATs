@@ -10,13 +10,12 @@ import java.util.EnumSet;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
-
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.archivepanel.ArchiveTableModel;
+import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -44,9 +43,9 @@ import be.witmoca.BEATs.utils.UiIcon;
 */
 class DeleteEntryAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
-	private final JTable archive;
+	private final SongTable archive;
 
-	DeleteEntryAction(JTable table) {
+	DeleteEntryAction(SongTable table) {
 		super(Lang.getUI("action.delete"));
 		this.putValue(Action.SMALL_ICON, UiIcon.DELETE.getIcon());
 		archive = table;
@@ -60,21 +59,20 @@ class DeleteEntryAction extends AbstractAction {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		int index = archive.getSelectedRow();
-		if (index < 0)
+		int indices[] = archive.getSelectedRows();
+		if (indices.length == 0)
 			return;
-		if (archive.getRowSorter() != null)
-			index = archive.getRowSorter().convertRowIndexToModel(index);
 
 		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("deleteAction.confirm"),
 				Lang.getUI("deleteAction.confirmTitle"), JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
 			return;
-
-		int rowid = ((ArchiveTableModel) archive.getModel()).getRowId(index);
-
+		
+		ArchiveTableModel tm = ((ArchiveTableModel) archive.getModel());
 		try {
-			CommonSQL.removeFromSongsInArchive(rowid);
+			for(int i = indices.length - 1; i >= 0; i--) {
+				CommonSQL.removeFromSongsInArchive(tm.getRowId(indices[i]));
+			}		
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_ARCHIVE));
 		} catch (SQLException e1) {
 			e1.printStackTrace();

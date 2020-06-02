@@ -24,10 +24,10 @@ package be.witmoca.BEATs.ui.archivepanel.actions;
 
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
+import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 import be.witmoca.BEATs.utils.UiUtils;
@@ -38,7 +38,7 @@ public class ArchiveToolbar extends JToolBar {
 	private final JTextField searchTerm = new JTextField(20);
 	private final JButton searchSubmit = new JButton(Lang.getUI("action.search"), UiIcon.SEARCH.getIcon());
 
-	public ArchiveToolbar(JTable table) {
+	public ArchiveToolbar(SongTable table) {
 		super(JToolBar.HORIZONTAL);
 
 		this.setFloatable(false);
