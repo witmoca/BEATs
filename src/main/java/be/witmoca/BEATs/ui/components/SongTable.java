@@ -95,7 +95,7 @@ public abstract class SongTable extends JTable {
 	
 
 	/**
-	 * Returns the selected row indices converted by the RowSorter
+	 * Returns the selected row indices converted by the RowSorter into model indices
 	 * Sorted into ascending order
 	 */
 	@Override
