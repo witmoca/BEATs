@@ -28,19 +28,18 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.KeyStroke;
-
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistTableModel;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
 class DeleteAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
-	private final JTable connectedTable;
+	private final SongTable connectedTable;
 
-	protected DeleteAction(JTable table) {
+	protected DeleteAction(SongTable table) {
 		super(Lang.getUI("action.delete"));
 		this.putValue(Action.ACTION_COMMAND_KEY, "Playlist: Delete Song Selection");
 		this.putValue(Action.SMALL_ICON, UiIcon.DELETE.getIcon());
@@ -54,17 +53,19 @@ class DeleteAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		int index = connectedTable.getSelectedRow();
-		if (index < 0)
+		int indices[] = connectedTable.getSelectedRows();
+		if (indices.length == 0)
 			return;
-		if (connectedTable.getRowSorter() != null)
-			index = connectedTable.getRowSorter().convertRowIndexToModel(index);
+		
 
 		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("deleteAction.confirm"),
 				Lang.getUI("deleteAction.confirmTitle"), JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION)
 			return;
 
-		((PlaylistTableModel) connectedTable.getModel()).deleteRow(index);
+		PlaylistTableModel tm = ((PlaylistTableModel) connectedTable.getModel());
+		for(int i = indices.length - 1; i >= 0; i--) {
+			tm.deleteRow(indices[i]);
+		}
 	}
 }

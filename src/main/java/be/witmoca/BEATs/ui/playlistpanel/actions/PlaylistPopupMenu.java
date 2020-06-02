@@ -24,14 +24,13 @@ package be.witmoca.BEATs.ui.playlistpanel.actions;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-
 import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
+import be.witmoca.BEATs.ui.components.SongTable;
 
 public class PlaylistPopupMenu extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
 
-	public PlaylistPopupMenu(JTable assocTable) {
+	public PlaylistPopupMenu(SongTable assocTable) {
 		super();
 		this.add(new JMenuItem(ClipboardActionFactory.getCutAction(assocTable)));
 		this.add(new JMenuItem(ClipboardActionFactory.getCopyAction(assocTable)));
