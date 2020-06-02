@@ -7,9 +7,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
 
@@ -51,8 +53,8 @@ public abstract class SongTable extends JTable {
 
 		this.getTableHeader().setReorderingAllowed(false);
 
-		// the ccp model depends on a single line selection
-		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		// always fill viewport even when empty
 		this.setFillsViewportHeight(true);
@@ -89,6 +91,43 @@ public abstract class SongTable extends JTable {
 	}
 
 	abstract public TransferableSong getSelectedSong();
+	
+	
+
+	/**
+	 * Returns the selected row indices converted by the RowSorter
+	 * Sorted into ascending order
+	 */
+	@Override
+	public int[] getSelectedRows() {
+		int indices[] = super.getSelectedRows();
+		if (indices.length <= 0)
+			return new int[0];
+		
+		// No rowsorter = no convert
+		if (this.getRowSorter() == null) {
+			return indices;
+		}
+		
+		// Convert indices
+		int convI[] = new int[indices.length];
+		RowSorter<?> rs = this.getRowSorter();
+		
+		// Loop through conversion
+		try {
+			for(int i = 0; i < indices.length; i++)
+				convI[i] = rs.convertRowIndexToModel(indices[i]);
+		} catch (Exception e) {
+			// if one of the indices is invalid, consider the whole array invalid
+			return new int[0];
+		}
+		
+		// for easy looping purposes
+		Arrays.sort(convI);
+		return convI;
+	}
+
+
 
 	private static class CatWalk extends MouseAdapter {
 
