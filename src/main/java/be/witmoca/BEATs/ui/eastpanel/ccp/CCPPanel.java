@@ -54,6 +54,7 @@ public class CCPPanel extends JPanel {
 		JList<String> ccpList = new JList<>(new CCPListModel());
 		ccpList.getSelectionModel().addListSelectionListener(new CCPUpdater(ccpList));
 		ccpList.setVisibleRowCount(10);
+		ccpList.setSelectedIndex(0);
 
 		final JScrollPane sPane = new JScrollPane(ccpList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -73,9 +74,9 @@ public class CCPPanel extends JPanel {
 		public void valueChanged(ListSelectionEvent e) {
 			if (ClipboardTransferHandler.class.equals(e.getSource()) && list.getSelectedIndex() != e.getFirstIndex()) {
 				// if transferhandler is source => update the list (only if it is different,
-				// otherwise this keeps going round and round)
+				// otherwise this is endlessly recursive)
 				list.setSelectedIndex(e.getFirstIndex());
-			} else {
+			} else if(!ClipboardTransferHandler.class.equals(e.getSource())) {
 				// if list is source => update the transferhandler
 				ClipboardTransferHandler.setSelected(list.getSelectedIndex());
 			}

@@ -84,6 +84,9 @@ public class ClipboardTransferHandler extends TransferHandler {
 				insertCCP.executeUpdate();
 			}
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.CCP));
+			// If nothing is selected in CCP window, select the top one
+			if(ClipboardTransferHandler.selected < 0)
+				setSelected(0);
 		} catch (UnsupportedFlavorException | IOException | SQLException e) {
 			e.printStackTrace();
 			return false;
