@@ -5,14 +5,12 @@ package be.witmoca.BEATs.ui.components;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
-import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
 
 import be.witmoca.BEATs.clipboard.TransferableSong;
@@ -52,8 +50,6 @@ public abstract class SongTable extends JTable {
 		super(model); // Just fabulous, a supermodel!
 
 		this.getTableHeader().setReorderingAllowed(false);
-
-		
 		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		// always fill viewport even when empty
