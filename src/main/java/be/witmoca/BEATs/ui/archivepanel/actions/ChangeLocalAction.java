@@ -3,21 +3,22 @@
  */
 package be.witmoca.BEATs.ui.archivepanel.actions;
 
-import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
+import javax.swing.table.TableModel;
 
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -43,32 +44,28 @@ import be.witmoca.BEATs.utils.UiIcon;
 * File: RenameAristAction.java
 * Created: 2018
 */
-class ChangeLocalAction extends AbstractAction {
+class ChangeLocalAction extends MultisongChangeAbstractAction {
 	private static final long serialVersionUID = 1L;
 
-	private final JTable archive;
-
-	ChangeLocalAction(JTable table) {
-		super(Lang.getUI("col.local"));
+	ChangeLocalAction(SongTable table) {
+		super(table, Lang.getUI("col.local"));
 		this.putValue(Action.SMALL_ICON, UiIcon.EDIT_W.getIcon());
-		archive = table;
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		int index = archive.getSelectedRow();
-		int originalIndex = index;
-		if (index < 0)
-			return;
-		if (archive.getRowSorter() != null)
-			index = archive.getRowSorter().convertRowIndexToModel(index);
-
+	protected void actionPerform(int[] indices) {
 		// PREPARE variables for user
-		String artist = (String) archive.getModel().getValueAt(index, 0);
-		boolean local;
+		Set<String> artists = new HashSet<String>();
+		TableModel tm = getConnectedTable().getModel();
+		for(int i: indices) {
+			artists.add((String) tm.getValueAt(i, 0));
+		}
+
+		
+		boolean isFirstLocal;
 
 		try {
-			local = CommonSQL.isArtistLocal(artist);
+			isFirstLocal = CommonSQL.isArtistLocal((String) tm.getValueAt(indices[0], 0));
 		} catch (SQLException e2) {
 			e2.printStackTrace();
 			return;
@@ -76,28 +73,28 @@ class ChangeLocalAction extends AbstractAction {
 
 		// USER UI interaction
 		JPanel userPanel = new JPanel();
-		JCheckBox localBox = new JCheckBox(artist + " " + Lang.getUI("changeLocalAction.descr"), local);
+		JCheckBox localBox = new JCheckBox(Lang.getUI("changeLocalAction.descr"), isFirstLocal);
 		userPanel.add(localBox);
 
-		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel, "Rename",
+		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel, Lang.getUI("col.local"),
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
 			return; // cancelled
 		}
 
-		if (localBox.isSelected() == local)
+		// Do nothing if there is a single select and it stays the same
+		if (localBox.isSelected() == isFirstLocal && indices.length == 1)
 			return;
 
 		// MAKE CHANGES
-		// update artist
+		// update artists
 		try {
-			CommonSQL.updateLocalityOfArtist(localBox.isSelected(), artist);
+			for(String artist : artists) {
+				CommonSQL.updateLocalityOfArtist(localBox.isSelected(), artist);
+			}
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.ARTIST));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;
 		}
-
-		// Reselect the selection that now changed
-		archive.setRowSelectionInterval(originalIndex, originalIndex);
 	}
 }
