@@ -15,7 +15,6 @@ import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.archivepanel.ArchiveTableModel;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.utils.Lang;
-import be.witmoca.BEATs.utils.StringUtils;
 import be.witmoca.BEATs.utils.UiIcon;
 
 /**
@@ -65,9 +64,9 @@ public class ChangeGenreAction extends MultisongChangeAbstractAction {
 			return; // cancelled
 		}
 
-		// MAKE CHANGES
-		String newString = StringUtils.ToUpperCamelCase((String) newGenre.getSelectedItem());
-		if (genre.equalsIgnoreCase(newString))
+		// MAKE CHANGES (String case is important here! No ignoreCase)
+		String newString = (String) newGenre.getSelectedItem();
+		if (genre.equals(newString))
 			return;
 		try {
 			ArchiveTableModel atm = ((ArchiveTableModel) getConnectedTable().getModel());
