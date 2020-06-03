@@ -59,10 +59,6 @@ public abstract class SongTable extends JTable {
 		// always fill viewport even when empty
 		this.setFillsViewportHeight(true);
 
-		// CatWalk seems cosmically perfect. A super model & a mouse listener. This is
-		// getting a bit cringy though.
-		this.addMouseListener(new CatWalk());
-
 		// This stops the cells from editing without actually clicking the cells (just
 		// typing)
 		// Not a prefered method (especially the property), but no better one exists
@@ -75,15 +71,28 @@ public abstract class SongTable extends JTable {
 	}
 
 	@Override
-	public Point getPopupLocation(MouseEvent event) {
+	public Point getPopupLocation(MouseEvent e) {
+		// Ensure JTable
+		if (!(e.getSource() instanceof JTable))
+			return null;
+		
+		JTable table = (JTable) e.getSource();
+		int row = table.rowAtPoint(e.getPoint());
+		int column = table.columnAtPoint(e.getPoint());
+		
 		// Popuplocation is always the bottomleft corner of the selected item
-		int row = this.getSelectedRow();
 		if (row < 0)
 			return null;
 
-		int column = this.getSelectedColumn();
 		if (column < 0)
 			column = 2;
+		
+		// Change the selection depending on the row selection state
+		// Selected = keep selection; row not selected = reset to this single line
+		if(! table.isRowSelected(row)) {
+			// If not selected, deselect all and set this line as selected
+			table.changeSelection(row, column, false, false);
+		}	
 
 		// Calculate according to all rows
 		Rectangle cell = this.getCellRect(row, column, false);
@@ -125,25 +134,5 @@ public abstract class SongTable extends JTable {
 		// for easy looping purposes
 		Arrays.sort(convI);
 		return convI;
-	}
-
-
-
-	private static class CatWalk extends MouseAdapter {
-
-		// add mouselistener: Rightclick (popupmenu open) also adjusts selector
-		@Override
-		public void mousePressed(MouseEvent e) {
-			if (!(e.getSource() instanceof JTable))
-				return;
-
-			JTable table = (JTable) e.getSource();
-			int row = table.rowAtPoint(e.getPoint());
-			int column = table.columnAtPoint(e.getPoint());
-
-			if (row >= 0 && column >= 0 && SwingUtilities.isRightMouseButton(e)) {
-				table.changeSelection(row, column, false, false);
-			}
-		}
 	}
 }
