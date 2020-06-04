@@ -60,6 +60,7 @@ class ChangeDateAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		int index = archive.getSelectedRow();
+		archive.getSelectionModel().setSelectionInterval(index, index); // force single selection
 		int originalIndex = index;
 		if (index < 0)
 			return;
