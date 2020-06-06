@@ -28,6 +28,7 @@ import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.components.SuggestCellEditor.AutoSuggestEditor;
 import be.witmoca.BEATs.ui.eastpanel.currentqueue.actions.MoveToQueueAction;
+import be.witmoca.BEATs.ui.playlistpanel.actions.PlayListKeyBindings;
 import be.witmoca.BEATs.ui.playlistpanel.actions.PlaylistPopupMenu;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
 
@@ -63,6 +64,9 @@ class PlaylistTable extends SongTable {
 		// When a row is selected and a key is pressed, JTable starts editing.
 		// With this functions, the cell editor gets focus (so blinking cursor, etc..)
 		this.setSurrendersFocusOnKeystroke(true);
+
+		// Register all keyboard shortcuts to be used on the table
+		PlayListKeyBindings.RegisterKeyBindings(this);
 	}
 
 	@Override
