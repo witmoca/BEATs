@@ -30,6 +30,7 @@ import be.witmoca.BEATs.clipboard.TransferableSong;
 import be.witmoca.BEATs.ui.components.EpisodeColumnRenderer;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.components.SongTableCopyOnlyTransferHandler;
+import be.witmoca.BEATs.ui.songcatalog.actions.SongCatalogKeyBindings;
 import be.witmoca.BEATs.ui.songcatalog.actions.SongCatalogPopupMenu;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
 
@@ -60,6 +61,9 @@ class CatalogTable extends SongTable {
 		this.setRowSorter(sorter);
 
 		this.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
+		
+		// Register all keyboard shortcuts to be used on the table
+		SongCatalogKeyBindings.RegisterKeyBindings(this);
 	}
 
 	@Override
