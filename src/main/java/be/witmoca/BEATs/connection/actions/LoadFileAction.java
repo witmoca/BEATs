@@ -15,6 +15,7 @@ import be.witmoca.BEATs.connection.ConnectionException;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
 
 /*
@@ -82,8 +83,21 @@ public class LoadFileAction implements ActionListener {
 			final JFileChooser fc = new JFileChooser();
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileFilter(new BEATsFileFilter());
-			if (this.loadFile == null)
-				fc.setCurrentDirectory(SQLConnection.getDbConn().getCurrentFile());
+			if (this.loadFile == null) {
+				// If no specific file/folder given, use the current opened file/dir
+				File currentFile = SQLConnection.getDbConn().getCurrentFile();
+				if(currentFile != null) {
+					fc.setCurrentDirectory(currentFile);
+				} else {
+					// No current directory? Is there a saved setting from the last time BEATs was open?
+					String lastPath = BEATsSettings.LAST_FILE_PATH.getValue();
+					if(lastPath != null) {
+						fc.setCurrentDirectory(new File(lastPath));
+					} else {
+						fc.setCurrentDirectory(null);
+					}
+				}
+			}
 			else
 				fc.setCurrentDirectory(this.loadFile);
 			if (fc.showOpenDialog(ApplicationWindow.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
@@ -135,6 +149,11 @@ public class LoadFileAction implements ActionListener {
 		if (SQLConnection.isRecoveredDb()) {
 			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("loadFileAction.recoveredMsg"),
 					Lang.getUI("loadFileAction.recovered"), JOptionPane.WARNING_MESSAGE);
+		} else {
+			if(loadFile != null) {
+				BEATsSettings.LAST_FILE_PATH.setValue(loadFile.getAbsolutePath());
+				BEATsSettings.savePreferences();
+			}
 		}
 	}
 }

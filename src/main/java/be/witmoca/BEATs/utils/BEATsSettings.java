@@ -34,7 +34,8 @@ import java.util.Properties;
 */
 public enum BEATsSettings {
 	LANGUAGE,
-	COUNTRY;
+	COUNTRY,
+	LAST_FILE_PATH;
 
 	public String getValue() {
 		return userSettings.getProperty(this.name());
@@ -42,6 +43,7 @@ public enum BEATsSettings {
 
 	public void setValue(String val) {
 		userSettings.setProperty(this.name(), val);
+		
 	}
 
 	// Statics
@@ -77,4 +79,6 @@ public enum BEATsSettings {
 			e.printStackTrace();
 		}
 	}
+	
+	
 }

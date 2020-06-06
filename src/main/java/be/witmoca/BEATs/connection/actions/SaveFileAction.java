@@ -24,6 +24,7 @@ package be.witmoca.BEATs.connection.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.sql.SQLException;
 
 import javax.swing.JFileChooser;
@@ -32,6 +33,7 @@ import javax.swing.JOptionPane;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
 
 public class SaveFileAction implements ActionListener {
@@ -65,7 +67,20 @@ public class SaveFileAction implements ActionListener {
 
 		fc.setAcceptAllFileFilterUsed(false);
 		fc.setFileFilter(new BEATsFileFilter());
-		fc.setCurrentDirectory(SQLConnection.getDbConn().getCurrentFile());
+		
+		// Choose default directory based on currentFile or LastFilePath
+		File currentFile = SQLConnection.getDbConn().getCurrentFile();
+		if(currentFile != null) {
+			fc.setCurrentDirectory(currentFile);
+		} else {
+			// No current directory? Is there a saved setting from the last time BEATs was open?
+			String lastPath = BEATsSettings.LAST_FILE_PATH.getValue();
+			if(lastPath != null) {
+				fc.setCurrentDirectory(new File(lastPath));
+			} else {
+				fc.setCurrentDirectory(null);
+			}
+		}
 
 		if (fc.showSaveDialog(ApplicationWindow.getAPP_WINDOW()) == JFileChooser.APPROVE_OPTION) {
 			String pathToFile = fc.getSelectedFile().getAbsolutePath();
@@ -76,6 +91,8 @@ public class SaveFileAction implements ActionListener {
 			pathToFile += ".beats";
 			try {
 				SQLConnection.getDbConn().saveDatabase(pathToFile, false);
+				BEATsSettings.LAST_FILE_PATH.setValue(pathToFile);
+				BEATsSettings.savePreferences();
 				hasSucceeded = true;
 			} catch (SQLException e1) {
 				JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
