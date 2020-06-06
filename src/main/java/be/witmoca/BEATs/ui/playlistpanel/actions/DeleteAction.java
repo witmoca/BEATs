@@ -41,14 +41,8 @@ class DeleteAction extends AbstractAction {
 
 	protected DeleteAction(SongTable table) {
 		super(Lang.getUI("action.delete"));
-		this.putValue(Action.ACTION_COMMAND_KEY, "Playlist: Delete Song Selection");
 		this.putValue(Action.SMALL_ICON, UiIcon.DELETE.getIcon());
 		connectedTable = table;
-
-		// Attach global hotkey
-		connectedTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
-				this.getValue(Action.ACTION_COMMAND_KEY));
-		connectedTable.getActionMap().put(this.getValue(Action.ACTION_COMMAND_KEY), this);
 	}
 
 	@Override
