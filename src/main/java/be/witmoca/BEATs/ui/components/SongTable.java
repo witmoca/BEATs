@@ -13,7 +13,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 
-import be.witmoca.BEATs.clipboard.TransferableSong;
+import be.witmoca.BEATs.clipboard.TransferableSongList;
 
 /*
 *
@@ -90,7 +90,7 @@ public abstract class SongTable extends JTable {
 		return new Point(cell.x, cell.y + cell.height);
 	}
 
-	abstract public TransferableSong getSelectedSong();
+	abstract public TransferableSongList getSelectedSongs();
 	
 	
 

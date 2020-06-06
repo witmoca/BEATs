@@ -26,7 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
-import be.witmoca.BEATs.clipboard.TransferableSong;
+import be.witmoca.BEATs.clipboard.TransferableSongList;
 import be.witmoca.BEATs.ui.components.EpisodeColumnRenderer;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.components.SongTableCopyOnlyTransferHandler;
@@ -67,19 +67,21 @@ class CatalogTable extends SongTable {
 	}
 
 	@Override
-	public TransferableSong getSelectedSong() {
-		int rowIndex = this.getSelectedRow();
-		if (rowIndex < 0)
+	public TransferableSongList getSelectedSongs() {
+		int indices[] = this.getSelectedRows();
+		if (indices.length == 0)
 			return null;
-		if (this.getRowSorter() != null)
-			rowIndex = this.getRowSorter().convertRowIndexToModel(rowIndex);
 
-		if (!(this.getModel() instanceof CatalogModel) || (rowIndex+1) >= this.getRowCount())
+		TransferableSongList list = new TransferableSongList();
+		if (!(this.getModel() instanceof CatalogModel))
 			return null;
+		
 		CatalogModel model = (CatalogModel) this.getModel();
-
-		// Copy only, so RowID can be anything (0 here)
-		return new TransferableSong((String) model.getValueAt(rowIndex, 1), (String) model.getValueAt(rowIndex, 2),0);
+		for(int i : indices) {
+			// Copy only, so RowID can be anything (0 here); SongID is empty as there are no songIds
+			list.addSong((String) model.getValueAt(i, 1), (String) model.getValueAt(i, 2),0);
+		}
+		return list;
 	}
 
 }

@@ -24,7 +24,7 @@ package be.witmoca.BEATs.ui.playlistpanel;
 
 import javax.swing.table.TableRowSorter;
 
-import be.witmoca.BEATs.clipboard.TransferableSong;
+import be.witmoca.BEATs.clipboard.TransferableSongList;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.components.SuggestCellEditor.AutoSuggestEditor;
 import be.witmoca.BEATs.ui.eastpanel.currentqueue.actions.MoveToQueueAction;
@@ -70,19 +70,27 @@ class PlaylistTable extends SongTable {
 	}
 
 	@Override
-	public TransferableSong getSelectedSong() {
-		int rowIndex = this.getSelectedRow();
-		if (rowIndex < 0)
+	public TransferableSongList getSelectedSongs() {
+		int indices[] = this.getSelectedRows();
+		if (indices.length == 0)
 			return null;
-		if (this.getRowSorter() != null)
-			rowIndex = this.getRowSorter().convertRowIndexToModel(rowIndex);
 
-		if (!(this.getModel() instanceof PlaylistTableModel) || (rowIndex+1) >= this.getRowCount())
+		// protection against copying the empty 'addsong' row
+		if (indices.length == 1 && (indices[0] + 1 >= this.getRowCount()))
+			return null;
+
+		TransferableSongList list = new TransferableSongList();
+
+		if (!(this.getModel() instanceof PlaylistTableModel))
 			return null;
 		PlaylistTableModel model = (PlaylistTableModel) this.getModel();
-
-		return new TransferableSong((String) model.getValueAt(rowIndex, 0), (String) model.getValueAt(rowIndex, 1),
-				model.getRowId(rowIndex));
+		for (int i : indices) {
+			// Skip the addRow row
+			if(i + 1 >= this.getRowCount())
+				continue;
+			list.addSong((String) model.getValueAt(i, 0), (String) model.getValueAt(i, 1), model.getRowId(i));
+		}
+		return list;
 	}
 
 	public String getPlaylistName() {

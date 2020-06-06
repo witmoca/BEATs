@@ -14,7 +14,7 @@ import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import be.witmoca.BEATs.clipboard.TransferableSong;
+import be.witmoca.BEATs.clipboard.TransferableSongList;
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
@@ -42,7 +42,7 @@ import be.witmoca.BEATs.connection.SQLConnection;
 * Created: 2018
 */
 class CCPListModel implements ListModel<String>, DataChangedListener {
-	private final List<TransferableSong> content = new ArrayList<TransferableSong>();
+	private final TransferableSongList content = new TransferableSongList();
 	private final List<ListDataListener> ldlList = new ArrayList<ListDataListener>();
 
 	public CCPListModel() {
@@ -57,7 +57,7 @@ class CCPListModel implements ListModel<String>, DataChangedListener {
 
 	@Override
 	public String getElementAt(int index) {
-		return content.get(index).toString();
+		return content.getHumanReadable(index);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ class CCPListModel implements ListModel<String>, DataChangedListener {
 
 			content.clear();
 			while (rs.next()) {
-				content.add(new TransferableSong(rs.getString(1), rs.getString(2), 0));
+				content.addSong(rs.getString(1), rs.getString(2), 0);
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();

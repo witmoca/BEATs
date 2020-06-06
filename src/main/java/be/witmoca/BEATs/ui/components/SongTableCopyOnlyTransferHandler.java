@@ -68,7 +68,7 @@ public class SongTableCopyOnlyTransferHandler extends TransferHandler {
 	@Override
 	protected Transferable createTransferable(JComponent c) {
 		if (c instanceof SongTable)
-			return ((SongTable) c).getSelectedSong();
+			return ((SongTable) c).getSelectedSongs();
 		return null;
 	}
 

@@ -24,7 +24,7 @@ package be.witmoca.BEATs.ui.archivepanel;
 
 import javax.swing.table.TableRowSorter;
 
-import be.witmoca.BEATs.clipboard.TransferableSong;
+import be.witmoca.BEATs.clipboard.TransferableSongList;
 import be.witmoca.BEATs.ui.archivepanel.actions.ArchiveKeyBindings;
 import be.witmoca.BEATs.ui.archivepanel.actions.ArchivePopupMenu;
 import be.witmoca.BEATs.ui.components.EpisodeColumnRenderer;
@@ -59,18 +59,20 @@ class ArchiveTable extends SongTable {
 	}
 
 	@Override
-	public TransferableSong getSelectedSong() {
-		int rowIndex = this.getSelectedRow();
-		if (rowIndex < 0)
+	public TransferableSongList getSelectedSongs() {
+		int indices[] = this.getSelectedRows();
+		if (indices.length == 0)
 			return null;
-		if (this.getRowSorter() != null)
-			rowIndex = this.getRowSorter().convertRowIndexToModel(rowIndex);
 
 		if (!(this.getModel() instanceof ArchiveTableModel))
 			return null;
 		ArchiveTableModel model = (ArchiveTableModel) this.getModel();
 
-		// Since this is a copy only table, the RowID can be anything (0 here)
-		return new TransferableSong((String) model.getValueAt(rowIndex, 0), (String) model.getValueAt(rowIndex, 1), 0);
+		TransferableSongList list = new TransferableSongList();
+		for(int i : indices) {
+			// Since this is a copy only table, the RowID can be anything (0 here)
+			list.addSong((String) model.getValueAt(i, 0), (String) model.getValueAt(i, 1), 0);
+		}		
+		return list;
 	}
 }

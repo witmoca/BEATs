@@ -40,7 +40,7 @@ class BEATsClipboard extends Clipboard {
 
 	@Override
 	public synchronized void setContents(Transferable contents, ClipboardOwner owner) {
-		if (!(contents.isDataFlavorSupported(TransferableSong.FLAVOR)))
+		if (!(contents.isDataFlavorSupported(TransferableSongList.FLAVOR)))
 			throw new IllegalArgumentException("Dataflavor is not acceptable");
 
 		if (owner != null)

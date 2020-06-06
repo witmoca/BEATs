@@ -11,7 +11,8 @@ import java.sql.SQLException;
 import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
-import be.witmoca.BEATs.clipboard.TransferableSong;
+import be.witmoca.BEATs.clipboard.CCPSong;
+import be.witmoca.BEATs.clipboard.TransferableSongList;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedType;
@@ -54,7 +55,7 @@ class PlaylistTransferHandler extends TransferHandler {
 		DataFlavor[] transferFlavors = support.getDataFlavors();
 
 		for (DataFlavor df : transferFlavors) {
-			if (df.equals(TransferableSong.FLAVOR))
+			if (df.equals(TransferableSongList.FLAVOR))
 				return true;
 		}
 		return false;
@@ -73,14 +74,15 @@ class PlaylistTransferHandler extends TransferHandler {
 		String pName = ((PlaylistTable) support.getComponent()).getPlaylistName();
 
 		try {
-			Object o = support.getTransferable().getTransferData(TransferableSong.FLAVOR);
-			if (!(o instanceof TransferableSong)) {
-				throw new ClassCastException("TransferableSong");
+			Object o = support.getTransferable().getTransferData(TransferableSongList.FLAVOR);
+			if (!(o instanceof TransferableSongList)) {
+				throw new ClassCastException("TransferableSongList");
 			}
-			TransferableSong ts = (TransferableSong) o;
+			TransferableSongList ts = (TransferableSongList) o;
 
-			CommonSQL.addSongInPlaylist(pName, ts.getARTIST(), ts.getSONG(), "");
-
+			for(CCPSong cs : ts) {
+				CommonSQL.addSongInPlaylist(pName, cs.getARTIST(), cs.getSONG(), "");
+			}
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST));
 		} catch (UnsupportedFlavorException | IOException | SQLException e) {
 			e.printStackTrace();
@@ -99,20 +101,22 @@ class PlaylistTransferHandler extends TransferHandler {
 	protected Transferable createTransferable(JComponent c) {
 		if (!(c instanceof PlaylistTable))
 			return null;
-		return ((PlaylistTable) c).getSelectedSong();
+		return ((PlaylistTable) c).getSelectedSongs();
 	}
 
 	@Override
 	protected void exportDone(JComponent source, Transferable data, int action) {
 		if (action == TransferHandler.MOVE) {
 			try {
-				Object o = data.getTransferData(TransferableSong.FLAVOR);
-				if (!(o instanceof TransferableSong)) {
-					throw new ClassCastException("TransferableSong");
+				Object o = data.getTransferData(TransferableSongList.FLAVOR);
+				if (!(o instanceof TransferableSongList)) {
+					throw new ClassCastException("TransferableSongList");
 				}
-				TransferableSong ts = (TransferableSong) o;
+				TransferableSongList ts = (TransferableSongList) o;
 
-				CommonSQL.removeFromSongsInPlaylist(ts.getROWID());
+				for(CCPSong cs : ts) {
+					CommonSQL.removeFromSongsInPlaylist(cs.getROWID());
+				}
 
 				SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST));
 			} catch (SQLException | UnsupportedFlavorException | IOException e) {

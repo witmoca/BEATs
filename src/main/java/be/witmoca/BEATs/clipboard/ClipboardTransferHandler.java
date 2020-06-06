@@ -55,7 +55,7 @@ public class ClipboardTransferHandler extends TransferHandler {
 		DataFlavor[] transferFlavors = support.getDataFlavors();
 
 		for (DataFlavor df : transferFlavors) {
-			if (df.equals(TransferableSong.FLAVOR))
+			if (df.equals(TransferableSongList.FLAVOR))
 				return true;
 		}
 		return false;
@@ -72,16 +72,19 @@ public class ClipboardTransferHandler extends TransferHandler {
 			return false;
 
 		try {
-			Object o = support.getTransferable().getTransferData(TransferableSong.FLAVOR);
-			if (!(o instanceof TransferableSong)) {
-				throw new ClassCastException("TransferableSong");
+			Object o = support.getTransferable().getTransferData(TransferableSongList.FLAVOR);
+			if (!(o instanceof TransferableSongList)) {
+				throw new ClassCastException("TransferableSongList");
 			}
-			TransferableSong ts = (TransferableSong) o;
+			TransferableSongList ts = (TransferableSongList) o;
+			
 			try (PreparedStatement insertCCP = SQLConnection.getDbConn()
 					.prepareStatement("INSERT INTO ccp (Artist, Song) VALUES (?,?)")) {
-				insertCCP.setString(1, ts.getARTIST());
-				insertCCP.setString(2, ts.getSONG());
-				insertCCP.executeUpdate();
+				for(CCPSong cs : ts) {
+					insertCCP.setString(1, cs.getARTIST());
+					insertCCP.setString(2, cs.getSONG());
+					insertCCP.executeUpdate();
+				}
 			}
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.CCP));
 			// If nothing is selected in CCP window, select the top one
@@ -108,6 +111,7 @@ public class ClipboardTransferHandler extends TransferHandler {
 	protected Transferable createTransferable(JComponent c) {
 		if (selected < 0)
 			return null;
+		
 		try (PreparedStatement selRow = SQLConnection.getDbConn()
 				.prepareStatement("SELECT rowid, artist, song FROM CCP ORDER BY rowid ASC")) {
 			ResultSet rs = selRow.executeQuery();
@@ -115,7 +119,9 @@ public class ClipboardTransferHandler extends TransferHandler {
 				if (!rs.next())
 					return null;
 			}
-			return new TransferableSong(rs.getString(2), rs.getString(3), rs.getInt(1));
+			TransferableSongList tsl = new TransferableSongList();
+			tsl.addSong(rs.getString(2), rs.getString(3), rs.getInt(1));
+			return tsl;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -128,20 +134,22 @@ public class ClipboardTransferHandler extends TransferHandler {
 			return;
 
 		try {
-			Object o = data.getTransferData(TransferableSong.FLAVOR);
-			if (!(o instanceof TransferableSong)) {
-				throw new ClassCastException("TransferableSong");
+			Object o = data.getTransferData(TransferableSongList.FLAVOR);
+			if (!(o instanceof TransferableSongList)) {
+				throw new ClassCastException("TransferableSongList");
 			}
-			TransferableSong ts = (TransferableSong) o;
+			TransferableSongList ts = (TransferableSongList) o;
 
 			try (PreparedStatement delRow = SQLConnection.getDbConn()
 					.prepareStatement("DELETE FROM CCP WHERE rowid = ?")) {
-				delRow.setInt(1, ts.getROWID());
-				delRow.executeUpdate();
+				for(CCPSong cs : ts) {
+					delRow.setInt(1, cs.getROWID());
+					delRow.executeUpdate();
+					setSelected(ClipboardTransferHandler.selected > 1 ? ClipboardTransferHandler.selected - 1 : 0);
+				}
 			}
 
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.CCP));
-			setSelected(ClipboardTransferHandler.selected > 1 ? ClipboardTransferHandler.selected - 1 : 0);
 		} catch (SQLException | UnsupportedFlavorException | IOException e) {
 			e.printStackTrace();
 		}
