@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -47,14 +49,13 @@ import be.witmoca.BEATs.utils.Lang;
 * Created: 2018
 */
 public class ShowSettingsDialogAction implements ActionListener {
-	private JComboBox<LocaleWrapper> localePicker = new JComboBox<LocaleWrapper>();
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// Construct and show dialog
 		JPanel content = new JPanel(new GridLayout(0, 1));
 
 		// Construct localePicker
+		JComboBox<LocaleWrapper> localePicker = new JComboBox<LocaleWrapper>();
 		List<LocaleWrapper> locales = new ArrayList<LocaleWrapper>();
 		for (Locale l : Lang.getPossibleLocales()) {
 			if (!l.getLanguage().isEmpty()) {
@@ -86,6 +87,21 @@ public class ShowSettingsDialogAction implements ActionListener {
 			}
 		});
 		content.add(localePicker);
+		
+		// Reset Settings Button
+		JButton resetDefault = new JButton(new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(BEATsSettings.resetDefaultPreferences()) {
+					JOptionPane.showMessageDialog(content, Lang.getUI("settings.resetSucceeded"));
+				} else {
+					JOptionPane.showMessageDialog(content, Lang.getUI("settings.resetFailed"));
+				}
+			}
+		});
+		resetDefault.setText(Lang.getUI("settings.reset"));
+		content.add(resetDefault);
 
 		// Warning label
 		JPanel descr = new JPanel();

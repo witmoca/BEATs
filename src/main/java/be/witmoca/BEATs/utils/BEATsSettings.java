@@ -51,17 +51,8 @@ public enum BEATsSettings {
 	private static Properties userSettings = null;
 
 	public static void loadPreferences() throws IOException {
-		// Load default settings
-		Properties defaultSettings = new Properties();
-		defaultSettings
-				.load(BEATsSettings.class.getClassLoader().getResourceAsStream("Text/DefaultSettings.properties"));
-
-		// Overwrite default settings with system defaults
-		defaultSettings.setProperty(LANGUAGE.name(), Locale.getDefault().getLanguage());
-		defaultSettings.setProperty(COUNTRY.name(), Locale.getDefault().getCountry());
-
 		// Create user settings
-		userSettings = new Properties(defaultSettings);
+		userSettings = new Properties(loadDefaultPreferences());
 		// User preferences exist? Load
 		File userFile = new File(ResourceLoader.USER_SETTINGS_LOC);
 		if (userFile.exists()) {
@@ -80,5 +71,37 @@ public enum BEATsSettings {
 		}
 	}
 	
+	/**
+	 * Reads the default properties from the DefaultSettings file.
+	 * Overwrites the default Locale with the operating system locale
+	 * 
+	 * @return DefaultProperties
+	 * @throws IOException
+	 */
+	private static Properties loadDefaultPreferences() throws IOException {
+		// Load default settings
+		Properties defaultSettings = new Properties();
+		defaultSettings.load(BEATsSettings.class.getClassLoader().getResourceAsStream("Text/DefaultSettings.properties"));
+
+		// Overwrite default settings with system defaults
+		defaultSettings.setProperty(LANGUAGE.name(), Locale.getDefault().getLanguage());
+		defaultSettings.setProperty(COUNTRY.name(), Locale.getDefault().getCountry());
+		return defaultSettings;
+	}
 	
+	/**
+	 * Resets properties to the default state
+	 * 
+	 * @return True if operation succeeded
+	 */
+	public static boolean resetDefaultPreferences() {
+		try {
+			userSettings = new Properties(loadDefaultPreferences());
+			savePreferences();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }
