@@ -23,12 +23,9 @@
 package be.witmoca.BEATs.ui.playlistpanel.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistTableModel;
