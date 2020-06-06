@@ -27,6 +27,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 import be.witmoca.BEATs.clipboard.TransferableSong;
+import be.witmoca.BEATs.ui.artistcatalog.actions.ArtistCatalogKeyBindings;
 import be.witmoca.BEATs.ui.artistcatalog.actions.ArtistCatalogPopupMenu;
 import be.witmoca.BEATs.ui.components.EpisodeColumnRenderer;
 import be.witmoca.BEATs.ui.components.SongTable;
@@ -60,6 +61,9 @@ class CatalogTable extends SongTable {
 		this.setRowSorter(sorter);
 
 		this.getTableHeader().setDefaultRenderer(new MultisortTableHeaderCellRenderer());
+		
+		// Register all keyboard shortcuts to be used on the table
+		ArtistCatalogKeyBindings.RegisterKeyBindings(this);
 	}
 
 	@Override
