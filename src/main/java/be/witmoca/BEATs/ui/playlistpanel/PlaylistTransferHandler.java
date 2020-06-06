@@ -52,6 +52,10 @@ class PlaylistTransferHandler extends TransferHandler {
 		if (!(support.getComponent() instanceof PlaylistTable))
 			return false;
 
+		// Don't import data while editing. This is considered 'weird' by users
+		if(((PlaylistTable) support.getComponent()).isEditing())
+			return false;
+		
 		DataFlavor[] transferFlavors = support.getDataFlavors();
 
 		for (DataFlavor df : transferFlavors) {

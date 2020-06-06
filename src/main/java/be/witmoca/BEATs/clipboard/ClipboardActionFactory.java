@@ -101,8 +101,8 @@ public class ClipboardActionFactory {
 			try {
 				Transferable tr = clipboard.getContents(null);
 				if (tr != null) {
-					th.importData(new TransferSupport(source, tr));
-					clipboard.pasteDone(tr);
+					if(th.importData(new TransferSupport(source, tr)))
+						clipboard.pasteDone(tr);
 				}
 			} catch (IllegalStateException ise) {
 				// Unavailable clipboard

@@ -74,6 +74,10 @@ class PlaylistTable extends SongTable {
 		int indices[] = this.getSelectedRows();
 		if (indices.length == 0)
 			return null;
+		
+		// Don't copy/cut data while editing. This is considered 'weird' by users
+		if(this.isEditing())
+			return null;
 
 		// protection against copying the empty 'addsong' row
 		if (indices.length == 1 && (indices[0] + 1 >= this.getRowCount()))
