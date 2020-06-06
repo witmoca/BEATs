@@ -54,12 +54,7 @@ public abstract class SongTable extends JTable {
 
 		// always fill viewport even when empty
 		this.setFillsViewportHeight(true);
-
-		// This stops the cells from editing without actually clicking the cells (just
-		// typing)
-		// Not a prefered method (especially the property), but no better one exists
-		this.setFocusable(false);
-		this.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		this.setFocusable(true);
 
 		// Table look
 		this.setRowHeight(this.getRowHeight() + 2); // Add 2 pixels to row height so all characters are visible when
