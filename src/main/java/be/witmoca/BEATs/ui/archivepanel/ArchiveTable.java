@@ -25,6 +25,7 @@ package be.witmoca.BEATs.ui.archivepanel;
 import javax.swing.table.TableRowSorter;
 
 import be.witmoca.BEATs.clipboard.TransferableSong;
+import be.witmoca.BEATs.ui.archivepanel.actions.ArchiveKeyBindings;
 import be.witmoca.BEATs.ui.archivepanel.actions.ArchivePopupMenu;
 import be.witmoca.BEATs.ui.components.EpisodeColumnRenderer;
 import be.witmoca.BEATs.ui.components.SongTable;
@@ -52,6 +53,9 @@ class ArchiveTable extends SongTable {
 
 		// Drag and drop logic (no drag and drop, just Cut/Cop/Paste)
 		this.setTransferHandler(new SongTableCopyOnlyTransferHandler());
+		
+		// Register all keyboard shortcuts to be used on the table
+		ArchiveKeyBindings.RegisterKeyBindings(this);
 	}
 
 	@Override
