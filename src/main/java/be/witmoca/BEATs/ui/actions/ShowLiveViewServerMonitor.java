@@ -46,6 +46,7 @@ public class ShowLiveViewServerMonitor implements ActionListener {
 		List<String[]> content = new ArrayList<String[]>();
 		
 		private ServerMonitorModel() {
+			UPDATE_TIMER.setInitialDelay(300);
 			UPDATE_TIMER.start();
 		}
 		
