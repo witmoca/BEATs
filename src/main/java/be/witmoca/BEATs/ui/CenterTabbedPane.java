@@ -28,7 +28,7 @@ import be.witmoca.BEATs.liveview.ConnectionsSetChangedListener;
 import be.witmoca.BEATs.liveview.LiveViewDataClient;
 import be.witmoca.BEATs.ui.archivepanel.ArchivePanel;
 import be.witmoca.BEATs.ui.artistcatalog.ArtistCatalog;
-import be.witmoca.BEATs.ui.liveview.LiveViewPanel;
+import be.witmoca.BEATs.ui.liveview.LiveViewTabbedPane;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistsTabbedPane;
 import be.witmoca.BEATs.ui.songcatalog.SongCatalog;
 import be.witmoca.BEATs.utils.Lang;
@@ -53,7 +53,7 @@ class CenterTabbedPane extends JTabbedPane implements ConnectionsSetChangedListe
 	public void connectionsSetChanged() {
 		// Cleanup inactive tabs
 		for(int tab = this.getTabCount()-1 ; tab >= dynamicTabRange; tab--) {
-			if(! ((LiveViewPanel) this.getTabComponentAt(tab)).isLvdcActive()){
+			if(! ((LiveViewTabbedPane) this.getTabComponentAt(tab)).isLvdcActive()){
 				this.removeTabAt(tab);
 			}
 		}
@@ -61,7 +61,7 @@ class CenterTabbedPane extends JTabbedPane implements ConnectionsSetChangedListe
 		// add  tabs as appropriate
 		for(LiveViewDataClient lvdc : LiveViewDataClient.getConnections()) {
 			if(lvdc.isActive() && this.indexOfTab(lvdc.getName()) == -1){
-				this.addTab(lvdc.getName(), new LiveViewPanel(lvdc));
+				this.addTab(lvdc.getName(), new LiveViewTabbedPane(lvdc));
 			}
 		}
 	}

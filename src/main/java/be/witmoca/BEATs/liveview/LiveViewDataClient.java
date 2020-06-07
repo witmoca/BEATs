@@ -10,13 +10,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.Timer;
+
+import be.witmoca.BEATs.connection.DataChangedListener;
 
 /**
  * @author Witmoca
@@ -34,6 +38,8 @@ public class LiveViewDataClient implements ActionListener {
 	private final ObjectOutputStream oos;
 	private final ObjectInputStream ois;
 	private final AtomicBoolean updatePlaylist = new AtomicBoolean(true);
+	private final Set<DataChangedListener> dcListeners = Collections
+			.synchronizedSet(new HashSet<DataChangedListener>());
 
 	private LiveViewSerializable content = LiveViewSerializable.createEmpty();
 
@@ -86,7 +92,7 @@ public class LiveViewDataClient implements ActionListener {
 	
 	public LiveViewSerializable getContent() {
 		synchronized(content) {
-			return this.getContent().clone();
+			return content.clone();
 		}
 	}
 	
@@ -119,10 +125,28 @@ public class LiveViewDataClient implements ActionListener {
 	}
 	
 	public static void fireConnectionsSetChanged() {
+		List<ConnectionsSetChangedListener> notifylist = new ArrayList<ConnectionsSetChangedListener>();		
 		synchronized(cscListeners) {
-			for(ConnectionsSetChangedListener cscl : cscListeners) {
-				cscl.connectionsSetChanged();
-			}
+			notifylist.addAll(cscListeners);
+		}
+		for(ConnectionsSetChangedListener cscl : notifylist) {
+			cscl.connectionsSetChanged();
+		}
+	}
+	
+	public void addDataChangedListener(DataChangedListener dcl) {
+		synchronized(dcListeners) {
+			dcListeners.add(dcl);
+		}
+	}
+	
+	public void fireDataChanged() {
+		List<DataChangedListener> notifylist = new ArrayList<DataChangedListener>();
+		synchronized(dcListeners) {
+			notifylist.addAll(dcListeners);
+		}
+		for(DataChangedListener dcl : notifylist) {
+			dcl.tableChanged();
 		}
 	}
 
@@ -147,7 +171,7 @@ public class LiveViewDataClient implements ActionListener {
 				if (LiveViewMessage.BEATS_DATA_REQUEST_FULL.equals(ois.readObject())) {
 					synchronized (content) {
 						content = (LiveViewSerializable) ois.readObject();
-						System.out.println(content.getPlaylists());
+						fireDataChanged();
 					}
 				}
 				updatePlaylist.set(false);

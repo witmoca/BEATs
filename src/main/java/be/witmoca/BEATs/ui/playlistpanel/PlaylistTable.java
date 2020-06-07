@@ -32,7 +32,7 @@ import be.witmoca.BEATs.ui.playlistpanel.actions.PlayListKeyBindings;
 import be.witmoca.BEATs.ui.playlistpanel.actions.PlaylistPopupMenu;
 import be.witmoca.BEATs.ui.t4j.ButtonColumn;
 
-class PlaylistTable extends SongTable {
+public class PlaylistTable extends SongTable {
 	private static final long serialVersionUID = 1L;
 	private final String playlistName;
 

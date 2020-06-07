@@ -62,6 +62,10 @@ public class LiveViewSerializable implements Serializable, Cloneable {
 	public List<String> getPlaylists() {
 		return playlistNames;
 	}
+	
+	public List<PlaylistEntry> getPlaylistContents(String playlistName){
+		return content.get(playlistName);
+	}
 
 	@Override
 	public LiveViewSerializable clone() {
