@@ -20,7 +20,7 @@
 * File: PlaylistsTabbedPane.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui;
+package be.witmoca.BEATs.ui.playlistpanel;
 
 import java.sql.SQLException;
 import java.util.EnumSet;
@@ -31,9 +31,8 @@ import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistPanel;
 
-class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener {
+public class PlaylistsTabbedPane extends JTabbedPane implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
 
 	public PlaylistsTabbedPane() {

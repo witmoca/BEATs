@@ -26,6 +26,7 @@ import javax.swing.JTabbedPane;
 
 import be.witmoca.BEATs.ui.archivepanel.ArchivePanel;
 import be.witmoca.BEATs.ui.artistcatalog.ArtistCatalog;
+import be.witmoca.BEATs.ui.playlistpanel.PlaylistsTabbedPane;
 import be.witmoca.BEATs.ui.songcatalog.SongCatalog;
 import be.witmoca.BEATs.utils.Lang;
 
