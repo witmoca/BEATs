@@ -74,7 +74,7 @@ public class SaveFileAction implements ActionListener {
 			fc.setCurrentDirectory(currentFile);
 		} else {
 			// No current directory? Is there a saved setting from the last time BEATs was open?
-			String lastPath = BEATsSettings.LAST_FILE_PATH.getValue();
+			String lastPath = BEATsSettings.LAST_FILE_PATH.getStringValue();
 			if(lastPath != null) {
 				fc.setCurrentDirectory(new File(lastPath));
 			} else {
@@ -91,7 +91,7 @@ public class SaveFileAction implements ActionListener {
 			pathToFile += ".beats";
 			try {
 				SQLConnection.getDbConn().saveDatabase(pathToFile, false);
-				BEATsSettings.LAST_FILE_PATH.setValue(pathToFile);
+				BEATsSettings.LAST_FILE_PATH.setStringValue(pathToFile);
 				BEATsSettings.savePreferences();
 				hasSucceeded = true;
 			} catch (SQLException e1) {

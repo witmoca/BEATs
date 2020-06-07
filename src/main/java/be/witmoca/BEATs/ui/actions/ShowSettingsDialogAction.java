@@ -64,7 +64,7 @@ public class ShowSettingsDialogAction implements ActionListener {
 		}
 		localePicker.setModel(new DefaultComboBoxModel<LocaleWrapper>(locales.toArray(new LocaleWrapper[0])));
 		// Set current as selected
-		Locale currentL = new Locale(BEATsSettings.LANGUAGE.getValue(), BEATsSettings.COUNTRY.getValue());
+		Locale currentL = new Locale(BEATsSettings.LANGUAGE.getStringValue(), BEATsSettings.COUNTRY.getStringValue());
 		for (LocaleWrapper lw : locales) {
 			if (lw.getLocale().equals(currentL))
 				localePicker.getModel().setSelectedItem(lw);
@@ -81,8 +81,8 @@ public class ShowSettingsDialogAction implements ActionListener {
 			@Override
 			public void contentsChanged(ListDataEvent e) {
 				Locale l = ((LocaleWrapper) localePicker.getSelectedItem()).getLocale();
-				BEATsSettings.LANGUAGE.setValue(l.getLanguage());
-				BEATsSettings.COUNTRY.setValue(l.getCountry());
+				BEATsSettings.LANGUAGE.setStringValue(l.getLanguage());
+				BEATsSettings.COUNTRY.setStringValue(l.getCountry());
 				BEATsSettings.savePreferences();
 			}
 		});

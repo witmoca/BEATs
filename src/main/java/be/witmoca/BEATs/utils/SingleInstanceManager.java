@@ -37,7 +37,7 @@ import javax.swing.SwingUtilities;
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
 
 public class SingleInstanceManager implements Runnable {
-	private static final int PORT = 41526;
+	private static final int PORT = BEATsSettings.LOCAL_PORT.getIntValue();
 	private final ServerSocket ss;
 
 	public static boolean start(File loadFile) {

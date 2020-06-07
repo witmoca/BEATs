@@ -33,6 +33,7 @@ import javax.swing.SwingUtilities;
 
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
+import be.witmoca.BEATs.liveview.LiveViewServer;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.ResourceLoader;
 import be.witmoca.BEATs.utils.SingleInstanceManager;
@@ -47,13 +48,16 @@ public class ApplicationManager {
 		try {
 			// Initialise Files & folders
 			ResourceLoader.initFileTree();
+			// Load (and install) userpreferences
+			BEATsSettings.loadPreferences();
 			// Check if single instance
 			if (!SingleInstanceManager.start(loadFile))
 				return; // Already running
 			// Register a new standard output
 			ResourceLoader.registerStandardErrorLog();
-			// Load (and install) userpreferences
-			BEATsSettings.loadPreferences();
+			// Startup LiveShare server
+			if(BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue())
+				LiveViewServer.startServer();
 		} catch (IOException e) {
 			fatalError(e);
 			System.exit(-1);

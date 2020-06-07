@@ -35,16 +35,37 @@ import java.util.Properties;
 public enum BEATsSettings {
 	LANGUAGE,
 	COUNTRY,
-	LAST_FILE_PATH;
+	LAST_FILE_PATH,
+	LOCAL_PORT,
+	LIVESHARE_PORT,
+	LIVESHARE_SERVER_ENABLED,
+	LIVESHARE_CLIENT_NAME_LIST,
+	LIVESHARE_CLIENT_IP_LIST,
+	LIVESHARE_CLIENT_PORT_LIST,
+	LIVESHARE_SERVER_MAXCONNECTIONS;
+	
 
-	public String getValue() {
+	public String getStringValue() {
 		return userSettings.getProperty(this.name());
 	}
 
-	public void setValue(String val) {
+	public void setStringValue(String val) {
 		userSettings.setProperty(this.name(), val);
-		
 	}
+	
+	public int getIntValue() {
+		return Integer.parseInt(userSettings.getProperty(this.name()));
+	}
+	
+	/**
+	 * Warning: defaults to false if unreadable/not a boolean
+	 * @return boolean value of property
+	 */
+	public boolean getBoolValue() {
+		return Boolean.parseBoolean(userSettings.getProperty(this.name()));
+	}
+	
+	
 
 	// Statics
 
@@ -60,7 +81,7 @@ public enum BEATsSettings {
 		}
 
 		// Install settings
-		Locale.setDefault(new Locale(LANGUAGE.getValue(), COUNTRY.getValue()));
+		Locale.setDefault(new Locale(LANGUAGE.getStringValue(), COUNTRY.getStringValue()));
 	}
 
 	public static void savePreferences() {

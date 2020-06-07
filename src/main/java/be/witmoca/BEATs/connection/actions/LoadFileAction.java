@@ -90,7 +90,7 @@ public class LoadFileAction implements ActionListener {
 					fc.setCurrentDirectory(currentFile);
 				} else {
 					// No current directory? Is there a saved setting from the last time BEATs was open?
-					String lastPath = BEATsSettings.LAST_FILE_PATH.getValue();
+					String lastPath = BEATsSettings.LAST_FILE_PATH.getStringValue();
 					if(lastPath != null) {
 						fc.setCurrentDirectory(new File(lastPath));
 					} else {
@@ -151,7 +151,7 @@ public class LoadFileAction implements ActionListener {
 					Lang.getUI("loadFileAction.recovered"), JOptionPane.WARNING_MESSAGE);
 		} else {
 			if(loadFile != null) {
-				BEATsSettings.LAST_FILE_PATH.setValue(loadFile.getAbsolutePath());
+				BEATsSettings.LAST_FILE_PATH.setStringValue(loadFile.getAbsolutePath());
 				BEATsSettings.savePreferences();
 			}
 		}
