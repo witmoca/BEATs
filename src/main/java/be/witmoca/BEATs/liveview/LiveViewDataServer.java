@@ -121,9 +121,15 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 		connectionCount.decrementAndGet();
 	}
 	
-	public String getHostName() {
-		if(clientSocket_local != null && clientSocket_local.getInetAddress() != null && !clientSocket_local.isClosed())
+	public String getClientHostName() {
+		if(clientSocket_local != null && clientSocket_local.getInetAddress() != null)
 			return this.clientSocket_local.getInetAddress().getHostName();
+		return "-Not Connected-";
+	}
+	
+	public String getClientIp() {
+		if(clientSocket_local != null && clientSocket_local.getInetAddress() != null && !clientSocket_local.isClosed())
+			return this.clientSocket_local.getInetAddress().getHostAddress();
 		return "-Not Connected-";
 	}
 
@@ -134,5 +140,12 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 	
 	private String getDataSerialized() {
 		return "Playlist data";
+	}
+
+	/**
+	 * @return the connections
+	 */
+	public static Set<LiveViewDataServer> getConnections() {
+		return connections;
 	}
 }

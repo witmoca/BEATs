@@ -40,6 +40,7 @@ import be.witmoca.BEATs.connection.actions.SaveFileAction;
 import be.witmoca.BEATs.ui.actions.*;
 import be.witmoca.BEATs.ui.genremanager.GenreManagerShowAction;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
+import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.ResourceLoader;
 import be.witmoca.BEATs.utils.UiIcon;
@@ -112,6 +113,18 @@ class ApplicationMenubar extends JMenuBar {
 		toolsMenu.add(settings);
 
 		this.add(toolsMenu);
+		
+		// LIVE VIEW
+		JMenu liveViewMenu = new JMenu(Lang.getUI("menu.liveview"));
+		fileMenu.setMnemonic(KeyEvent.VK_L);
+		
+		JMenuItem serverMonitor = new JMenuItem(Lang.getUI("menu.liveview.servermonitor"));
+		serverMonitor.setMnemonic(KeyEvent.VK_S);
+		serverMonitor.addActionListener(new ShowLiveViewServerMonitor());
+		serverMonitor.setEnabled(BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue());
+		liveViewMenu.add(serverMonitor);
+		
+		this.add(liveViewMenu);
 
 		// HELP
 		JMenu helpMenu = new JMenu(Lang.getUI("menu.help"));
