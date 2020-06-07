@@ -10,10 +10,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,8 +24,10 @@ import javax.swing.Timer;
  */
 public class LiveViewDataClient implements ActionListener {
 	private static final int CONN_TIMEOUT_MS = 10 * 1000;
-	protected static final Set<LiveViewDataClient> connections = Collections
+	private static final Set<LiveViewDataClient> connections = Collections
 			.synchronizedSet(new HashSet<LiveViewDataClient>());
+	private static final Set<ConnectionsSetChangedListener> cscListeners = Collections
+			.synchronizedSet(new HashSet<ConnectionsSetChangedListener>());
 
 	private final Timer UPDATE_TIMER = new Timer((int) TimeUnit.SECONDS.toMillis(1), this);
 	private final Socket s;
@@ -53,6 +53,7 @@ public class LiveViewDataClient implements ActionListener {
 		if (!isClientRunning(address)) {
 			try {
 				connections.add(new LiveViewDataClient(new Socket(address, port)));
+				fireConnectionsSetChanged();
 			} catch (IOException e) {
 			}
 		}
@@ -64,7 +65,6 @@ public class LiveViewDataClient implements ActionListener {
 	 * @return True if a client for this address is already running
 	 */
 	public static boolean isClientRunning(InetAddress address) {
-		cleanupConnections();
 		synchronized (connections) {
 			// check if an lvdc exists for this address
 			for (LiveViewDataClient lvdc : connections) {
@@ -75,22 +75,13 @@ public class LiveViewDataClient implements ActionListener {
 		}
 		return false;
 	}
-	
-	private static void cleanupConnections() {
-		synchronized(connections) {
-			// create list of LVDC's to delete
-			List<LiveViewDataClient> gcList = new ArrayList<LiveViewDataClient>();
-			for (LiveViewDataClient lvdc : connections) {
-				if(lvdc.s.isClosed()) {
-					gcList.add(lvdc);
-				}
-			}
-			connections.removeAll(gcList);
-		}
-	}
 
 	public InetAddress getInetAddress() {
 		return s.getInetAddress();
+	}
+	
+	public String getName() {
+		return this.getInetAddress().getHostName();
 	}
 	
 	public LiveViewSerializable getContent() {
@@ -98,14 +89,46 @@ public class LiveViewDataClient implements ActionListener {
 			return this.getContent().clone();
 		}
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (s.isClosed()) {
-			// stop this client
+	
+	public static Set<LiveViewDataClient> getConnections() {
+		Set<LiveViewDataClient> conset = new HashSet<LiveViewDataClient>();
+		synchronized(connections) {
+			conset.addAll(connections);
+		}
+		return conset;
+	}
+	
+	/**
+	 * Check if this LVDC is active (and cleanup if it isn't)
+	 * @return true if active
+	 */
+	public boolean isActive() {
+		if(s.isClosed() && UPDATE_TIMER.isRunning()) {
 			UPDATE_TIMER.stop();
 			UPDATE_TIMER.removeActionListener(this);
 			connections.remove(this);
+			fireConnectionsSetChanged();
+		}
+		return !s.isClosed() ;
+	}
+	
+	public static void addConnectionsSetChangedListener(ConnectionsSetChangedListener cscl) {
+		synchronized(cscListeners) {
+			cscListeners.add(cscl);
+		}
+	}
+	
+	public static void fireConnectionsSetChanged() {
+		synchronized(cscListeners) {
+			for(ConnectionsSetChangedListener cscl : cscListeners) {
+				cscl.connectionsSetChanged();
+			}
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (!this.isActive()) {
 			return;
 		}
 		try {
