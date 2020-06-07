@@ -3,11 +3,14 @@
  */
 package be.witmoca.BEATs.ui.components;
 
+import java.io.Serializable;
+
 /**
  * @author Witmoca
  *
  */
-public class PlaylistEntry {
+public class PlaylistEntry implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private final String ARTIST;
 	private final String SONG;
 	private final String COMMENT;

@@ -111,7 +111,6 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 		} catch (ClassNotFoundException e) {
 		}
 		// Close datastream when done or error occurred
-		System.out.println("Connection closed: " + serverSocket.getLocalPort());
 		connections.remove(this);
 		connectionCount.decrementAndGet();
 	}
