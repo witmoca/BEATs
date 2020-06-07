@@ -34,6 +34,7 @@ import javax.swing.table.AbstractTableModel;
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
+import be.witmoca.BEATs.ui.components.PlaylistEntry;
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.StringUtils;
@@ -160,38 +161,6 @@ public class PlaylistTableModel extends AbstractTableModel implements DataChange
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.SONGS_IN_PLAYLIST));
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-	}
-
-	private static class PlaylistEntry {
-		private final String ARTIST;
-		private final String SONG;
-		private final String COMMENT;
-		private final int ROWID;
-
-		PlaylistEntry(int rowid, String aRTIST, String sONG, String cOMMENT) {
-			super();
-			ARTIST = aRTIST;
-			SONG = sONG;
-			COMMENT = cOMMENT;
-			ROWID = rowid;
-		}
-
-		String getColumn(int i) {
-			switch (i) {
-			case 0:
-				return this.ARTIST;
-			case 1:
-				return this.SONG;
-			case 2:
-				return this.COMMENT;
-			default:
-				return null;
-			}
-		}
-
-		public int getROWID() {
-			return ROWID;
 		}
 	}
 }

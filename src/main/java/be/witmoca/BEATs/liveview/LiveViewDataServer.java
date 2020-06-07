@@ -3,11 +3,9 @@
  */
 package be.witmoca.BEATs.liveview;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -74,61 +72,58 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 			serverSocket.setSoTimeout(CONN_TIMEOUT_MS);
 			// socket object to receive incoming client requests
 			try (Socket clientSocket = serverSocket.accept()) {
-				System.out.println("Connection Opened: " + clientSocket.getLocalPort());
 				// keep track of the clienSocket (for metadata)
 				this.clientSocket_local = clientSocket;
 				// Set timeout
 				clientSocket.setSoTimeout(CONN_TIMEOUT_MS);
 				SQLConnection.getDbConn().addDataChangedListener(this, DataChangedType.PLAYLIST_DATA_OPTS);
-				try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-						BufferedWriter out = new BufferedWriter(
-								new OutputStreamWriter(clientSocket.getOutputStream()))) {
-
-					while (!clientSocket.isClosed()) {
-						System.out.println("outputloop: " + clientSocket.getLocalPort());
-						// Catch incoming connection requests
-						
-						String request = in.readLine();
-						// Stop execution on timeout
-						if(request == null)
-							break;
-						switch (request) {
-							case "<BEATS_DATA_REQUEST_FULL>":
-								out.write("<BEATS_DATA_REQUEST_FULL>");
-								out.newLine();
-								out.write(getDataSerialized());
-								out.newLine();
-								out.flush();
-								playlistChanged.set(false);
+				try (ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream())){
+					// ObjectOutputStream before Input! Flush oos first before constructing ois! (see JavaDoc)
+					oos.flush();
+					try(ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream())){
+						while (!clientSocket.isClosed()) {
+							// Catch incoming connection requests
+							LiveViewMessage request = (LiveViewMessage) ois.readObject();
+							// Stop execution on timeout
+							if(request == null)
 								break;
-							case "<BEATS_DATA_CHECK_CHANGED>":
-								out.write("<BEATS_DATA_CHECK_CHANGED>");
-								out.newLine();
-								out.write(Boolean.toString(playlistChanged.get()));
-								out.newLine();
-								out.flush();
+							switch (request) {
+								case BEATS_DATA_REQUEST_FULL:
+									oos.writeObject(LiveViewMessage.BEATS_DATA_REQUEST_FULL);
+									oos.writeObject(LiveViewSerializable.createSnapShot());
+									oos.flush();
+									playlistChanged.set(false);
+									break;
+								case BEATS_DATA_CHECK_CHANGED:
+									oos.writeObject(LiveViewMessage.BEATS_DATA_CHECK_CHANGED);
+									oos.writeBoolean(playlistChanged.get());
+									oos.flush();
+									break;
+							default:
 								break;							
+							}
 						}
 					}
 				}
 			}
 		} catch (SocketException e1) {
 		} catch (IOException e) {
+		} catch (ClassNotFoundException e) {
 		}
 		// Close datastream when done or error occurred
 		System.out.println("Connection closed: " + serverSocket.getLocalPort());
 		connections.remove(this);
 		connectionCount.decrementAndGet();
 	}
-	
+
 	public String getClientHostName() {
-		if(clientSocket_local != null && clientSocket_local.getInetAddress() != null)
+		if (clientSocket_local != null && clientSocket_local.getInetAddress() != null)
 			return this.clientSocket_local.getInetAddress().getHostName();
 		return "-Not Connected-";
 	}
-	
+
 	public String getClientIp() {
-		if(clientSocket_local != null && clientSocket_local.getInetAddress() != null && !clientSocket_local.isClosed())
+		if (clientSocket_local != null && clientSocket_local.getInetAddress() != null && !clientSocket_local.isClosed())
 			return this.clientSocket_local.getInetAddress().getHostAddress();
 		return "-Not Connected-";
 	}
@@ -136,10 +131,6 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 	@Override
 	public void tableChanged() {
 		playlistChanged.set(true);
-	}
-	
-	private String getDataSerialized() {
-		return "Playlist data";
 	}
 
 	/**
