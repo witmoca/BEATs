@@ -36,12 +36,13 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.Timer;
 
+import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.ResourceLoader;
 
 class BackupHandler implements ActionListener {
-	private static final int DELAY = (int) TimeUnit.MINUTES.toMillis(5); // 5 minutes
-	private static final int MAX_BACKUP_COUNT = 20; // Max 20 files representing a backup
-	private static final int MAX_BACKUP_SIZE = 1024 * 1024 * 50; // Max 50Mb total space used by the backups
+	private static final int DELAY = (int) TimeUnit.MINUTES.toMillis(BEATsSettings.BACKUPS_TIMEBETWEEN.getIntValue()); // 5 minutes
+	private static final int MAX_BACKUP_COUNT = BEATsSettings.BACKUPS_MAXAMOUNT.getIntValue(); // Max 20 files representing a backup
+	private static final int MAX_BACKUP_SIZE = 1024 * 1024 * BEATsSettings.BACKUPS_MAXSIZE.getIntValue(); // Max 50Mb total space used by the backups
 	private static final Timer BACKUP_TIMER = new Timer(DELAY, new BackupHandler());
 	private static final String BACKUP_DIR = ResourceLoader.BACKUP_DIR;
 
@@ -88,7 +89,9 @@ class BackupHandler implements ActionListener {
 	}
 
 	static void StartBackups() {
-		BACKUP_TIMER.start();
+		// Only start if enabled
+		if(BEATsSettings.BACKUPS_ENABLED.getBoolValue())
+			BACKUP_TIMER.start();
 	}
 
 	static void StopBackups() {
