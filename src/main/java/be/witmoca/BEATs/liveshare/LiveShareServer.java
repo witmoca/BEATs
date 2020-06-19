@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.liveview;
+package be.witmoca.BEATs.liveshare;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -16,17 +16,17 @@ import be.witmoca.BEATs.utils.BEATsSettings;
  * @author Witmoca
  *
  */
-public class LiveViewServer implements Runnable {
+public class LiveShareServer implements Runnable {
 	private static final int PORT = BEATsSettings.LIVESHARE_PORT.getIntValue();
-	private static LiveViewServer currentServer;
+	private static LiveShareServer currentServer;
 	private final ServerSocket serverSocket;
 
-	private LiveViewServer(ServerSocket socket) {
+	private LiveShareServer(ServerSocket socket) {
 		this.serverSocket = socket;
 	}
 
 	public static void startServer() throws IOException {
-		currentServer = new LiveViewServer(new ServerSocket(PORT, 50)); // Do not specifiy a host ip here! => The server should be visible on all Networks on the device
+		currentServer = new LiveShareServer(new ServerSocket(PORT, 50)); // Do not specifiy a host ip here! => The server should be visible on all Networks on the device
 		(new Thread(currentServer)).start();
 	}
 	
@@ -50,10 +50,10 @@ public class LiveViewServer implements Runnable {
 				oos.flush();
 				try(ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream())){
 					// Catch incoming connection requests
-					if (ois.readObject().equals(LiveViewMessage.BEATS_CONNECT_REQUEST)) {
+					if (ois.readObject().equals(LiveShareMessage.BEATS_CONNECT_REQUEST)) {
 						// start new connection handler and return the port for the client to connect to
-						int port = LiveViewDataServer.startNewDataServer();
-						oos.writeObject(LiveViewMessage.BEATS_CONNECT_ACCEPTED);
+						int port = LiveShareDataServer.startNewDataServer();
+						oos.writeObject(LiveShareMessage.BEATS_CONNECT_ACCEPTED);
 						oos.writeInt(port);
 						oos.flush();
 					}

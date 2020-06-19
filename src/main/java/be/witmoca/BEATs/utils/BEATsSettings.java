@@ -84,7 +84,7 @@ public enum BEATsSettings {
 	private static Properties userSettings = null;
 
 	public static void loadPreferences() throws IOException {
-		// Create user settings
+		// Create user setting defaults (defaults are not saved)
 		userSettings = new Properties(loadDefaultPreferences());
 		// User preferences exist? Load
 		File userFile = new File(ResourceLoader.USER_SETTINGS_LOC);

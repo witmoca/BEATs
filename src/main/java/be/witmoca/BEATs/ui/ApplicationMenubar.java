@@ -115,16 +115,16 @@ class ApplicationMenubar extends JMenuBar {
 		this.add(toolsMenu);
 		
 		// LIVE VIEW
-		JMenu liveViewMenu = new JMenu(Lang.getUI("menu.liveview"));
+		JMenu LiveShareMenu = new JMenu(Lang.getUI("menu.liveshare"));
 		fileMenu.setMnemonic(KeyEvent.VK_L);
 		
-		JMenuItem serverMonitor = new JMenuItem(Lang.getUI("menu.liveview.servermonitor"));
+		JMenuItem serverMonitor = new JMenuItem(Lang.getUI("menu.liveshare.servermonitor"));
 		serverMonitor.setMnemonic(KeyEvent.VK_S);
-		serverMonitor.addActionListener(new ShowLiveViewServerMonitor());
+		serverMonitor.addActionListener(new ShowLiveShareServerMonitor());
 		serverMonitor.setEnabled(BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue());
-		liveViewMenu.add(serverMonitor);
+		LiveShareMenu.add(serverMonitor);
 		
-		this.add(liveViewMenu);
+		this.add(LiveShareMenu);
 
 		// HELP
 		JMenu helpMenu = new JMenu(Lang.getUI("menu.help"));

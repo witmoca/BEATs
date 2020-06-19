@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.liveview.actions;
+package be.witmoca.BEATs.ui.liveshare.actions;
 
 import java.awt.event.KeyEvent;
 
@@ -16,7 +16,7 @@ import be.witmoca.BEATs.ui.components.SongTable;
  * @author Witmoca
  *
  */
-public class LiveViewKeyBindings {
+public class LiveShareKeyBindings {
 	public static void RegisterKeyBindings(SongTable table) {
 		InputMap im = table.getInputMap();
 		ActionMap am = table.getActionMap();

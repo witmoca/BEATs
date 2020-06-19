@@ -15,7 +15,7 @@ import javax.swing.JTable;
 import javax.swing.Timer;
 import javax.swing.table.AbstractTableModel;
 
-import be.witmoca.BEATs.liveview.LiveViewDataServer;
+import be.witmoca.BEATs.liveshare.LiveShareDataServer;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
@@ -24,7 +24,7 @@ import be.witmoca.BEATs.utils.Lang;
  * @author Witmoca
  *
  */
-public class ShowLiveViewServerMonitor implements ActionListener {
+public class ShowLiveShareServerMonitor implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -33,7 +33,7 @@ public class ShowLiveViewServerMonitor implements ActionListener {
 		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
 				new JScrollPane(monitor, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-				Lang.getUI("menu.liveview.servermonitor"), JOptionPane.PLAIN_MESSAGE);
+				Lang.getUI("menu.liveshare.servermonitor"), JOptionPane.PLAIN_MESSAGE);
 	}
 	
 	
@@ -58,9 +58,9 @@ public class ShowLiveViewServerMonitor implements ActionListener {
 		
 		private void updateData() {
 			content.clear();
-			LiveViewDataServer[] cons = LiveViewDataServer.getConnections();
+			LiveShareDataServer[] cons = LiveShareDataServer.getConnections();
 
-			for(LiveViewDataServer lvds : cons) {
+			for(LiveShareDataServer lvds : cons) {
 				content.add(new String[]{lvds.getClientHostName(), lvds.getClientIp()});
 			}
 			this.fireTableDataChanged();

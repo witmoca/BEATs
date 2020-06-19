@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.liveview;
+package be.witmoca.BEATs.liveshare;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,17 +23,17 @@ import be.witmoca.BEATs.utils.BEATsSettings;
  * @author Witmoca
  *
  */
-public class LiveViewClient implements ActionListener {
+public class LiveShareClient implements ActionListener {
 	private static final int CONN_TRY_TIMEOUT = 500; // try to connect for X milliseconds to every server
 	private static final int CONN_TIMEOUT_MS = 10 * 1000; // timeout between messages
 	
-	private static LiveViewClient lvc;
+	private static LiveShareClient lvc;
 	
 	private final Timer UPDATE_TIMER = new Timer((int) TimeUnit.SECONDS.toMillis(2), this);
 	private final List<InetSocketAddress> watchServers = new ArrayList<InetSocketAddress>();
 
 	
-	private LiveViewClient()
+	private LiveShareClient()
 	{
 		// TODO better saving of IP & PORT
 		// TODO save HOSTNAME instead of IP & resolve hostname
@@ -46,7 +46,7 @@ public class LiveViewClient implements ActionListener {
 	}
 
 	public static void startClient() {
-		lvc = new LiveViewClient();
+		lvc = new LiveShareClient();
 	}
 	
 	public static void stopClient() {
@@ -56,8 +56,8 @@ public class LiveViewClient implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		for (InetSocketAddress isa : watchServers) {
-			// for every server that can be resolved and has no LiveViewDataClient associated
-			if (isa.isUnresolved() == false && LiveViewDataClient.isClientRunning(isa.getAddress()) == false) {
+			// for every server that can be resolved and has no LiveShareDataClient associated
+			if (isa.isUnresolved() == false && LiveShareDataClient.isClientRunning(isa.getAddress()) == false) {
 				try (Socket s = new Socket()) {
 					s.connect(isa, CONN_TRY_TIMEOUT);
 					s.setSoTimeout(CONN_TIMEOUT_MS);
@@ -67,12 +67,12 @@ public class LiveViewClient implements ActionListener {
 						// ObjectOutputStream before Input! Flush oos first before constructing ois!
 						// (see JavaDoc)
 						oos.flush();
-						oos.writeObject(LiveViewMessage.BEATS_CONNECT_REQUEST);
+						oos.writeObject(LiveShareMessage.BEATS_CONNECT_REQUEST);
 						oos.flush();
 						try (ObjectInputStream ois = new ObjectInputStream(s.getInputStream())) {
 							Object o = ois.readObject();
-							if (o instanceof LiveViewMessage && LiveViewMessage.BEATS_CONNECT_ACCEPTED.equals(o)) {
-								LiveViewDataClient.startNewDataClient(isa.getAddress(), ois.readInt());
+							if (o instanceof LiveShareMessage && LiveShareMessage.BEATS_CONNECT_ACCEPTED.equals(o)) {
+								LiveShareDataClient.startNewDataClient(isa.getAddress(), ois.readInt());
 							}
 						}
 					}

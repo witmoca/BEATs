@@ -17,61 +17,74 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistsTabbedPane.java
+* File: PlaylistTableModel.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.liveview;
+package be.witmoca.BEATs.ui.liveshare;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JTabbedPane;
+import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.liveview.LiveViewDataClient;
+import be.witmoca.BEATs.liveshare.LiveShareDataClient;
+import be.witmoca.BEATs.ui.components.PlaylistEntry;
+import be.witmoca.BEATs.utils.Lang;
 
-public class LiveViewTabbedPane extends JTabbedPane implements DataChangedListener {
+public class LiveShareTableModel extends AbstractTableModel implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
-	private final LiveViewDataClient lvdc;
+	private static final String COLUMN_NAME[] = { Lang.getUI("col.artist"), Lang.getUI("col.song"),
+			Lang.getUI("col.comment")};
 	
-	public LiveViewTabbedPane(LiveViewDataClient lvdc) {
-		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
+	private final List<PlaylistEntry> playlistList = new ArrayList<PlaylistEntry>();
+	private final String playlistName;
+	private final LiveShareDataClient lvdc;
+	
+	LiveShareTableModel(String playlistName, LiveShareDataClient lvdc) {
+		super();
+		this.playlistName = playlistName;
 		this.lvdc = lvdc;
-
-		this.tableChanged();
+		
+		tableChanged();
 		lvdc.addDataChangedListener(this);
 	}
 
 	@Override
 	public void tableChanged() {
-		List<String> playlistNames = this.lvdc.getContent().getPlaylists();
-
-		// Remove deleted tabs 
-		for(int tabIndex = this.getTabCount() - 1; tabIndex >= 0 ; tabIndex--) {
-			String tabName = this.getTitleAt(tabIndex);
-			if(!playlistNames.contains(tabName)){
-				this.remove(tabIndex);
-			} 
-		}
+		playlistList.clear();
+		playlistList.addAll(lvdc.getContent().getPlaylistContents(playlistName));
 		
-		// Add new tabs in the correct places
-		for(int tabIndex = 0; tabIndex < playlistNames.size(); tabIndex++) {
-			
-			String tabName = tabIndex < this.getTabCount() ? this.getTitleAt(tabIndex) : "";
-			String expectedName = playlistNames.get(tabIndex);
-			if(!expectedName.equals(tabName)){
-				this.insertTab(expectedName, null, new LiveViewPanel(expectedName,lvdc), null, tabIndex);
-			}
-		}
-		// In case any mishaps occur
-		if(playlistNames.size() < this.getTabCount()) {
-			System.err.println("LiveViewTabbedPane getTabCount higher than amount of playlistNames!");
-			for(int i = this.getTabCount()-1 ; i >= playlistNames.size()  ; i--) {
-				this.remove(i);
-			}
-		}
+		this.fireTableDataChanged();
 	}
-	
-	public boolean isLvdcActive() {
-		return this.lvdc.isActive();
+
+	@Override
+	public int getRowCount() {
+		return playlistList.size();
+	}
+
+	@Override
+	public int getColumnCount() {
+		return COLUMN_NAME.length;
+	}
+
+	@Override
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		return playlistList.get(rowIndex).getColumn(columnIndex);
+	}
+
+	@Override
+	public String getColumnName(int column) {
+		return COLUMN_NAME[column];
+	}
+
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return false;
+	}
+
+	@Override
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		return;
 	}
 }

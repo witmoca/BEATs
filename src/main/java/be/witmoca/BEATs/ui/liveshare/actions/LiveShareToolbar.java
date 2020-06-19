@@ -17,22 +17,28 @@
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: PlaylistPopupMenu.java
+* File: PlaylistToolbar.java
 * Created: 2018
 */
-package be.witmoca.BEATs.ui.liveview.actions;
+package be.witmoca.BEATs.ui.liveshare.actions;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.Box;
+import javax.swing.JToolBar;
+
 import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
 import be.witmoca.BEATs.ui.components.SongTable;
 
-public class LiveViewPopupMenu extends JPopupMenu {
+public class LiveShareToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
-	public LiveViewPopupMenu(SongTable assocTable) {
-		super();
-		this.add(new JMenuItem(ClipboardActionFactory.getCopyAction(assocTable)));
-		this.addSeparator();
+	public LiveShareToolbar(SongTable table) {
+		super(JToolBar.HORIZONTAL);
+
+		this.setFloatable(false);
+		this.add(ClipboardActionFactory.getCopyAction(table));
+
+		// Beyond this point all goes on the right
+		add(Box.createHorizontalGlue());
+
 	}
 }

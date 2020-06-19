@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.liveview;
+package be.witmoca.BEATs.liveshare;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,13 +24,13 @@ import be.witmoca.BEATs.utils.BEATsSettings;
  * @author Witmoca
  *
  */
-public class LiveViewDataServer implements Runnable, DataChangedListener {
+public class LiveShareDataServer implements Runnable, DataChangedListener {
 	private static final AtomicInteger connectionCount = new AtomicInteger(0);
 	private static final AtomicBoolean playlistChanged = new AtomicBoolean(true);
 	private static final int CONN_TIMEOUT_MS = 10 * 1000;
 
-	private static final Set<LiveViewDataServer> connections = Collections
-			.synchronizedSet(new HashSet<LiveViewDataServer>());
+	private static final Set<LiveShareDataServer> connections = Collections
+			.synchronizedSet(new HashSet<LiveShareDataServer>());
 
 	private final ServerSocket serverSocket;
 	private Socket clientSocket_local;
@@ -49,13 +49,13 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 		}
 
 		ServerSocket ss = new ServerSocket(0, 50); // Do not specifiy a host ip here! => The server should be visible on all Networks on the device
-		(new Thread(new LiveViewDataServer(ss))).start();
+		(new Thread(new LiveShareDataServer(ss))).start();
 		return ss.getLocalPort();
 	}
 	
 	public static void closeAllDataServers() {
 		synchronized(connections) {
-			for(LiveViewDataServer lvds : connections) {
+			for(LiveShareDataServer lvds : connections) {
 				try {
 					if(!lvds.serverSocket.isClosed())
 						lvds.serverSocket.close();
@@ -67,12 +67,12 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 	}
 
 	/**
-	 * LiveViewServer guarantees that only one constructor is running at a time
+	 * LiveShareServer guarantees that only one constructor is running at a time
 	 * 
 	 * @throws SocketException When connection limit reached
 	 * 
 	 */
-	private LiveViewDataServer(ServerSocket socket) throws SocketException {
+	private LiveShareDataServer(ServerSocket socket) throws SocketException {
 		this.serverSocket = socket;
 	}
 
@@ -95,19 +95,19 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 					try(ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream())){
 						while (!clientSocket.isClosed()) {
 							// Catch incoming connection requests
-							LiveViewMessage request = (LiveViewMessage) ois.readObject();
+							LiveShareMessage request = (LiveShareMessage) ois.readObject();
 							// Stop execution on timeout
 							if(request == null)
 								break;
 							switch (request) {
 								case BEATS_DATA_REQUEST_FULL:
-									oos.writeObject(LiveViewMessage.BEATS_DATA_REQUEST_FULL);
-									oos.writeObject(LiveViewSerializable.createSnapShot());
+									oos.writeObject(LiveShareMessage.BEATS_DATA_REQUEST_FULL);
+									oos.writeObject(LiveShareSerializable.createSnapShot());
 									oos.flush();
 									playlistChanged.set(false);
 									break;
 								case BEATS_DATA_CHECK_CHANGED:
-									oos.writeObject(LiveViewMessage.BEATS_DATA_CHECK_CHANGED);
+									oos.writeObject(LiveShareMessage.BEATS_DATA_CHECK_CHANGED);
 									oos.writeBoolean(playlistChanged.get());
 									oos.flush();
 									break;
@@ -148,10 +148,10 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 	 * Thread-safe: makes a copy of the connections set at this moment
 	 * @return the connections
 	 */
-	public static LiveViewDataServer[] getConnections() {
-		LiveViewDataServer[] cons;
+	public static LiveShareDataServer[] getConnections() {
+		LiveShareDataServer[] cons;
 		synchronized(connections) {
-			cons = connections.toArray(new LiveViewDataServer[0]);
+			cons = connections.toArray(new LiveShareDataServer[0]);
 		}
 		return cons;
 	}

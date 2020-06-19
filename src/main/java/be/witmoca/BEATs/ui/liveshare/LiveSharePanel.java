@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.liveview;
+package be.witmoca.BEATs.ui.liveshare;
 
 import java.awt.BorderLayout;
 
@@ -9,8 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import be.witmoca.BEATs.liveview.LiveViewDataClient;
-import be.witmoca.BEATs.ui.liveview.actions.LiveViewToolbar;
+import be.witmoca.BEATs.liveshare.LiveShareDataClient;
+import be.witmoca.BEATs.ui.liveshare.actions.LiveShareToolbar;
 import be.witmoca.BEATs.ui.southpanel.SouthPanel;
 import be.witmoca.BEATs.ui.t4j.RowNumberTable;
 
@@ -18,21 +18,21 @@ import be.witmoca.BEATs.ui.t4j.RowNumberTable;
  * @author Witmoca
  *
  */
-public class LiveViewPanel extends JPanel {
+public class LiveSharePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private final LiveViewTable lvTable;
+	private final LiveShareTable lvTable;
 	private final JScrollPane scrollPane;
 	private final JPanel southPanel;
 	
-	public LiveViewPanel(String playlistName, LiveViewDataClient lvdc) {
+	public LiveSharePanel(String playlistName, LiveShareDataClient lvdc) {
 		super(new BorderLayout());
 		
-		lvTable = new LiveViewTable(playlistName, lvdc);
+		lvTable = new LiveShareTable(playlistName, lvdc);
 		southPanel = new SouthPanel(lvTable, 0, 1);
 		scrollPane = new JScrollPane(lvTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		this.add(new LiveViewToolbar(lvTable), BorderLayout.NORTH);
+		this.add(new LiveShareToolbar(lvTable), BorderLayout.NORTH);
 		this.add(scrollPane, BorderLayout.CENTER);
 		this.add(southPanel, BorderLayout.SOUTH);
 

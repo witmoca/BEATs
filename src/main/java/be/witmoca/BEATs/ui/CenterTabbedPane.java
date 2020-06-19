@@ -24,11 +24,11 @@ package be.witmoca.BEATs.ui;
 
 import javax.swing.JTabbedPane;
 
-import be.witmoca.BEATs.liveview.ConnectionsSetChangedListener;
-import be.witmoca.BEATs.liveview.LiveViewDataClient;
+import be.witmoca.BEATs.liveshare.ConnectionsSetChangedListener;
+import be.witmoca.BEATs.liveshare.LiveShareDataClient;
 import be.witmoca.BEATs.ui.archivepanel.ArchivePanel;
 import be.witmoca.BEATs.ui.artistcatalog.ArtistCatalog;
-import be.witmoca.BEATs.ui.liveview.LiveViewTabbedPane;
+import be.witmoca.BEATs.ui.liveshare.LiveShareTabbedPane;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistsTabbedPane;
 import be.witmoca.BEATs.ui.songcatalog.SongCatalog;
 import be.witmoca.BEATs.utils.Lang;
@@ -46,22 +46,22 @@ class CenterTabbedPane extends JTabbedPane implements ConnectionsSetChangedListe
 		this.addTab(Lang.getUI("center.songcatalog"), new SongCatalog());
 		
 		dynamicTabRange = this.getTabCount();
-		LiveViewDataClient.addConnectionsSetChangedListener(this);
+		LiveShareDataClient.addConnectionsSetChangedListener(this);
 	}
 
 	@Override
 	public void connectionsSetChanged() {
 		// Cleanup inactive tabs
 		for(int tab = this.getTabCount()-1 ; tab >= dynamicTabRange; tab--) {
-			if(! ((LiveViewTabbedPane) this.getTabComponentAt(tab)).isLvdcActive()){
+			if(! ((LiveShareTabbedPane) this.getTabComponentAt(tab)).isLvdcActive()){
 				this.removeTabAt(tab);
 			}
 		}
 		
 		// add  tabs as appropriate
-		for(LiveViewDataClient lvdc : LiveViewDataClient.getConnections()) {
+		for(LiveShareDataClient lvdc : LiveShareDataClient.getConnections()) {
 			if(lvdc.isActive() && this.indexOfTab(lvdc.getName()) == -1){
-				this.addTab(lvdc.getName(), new LiveViewTabbedPane(lvdc));
+				this.addTab(lvdc.getName(), new LiveShareTabbedPane(lvdc));
 			}
 		}
 	}

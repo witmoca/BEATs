@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.liveview;
+package be.witmoca.BEATs.liveshare;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
@@ -18,13 +18,13 @@ import be.witmoca.BEATs.ui.components.PlaylistEntry;
  * @author Witmoca
  *
  */
-public class LiveViewSerializable implements Serializable, Cloneable {
+public class LiveShareSerializable implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 	// HashMap = serializable
 	private final HashMap<String, List<PlaylistEntry>> content = new HashMap<String, List<PlaylistEntry>>();
 	private final List<String> playlistNames = new ArrayList<String>(); // double info, but array list is ordered!
 
-	private LiveViewSerializable(boolean empty) throws SQLException {
+	private LiveShareSerializable(boolean empty) throws SQLException {
 		if (!empty) {
 			playlistNames.addAll(CommonSQL.getPlaylists());
 			try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
@@ -43,17 +43,17 @@ public class LiveViewSerializable implements Serializable, Cloneable {
 		}
 	}
 
-	public static LiveViewSerializable createSnapShot() {
+	public static LiveShareSerializable createSnapShot() {
 		try {
-			return new LiveViewSerializable(false);
+			return new LiveShareSerializable(false);
 		} catch (SQLException e) {
 			return null;
 		}
 	}
 	
-	public static LiveViewSerializable createEmpty() {
+	public static LiveShareSerializable createEmpty() {
 		try {
-			return new LiveViewSerializable(false);
+			return new LiveShareSerializable(false);
 		} catch (SQLException e) {
 			return null;
 		}
@@ -68,9 +68,9 @@ public class LiveViewSerializable implements Serializable, Cloneable {
 	}
 
 	@Override
-	public LiveViewSerializable clone() {
+	public LiveShareSerializable clone() {
 		try {
-			return (LiveViewSerializable) super.clone();
+			return (LiveShareSerializable) super.clone();
 		} catch (CloneNotSupportedException e) {
 			return null;
 		}

@@ -1,41 +1,41 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.liveview;
+package be.witmoca.BEATs.ui.liveshare;
 
 import javax.swing.table.TableRowSorter;
 
 import be.witmoca.BEATs.clipboard.TransferableSongList;
-import be.witmoca.BEATs.liveview.LiveViewDataClient;
+import be.witmoca.BEATs.liveshare.LiveShareDataClient;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.components.SongTableCopyOnlyTransferHandler;
-import be.witmoca.BEATs.ui.liveview.actions.LiveViewKeyBindings;
-import be.witmoca.BEATs.ui.liveview.actions.LiveViewPopupMenu;
+import be.witmoca.BEATs.ui.liveshare.actions.LiveShareKeyBindings;
+import be.witmoca.BEATs.ui.liveshare.actions.LiveSharePopupMenu;
 
 /**
  * @author Witmoca
  *
  */
-public class LiveViewTable extends SongTable {
+public class LiveShareTable extends SongTable {
 	private static final long serialVersionUID = 1L;
 	
-	public LiveViewTable(String playlistName, LiveViewDataClient lvdc) {
-		super(new LiveViewTableModel(playlistName, lvdc));
+	public LiveShareTable(String playlistName, LiveShareDataClient lvdc) {
+		super(new LiveShareTableModel(playlistName, lvdc));
 		
 		// Add standard single column rowsorter
-		TableRowSorter<LiveViewTableModel> srt = new TableRowSorter<LiveViewTableModel>(
-				(LiveViewTableModel) this.getModel());
+		TableRowSorter<LiveShareTableModel> srt = new TableRowSorter<LiveShareTableModel>(
+				(LiveShareTableModel) this.getModel());
 		srt.setMaxSortKeys(1);
 		this.setRowSorter(srt);
 
 		// right click menu
-		this.setComponentPopupMenu(new LiveViewPopupMenu(this));
+		this.setComponentPopupMenu(new LiveSharePopupMenu(this));
 
 		// Drag and drop logic (no drag and drop, just Cut/Cop/Paste)
 		this.setTransferHandler(new SongTableCopyOnlyTransferHandler());
 
 		// Register all keyboard shortcuts to be used on the table
-		LiveViewKeyBindings.RegisterKeyBindings(this);
+		LiveShareKeyBindings.RegisterKeyBindings(this);
 	}
 
 
@@ -46,9 +46,9 @@ public class LiveViewTable extends SongTable {
 		if (indices.length == 0)
 			return null;
 
-		if (!(this.getModel() instanceof LiveViewTableModel))
+		if (!(this.getModel() instanceof LiveShareTableModel))
 			return null;
-		LiveViewTableModel model = (LiveViewTableModel) this.getModel();
+		LiveShareTableModel model = (LiveShareTableModel) this.getModel();
 		
 		TransferableSongList list = new TransferableSongList();
 		for (int i : indices) {

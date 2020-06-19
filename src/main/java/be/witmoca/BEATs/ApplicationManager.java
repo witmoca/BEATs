@@ -36,8 +36,8 @@ import javax.swing.SwingUtilities;
 
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
-import be.witmoca.BEATs.liveview.LiveViewClient;
-import be.witmoca.BEATs.liveview.LiveViewServer;
+import be.witmoca.BEATs.liveshare.LiveShareClient;
+import be.witmoca.BEATs.liveshare.LiveShareServer;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.actions.ExitApplicationAction;
 import be.witmoca.BEATs.utils.ResourceLoader;
@@ -70,11 +70,11 @@ public class ApplicationManager {
 			
 			// Startup LiveShare server
 			if (BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue())
-				LiveViewServer.startServer();
+				LiveShareServer.startServer();
 			
 			// Startup LiveShare client
 			if (BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue())
-				LiveViewClient.startClient();
+				LiveShareClient.startClient();
 			
 		} catch (IOException e) {
 			fatalError(e);

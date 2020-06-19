@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.liveview;
+package be.witmoca.BEATs.liveshare;
 
 /**
  * @author Witmoca
