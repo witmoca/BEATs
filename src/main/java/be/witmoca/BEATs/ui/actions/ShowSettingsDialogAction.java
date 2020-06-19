@@ -3,12 +3,16 @@
  */
 package be.witmoca.BEATs.ui.actions;
 
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.font.TextAttribute;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
@@ -96,6 +100,16 @@ public class ShowSettingsDialogAction implements ActionListener {
 		liveShareServerMaxConnections = new JFormattedTextField(BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.getIntValue());
 		liveShareClientEnabled = new JCheckBox("", BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue());
 		
+		JLabel languageTitle = new JLabel(Lang.getUI("settings.label.lang.title"));
+		Font titleFont = languageTitle.getFont();
+		Map<TextAttribute, Object> attributes = new HashMap<>(titleFont.getAttributes());
+		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+		titleFont = titleFont.deriveFont(attributes);
+		
+		languageTitle.setFont(titleFont);
+		content.add(languageTitle);
+		content.add(new JLabel(""));
+		
 		content.add(new JLabel(Lang.getUI("settings.label.lang")));
 		
 		// Construct localePicker
@@ -116,6 +130,10 @@ public class ShowSettingsDialogAction implements ActionListener {
 		content.add(localePicker);
 		
 		// BACKUPS
+		JLabel backupTitle = new JLabel(Lang.getUI("settings.label.backup.title"));
+		backupTitle.setFont(titleFont);
+		content.add(backupTitle);
+		content.add(new JLabel(""));
 		content.add(new JLabel(Lang.getUI("settings.label.backup.enabled")));
 		content.add(backupEnabled);
 		backupEnabled.addActionListener(new AbstractAction() {
@@ -140,7 +158,12 @@ public class ShowSettingsDialogAction implements ActionListener {
 		content.add(backupSize);
 		
 		// LiveShare SERVER
-		content.add(new JLabel(Lang.getUI("settings.label.liveshare.enabled")));
+		JLabel liveShareServerTitle = new JLabel(Lang.getUI("settings.label.liveshare.server.title"));
+		liveShareServerTitle.setFont(titleFont);
+		content.add(liveShareServerTitle);
+		content.add(new JLabel(""));
+		
+		content.add(new JLabel(Lang.getUI("settings.label.liveshare.server.enabled")));
 		content.add(liveShareServerEnabled);
 		liveShareServerEnabled.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = 1L;
@@ -152,12 +175,12 @@ public class ShowSettingsDialogAction implements ActionListener {
 			}
 			
 		});
-		liveShareServerPort.setEnabled(liveShareServerEnabled.isEnabled());	
-		liveShareServerMaxConnections.setEnabled(liveShareServerEnabled.isEnabled());	
+		liveShareServerPort.setEnabled(liveShareServerEnabled.isSelected());	
+		liveShareServerMaxConnections.setEnabled(liveShareServerEnabled.isSelected());	
 		
-		content.add(new JLabel(Lang.getUI("settings.label.liveshare.port")));
+		content.add(new JLabel(Lang.getUI("settings.label.liveshare.server.port")));
 		content.add(liveShareServerPort);
-		content.add(new JLabel(Lang.getUI("settings.label.liveshare.maxcon")));
+		content.add(new JLabel(Lang.getUI("settings.label.liveshare.server.maxcon")));
 		content.add(liveShareServerMaxConnections);
 		
 		
