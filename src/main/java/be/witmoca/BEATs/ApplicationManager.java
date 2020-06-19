@@ -29,23 +29,32 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import javax.swing.SwingUtilities;
 
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
-import be.witmoca.BEATs.liveview.LiveViewClient;
-import be.witmoca.BEATs.liveview.LiveViewServer;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.ui.actions.ExitApplicationAction;
 import be.witmoca.BEATs.utils.ResourceLoader;
 import be.witmoca.BEATs.utils.SingleInstanceManager;
 import be.witmoca.BEATs.utils.VersionChecker;
 import be.witmoca.BEATs.utils.BEATsSettings;
 
 public class ApplicationManager {
-	// Start up
-	public static void main(String[] args) {
-		// Get the file to load from the arguments
-		File loadFile = extractFileFromArgs(args);
+	private final File loadFile;
+
+	public ApplicationManager(File loadFile) {
+		this.loadFile = loadFile;
+	}
+	
+	/**
+	 * Start application
+	 * @return true if application should be relaunched (restarted)
+	 */
+	public boolean launch() {		
 		try {
 			// Initialise Files & folders
 			ResourceLoader.initFileTree();
@@ -53,31 +62,76 @@ public class ApplicationManager {
 			BEATsSettings.loadPreferences();
 			// Check if single instance
 			if (!SingleInstanceManager.start(loadFile))
-				return; // Already running
+				return false; // Already running
 			// Register a new standard output
 			ResourceLoader.registerStandardErrorLog();
 			// Startup LiveShare server
-			if(BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue())
+			/*
+			if (BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue())
 				LiveViewServer.startServer();
-			if(BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue())
+			System.out.println("liveshare server");
+			// Startup LiveShare client
+			if (BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue())
 				LiveViewClient.startClient();
+			System.out.println("liveshare client");
+			*/
 		} catch (IOException e) {
 			fatalError(e);
-			System.exit(-1);
+			return false;
 		}
 
 		// Start the versionchecker
 		VersionChecker.CheckVersion();
-
+		
 		// Create the GUI on the EDT
-		SwingUtilities.invokeLater(new Runnable() {
+		FutureTask<ApplicationWindow> createGui = new FutureTask<ApplicationWindow>(new Callable<ApplicationWindow>() {
 			@Override
-			public void run() {
-				LoadFileAction.getLoadFileAction(loadFile)
-						.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_LAST, "load"));
-				ApplicationWindow.createAndShowUi();
+			public ApplicationWindow call() throws Exception {
+				// Load database
+				LoadFileAction.getLoadFileAction(loadFile).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_LAST, "load"));
+				// create and return gui
+				return ApplicationWindow.createAndShowUi();
 			}
-		});
+		});		
+
+		SwingUtilities.invokeLater(createGui);
+		
+		// Wait for gui to be created
+		ApplicationWindow appWindow;
+		try {
+			appWindow = createGui.get();
+		} catch (InterruptedException | ExecutionException e1) {
+			fatalError(e1);
+			return false;
+		} 
+		
+		// Make sure to reset previous value
+		ExitApplicationAction.restartAfterClose.set(false);
+		
+		// wait for end of life
+		synchronized(ExitApplicationAction.endOfLifeLock) {
+			while(appWindow != null && appWindow.isVisible()) {
+				try {
+					ExitApplicationAction.endOfLifeLock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return ExitApplicationAction.restartAfterClose.get();
+	}
+	
+
+	// Start up
+	public static void main(String[] args) {
+		// Get the file to load from the arguments
+		File loadFile = extractFileFromArgs(args);
+		
+		boolean restart = true;
+		while (restart) {
+			restart = (new ApplicationManager(loadFile)).launch();
+		}
 	}
 
 	/**
@@ -115,9 +169,8 @@ public class ApplicationManager {
 	/**
 	 * Searches for the first loadable database in the arguments
 	 * 
-	 * @param args
-	 *            the arguments passed to the application (usually the arguments of
-	 *            the main method)
+	 * @param args the arguments passed to the application (usually the arguments of
+	 *             the main method)
 	 * @return the file to load, {@code null} if none was found
 	 */
 	private static File extractFileFromArgs(String[] args) {

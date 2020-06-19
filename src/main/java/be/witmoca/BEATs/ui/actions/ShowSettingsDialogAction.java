@@ -6,7 +6,6 @@ package be.witmoca.BEATs.ui.actions;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -19,8 +18,6 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
@@ -48,19 +45,19 @@ import be.witmoca.BEATs.utils.Lang;
 * Created: 2018
 */
 public class ShowSettingsDialogAction implements ActionListener {
-	private final JPanel content = new JPanel(new GridLayout(0, 2, 10, 0));
-	private final JComboBox<LocaleWrapper> localePicker = new JComboBox<LocaleWrapper>();
-	private final JCheckBox backupEnabled = new JCheckBox("", BEATsSettings.BACKUPS_ENABLED.getBoolValue());
-	private final JFormattedTextField backupAmount = new JFormattedTextField(BEATsSettings.BACKUPS_MAXAMOUNT.getIntValue());
-	private final JFormattedTextField backupSize = new JFormattedTextField(BEATsSettings.BACKUPS_MAXSIZE.getIntValue());
-	private final JFormattedTextField backupFrequency = new JFormattedTextField(BEATsSettings.BACKUPS_TIMEBETWEEN.getIntValue());
+
+	private JComboBox<LocaleWrapper> localePicker;
+	private JCheckBox backupEnabled;
+	private JFormattedTextField backupAmount;
+	private JFormattedTextField backupSize;
+	private JFormattedTextField backupFrequency;
 	
 	public ShowSettingsDialogAction() {
-		constructGUI();
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		JPanel content = constructGUI();
 		// Show
 		String[] options = {Lang.getUI("action.save"), Lang.getUI("action.cancel"), Lang.getUI("settings.reset")};
 		int answer = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(), content, Lang.getUI("menu.tools.settings"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
@@ -69,7 +66,8 @@ public class ShowSettingsDialogAction implements ActionListener {
 			saveSettings();
 			// Warning label
 			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("settings.restartrequired"));
-			// TODO: force restart
+			// Force restart
+			(new ExitApplicationAction(true)).actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, e.paramString()));
 		} else if (answer == 2) {
 			// reset
 			if(BEATsSettings.resetDefaultPreferences()) {
@@ -80,7 +78,14 @@ public class ShowSettingsDialogAction implements ActionListener {
 		}
 	}
 	
-	private void constructGUI() {
+	private JPanel constructGUI() {
+		JPanel content = new JPanel(new GridLayout(0, 2, 10, 0));
+		localePicker = new JComboBox<LocaleWrapper>();
+		backupEnabled = new JCheckBox("", BEATsSettings.BACKUPS_ENABLED.getBoolValue());
+		backupAmount = new JFormattedTextField(BEATsSettings.BACKUPS_MAXAMOUNT.getIntValue());
+		backupSize = new JFormattedTextField(BEATsSettings.BACKUPS_MAXSIZE.getIntValue());
+		backupFrequency = new JFormattedTextField(BEATsSettings.BACKUPS_TIMEBETWEEN.getIntValue());		
+		
 		content.add(new JLabel(Lang.getUI("settings.label.lang")));
 		
 		// Construct localePicker
@@ -123,6 +128,7 @@ public class ShowSettingsDialogAction implements ActionListener {
 		content.add(backupAmount);
 		content.add(new JLabel(Lang.getUI("settings.label.backup.totalsize")));
 		content.add(backupSize);
+		return content;
 	}
 	
 	private void saveSettings() {

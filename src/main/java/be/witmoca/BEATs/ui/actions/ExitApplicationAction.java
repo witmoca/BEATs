@@ -24,12 +24,22 @@ package be.witmoca.BEATs.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import be.witmoca.BEATs.connection.ConnectionException;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.actions.CheckFileSavedAction;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.utils.SingleInstanceManager;
 
 public class ExitApplicationAction implements ActionListener {
+	public static final Object endOfLifeLock = new Object();
+	public static final AtomicBoolean restartAfterClose = new AtomicBoolean(true);
+	
+	
+	public ExitApplicationAction(boolean restart) {
+		restartAfterClose.set(restart);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -55,7 +65,10 @@ public class ExitApplicationAction implements ActionListener {
 		}
 
 		// Kill GUI
-		ApplicationWindow.getAPP_WINDOW().dispose();
-		System.exit(0);
+		synchronized(endOfLifeLock) {
+			ApplicationWindow.getAPP_WINDOW().dispose();
+			SingleInstanceManager.stopSingleInstanceManager();
+			endOfLifeLock.notify();
+		}
 	}
 }

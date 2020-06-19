@@ -52,8 +52,9 @@ public class ApplicationWindow extends JFrame implements WindowListener, DataCha
 	private final JComponent eastPanel = new EastPanel();
 	private final JComponent centerPanel = new CenterTabbedPane();
 
-	public static void createAndShowUi() {
+	public static ApplicationWindow createAndShowUi() {
 		APP_WINDOW = new ApplicationWindow();
+		return APP_WINDOW;
 	}
 
 	private ApplicationWindow() {
@@ -99,7 +100,7 @@ public class ApplicationWindow extends JFrame implements WindowListener, DataCha
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		(new ExitApplicationAction())
+		(new ExitApplicationAction(false))
 				.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, e.paramString()));
 	}
 
