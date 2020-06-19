@@ -51,6 +51,10 @@ public class ShowSettingsDialogAction implements ActionListener {
 	private JFormattedTextField backupAmount;
 	private JFormattedTextField backupSize;
 	private JFormattedTextField backupFrequency;
+	private JCheckBox liveShareServerEnabled;
+	private JFormattedTextField liveShareServerPort;
+	private JFormattedTextField liveShareServerMaxConnections;
+	private JCheckBox liveShareClientEnabled;
 	
 	public ShowSettingsDialogAction() {
 	}
@@ -75,6 +79,8 @@ public class ShowSettingsDialogAction implements ActionListener {
 			} else {
 				JOptionPane.showMessageDialog(content, Lang.getUI("settings.resetFailed"));
 			}
+			// Force restart
+			(new ExitApplicationAction(true)).actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, e.paramString()));
 		}
 	}
 	
@@ -85,6 +91,10 @@ public class ShowSettingsDialogAction implements ActionListener {
 		backupAmount = new JFormattedTextField(BEATsSettings.BACKUPS_MAXAMOUNT.getIntValue());
 		backupSize = new JFormattedTextField(BEATsSettings.BACKUPS_MAXSIZE.getIntValue());
 		backupFrequency = new JFormattedTextField(BEATsSettings.BACKUPS_TIMEBETWEEN.getIntValue());		
+		liveShareServerEnabled = new JCheckBox("", BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue());
+		liveShareServerPort = new JFormattedTextField(BEATsSettings.LIVESHARE_SERVER_PORT.getIntValue());
+		liveShareServerMaxConnections = new JFormattedTextField(BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.getIntValue());
+		liveShareClientEnabled = new JCheckBox("", BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue());
 		
 		content.add(new JLabel(Lang.getUI("settings.label.lang")));
 		
@@ -128,6 +138,29 @@ public class ShowSettingsDialogAction implements ActionListener {
 		content.add(backupAmount);
 		content.add(new JLabel(Lang.getUI("settings.label.backup.totalsize")));
 		content.add(backupSize);
+		
+		// LiveShare SERVER
+		content.add(new JLabel(Lang.getUI("settings.label.liveshare.enabled")));
+		content.add(liveShareServerEnabled);
+		liveShareServerEnabled.addActionListener(new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				liveShareServerPort.setEnabled(liveShareServerEnabled.isSelected());	
+				liveShareServerMaxConnections.setEnabled(liveShareServerEnabled.isSelected());	
+			}
+			
+		});
+		liveShareServerPort.setEnabled(liveShareServerEnabled.isEnabled());	
+		liveShareServerMaxConnections.setEnabled(liveShareServerEnabled.isEnabled());	
+		
+		content.add(new JLabel(Lang.getUI("settings.label.liveshare.port")));
+		content.add(liveShareServerPort);
+		content.add(new JLabel(Lang.getUI("settings.label.liveshare.maxcon")));
+		content.add(liveShareServerMaxConnections);
+		
+		
 		return content;
 	}
 	
@@ -146,6 +179,15 @@ public class ShowSettingsDialogAction implements ActionListener {
 		int size = (int) backupSize.getValue();
 		size = (size < 1 ? 1 : (size > 999 ? 999 : size));
 		BEATsSettings.BACKUPS_MAXSIZE.setIntValue(size);
+		
+		BEATsSettings.LIVESHARE_SERVER_ENABLED.setBoolValue(liveShareServerEnabled.isSelected());
+		int port = (int) liveShareServerPort.getValue();
+		port = (port < 1 ? 1 : (port > 65535 ? 65535 : port));
+		BEATsSettings.LIVESHARE_SERVER_PORT.setIntValue(port);
+		int maxcon = (int) liveShareServerMaxConnections.getValue();
+		maxcon = (maxcon < 1 ? 1 : (maxcon > 99 ? 99 : maxcon));
+		BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.setIntValue(maxcon);
+		
 		
 		BEATsSettings.savePreferences();
 	}

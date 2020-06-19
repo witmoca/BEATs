@@ -38,7 +38,7 @@ public class LiveShareClient implements ActionListener {
 		// TODO better saving of IP & PORT
 		// TODO save HOSTNAME instead of IP & resolve hostname
 		String ip = BEATsSettings.LIVESHARE_CLIENT_IP_LIST.getStringValue();
-		int port = BEATsSettings.LIVESHARE_CLIENT_PORT_LIST.getIntValue();
+		int port = Integer.parseInt(BEATsSettings.LIVESHARE_CLIENT_PORT_LIST.getStringValue());
 		InetSocketAddress isa = new InetSocketAddress(ip, port);
 		watchServers.add(isa);
 

@@ -17,7 +17,7 @@ import be.witmoca.BEATs.utils.BEATsSettings;
  *
  */
 public class LiveShareServer implements Runnable {
-	private static final int PORT = BEATsSettings.LIVESHARE_PORT.getIntValue();
+	private static final int PORT = BEATsSettings.LIVESHARE_SERVER_PORT.getIntValue();
 	private static LiveShareServer currentServer;
 	private final ServerSocket serverSocket;
 
