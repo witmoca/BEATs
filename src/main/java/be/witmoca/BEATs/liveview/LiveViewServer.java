@@ -3,10 +3,10 @@
  */
 package be.witmoca.BEATs.liveview;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -18,6 +18,7 @@ import be.witmoca.BEATs.utils.BEATsSettings;
  */
 public class LiveViewServer implements Runnable {
 	private static final int PORT = BEATsSettings.LIVESHARE_PORT.getIntValue();
+	private static LiveViewServer currentServer;
 	private final ServerSocket serverSocket;
 
 	private LiveViewServer(ServerSocket socket) {
@@ -25,12 +26,23 @@ public class LiveViewServer implements Runnable {
 	}
 
 	public static void startServer() throws IOException {
-		(new Thread(new LiveViewServer(new ServerSocket(PORT, 50, InetAddress.getLocalHost())))).start();
+		currentServer = new LiveViewServer(new ServerSocket(PORT, 50)); // Do not specifiy a host ip here! => The server should be visible on all Networks on the device
+		(new Thread(currentServer)).start();
+	}
+	
+	public static void closeServer() {
+		if(currentServer != null && !currentServer.serverSocket.isClosed()) {
+			try {
+				currentServer.serverSocket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
 	public void run() {
-		while (true) {
+		while (!serverSocket.isClosed()) {
 			// socket object to receive incoming client requests
 			try (Socket clientSocket = serverSocket.accept();
 					ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream())) {
@@ -48,7 +60,12 @@ public class LiveViewServer implements Runnable {
 				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
+			} catch (EOFException e) {
+				// ignore (some other program might have tried to connect or data just didn't get through fully)
 			} catch (IOException e) {
+				if(!serverSocket.isClosed()) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

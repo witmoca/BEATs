@@ -6,7 +6,6 @@ package be.witmoca.BEATs.liveview;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -49,9 +48,22 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 			throw new IOException("Maximum connections limit reached!");
 		}
 
-		ServerSocket ss = new ServerSocket(0, 50, InetAddress.getLocalHost());
+		ServerSocket ss = new ServerSocket(0, 50); // Do not specifiy a host ip here! => The server should be visible on all Networks on the device
 		(new Thread(new LiveViewDataServer(ss))).start();
 		return ss.getLocalPort();
+	}
+	
+	public static void closeAllDataServers() {
+		synchronized(connections) {
+			for(LiveViewDataServer lvds : connections) {
+				try {
+					if(!lvds.serverSocket.isClosed())
+						lvds.serverSocket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	/**
@@ -133,9 +145,14 @@ public class LiveViewDataServer implements Runnable, DataChangedListener {
 	}
 
 	/**
+	 * Thread-safe: makes a copy of the connections set at this moment
 	 * @return the connections
 	 */
-	public static Set<LiveViewDataServer> getConnections() {
-		return connections;
+	public static LiveViewDataServer[] getConnections() {
+		LiveViewDataServer[] cons;
+		synchronized(connections) {
+			cons = connections.toArray(new LiveViewDataServer[0]);
+		}
+		return cons;
 	}
 }
