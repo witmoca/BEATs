@@ -183,7 +183,14 @@ public class ShowSettingsDialogAction implements ActionListener {
 		content.add(new JLabel(Lang.getUI("settings.label.liveshare.server.maxcon")));
 		content.add(liveShareServerMaxConnections);
 		
+		// LiveShare CLIENT
+		JLabel liveShareClientTitle = new JLabel(Lang.getUI("settings.label.liveshare.client.title"));
+		liveShareClientTitle.setFont(titleFont);
+		content.add(liveShareClientTitle);
+		content.add(new JLabel(""));
 		
+		content.add(new JLabel(Lang.getUI("settings.label.liveshare.client.enabled")));
+		content.add(liveShareClientEnabled);
 		return content;
 	}
 	
@@ -211,6 +218,7 @@ public class ShowSettingsDialogAction implements ActionListener {
 		maxcon = (maxcon < 1 ? 1 : (maxcon > 99 ? 99 : maxcon));
 		BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.setIntValue(maxcon);
 		
+		BEATsSettings.LIVESHARE_CLIENT_ENABLED.setBoolValue(liveShareClientEnabled.isSelected());
 		
 		BEATsSettings.savePreferences();
 	}
