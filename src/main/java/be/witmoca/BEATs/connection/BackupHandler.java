@@ -36,14 +36,15 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.Timer;
 
+import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.ResourceLoader;
 
 class BackupHandler implements ActionListener {
-	private static final int DELAY = (int) TimeUnit.MINUTES.toMillis(5); // 5 minutes
-	private static final int MAX_BACKUP_COUNT = 20; // Max 20 files representing a backup
-	private static final int MAX_BACKUP_SIZE = 1024 * 1024 * 50; // Max 50Mb total space used by the backups
-	private static final Timer BACKUP_TIMER = new Timer(DELAY, new BackupHandler());
+	private static final Timer BACKUP_TIMER = new Timer(1000, new BackupHandler()); // (default delay is overriden on every timer start)
 	private static final String BACKUP_DIR = ResourceLoader.BACKUP_DIR;
+	
+	private static int MAX_BACKUP_COUNT = 10; // max X backups (default is overriden on every timer start)
+	private static int MAX_BACKUP_SIZE = 1024 * 1024 * 50; // max Mb size of backups folder (default is overriden on every timer start)
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -88,7 +89,17 @@ class BackupHandler implements ActionListener {
 	}
 
 	static void StartBackups() {
-		BACKUP_TIMER.start();
+		// reload values
+		int delay = (int) TimeUnit.MINUTES.toMillis(BEATsSettings.BACKUPS_TIMEBETWEEN.getIntValue());
+		BACKUP_TIMER.setDelay(delay);
+		BACKUP_TIMER.setInitialDelay(delay);
+		
+		MAX_BACKUP_COUNT = BEATsSettings.BACKUPS_MAXAMOUNT.getIntValue(); // max X backups
+		MAX_BACKUP_SIZE = 1024 * 1024 * BEATsSettings.BACKUPS_MAXSIZE.getIntValue(); // max Mb size of backups folder
+		
+		// Only start if enabled
+		if(BEATsSettings.BACKUPS_ENABLED.getBoolValue())
+			BACKUP_TIMER.start();
 	}
 
 	static void StopBackups() {

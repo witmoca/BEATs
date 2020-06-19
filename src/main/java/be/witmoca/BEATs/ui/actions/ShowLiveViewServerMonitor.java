@@ -58,10 +58,7 @@ public class ShowLiveViewServerMonitor implements ActionListener {
 		
 		private void updateData() {
 			content.clear();
-			LiveViewDataServer[] cons;
-			synchronized(LiveViewDataServer.getConnections()) {
-				cons = LiveViewDataServer.getConnections().toArray(new LiveViewDataServer[0]);
-			}
+			LiveViewDataServer[] cons = LiveViewDataServer.getConnections();
 
 			for(LiveViewDataServer lvds : cons) {
 				content.add(new String[]{lvds.getClientHostName(), lvds.getClientIp()});

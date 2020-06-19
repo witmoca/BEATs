@@ -3,7 +3,6 @@
  */
 package be.witmoca.BEATs.ui.actions;
 
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,16 +11,13 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
@@ -49,13 +45,50 @@ import be.witmoca.BEATs.utils.Lang;
 * Created: 2018
 */
 public class ShowSettingsDialogAction implements ActionListener {
+
+	private JComboBox<LocaleWrapper> localePicker;
+	private JCheckBox backupEnabled;
+	private JFormattedTextField backupAmount;
+	private JFormattedTextField backupSize;
+	private JFormattedTextField backupFrequency;
+	
+	public ShowSettingsDialogAction() {
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// Construct and show dialog
-		JPanel content = new JPanel(new GridLayout(0, 1));
-
+		JPanel content = constructGUI();
+		// Show
+		String[] options = {Lang.getUI("action.save"), Lang.getUI("action.cancel"), Lang.getUI("settings.reset")};
+		int answer = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(), content, Lang.getUI("menu.tools.settings"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		if(answer == 0) {
+			// Save
+			saveSettings();
+			// Warning label
+			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("settings.restartrequired"));
+			// Force restart
+			(new ExitApplicationAction(true)).actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, e.paramString()));
+		} else if (answer == 2) {
+			// reset
+			if(BEATsSettings.resetDefaultPreferences()) {
+				JOptionPane.showMessageDialog(content, Lang.getUI("settings.resetSucceeded"));
+			} else {
+				JOptionPane.showMessageDialog(content, Lang.getUI("settings.resetFailed"));
+			}
+		}
+	}
+	
+	private JPanel constructGUI() {
+		JPanel content = new JPanel(new GridLayout(0, 2, 10, 0));
+		localePicker = new JComboBox<LocaleWrapper>();
+		backupEnabled = new JCheckBox("", BEATsSettings.BACKUPS_ENABLED.getBoolValue());
+		backupAmount = new JFormattedTextField(BEATsSettings.BACKUPS_MAXAMOUNT.getIntValue());
+		backupSize = new JFormattedTextField(BEATsSettings.BACKUPS_MAXSIZE.getIntValue());
+		backupFrequency = new JFormattedTextField(BEATsSettings.BACKUPS_TIMEBETWEEN.getIntValue());		
+		
+		content.add(new JLabel(Lang.getUI("settings.label.lang")));
+		
 		// Construct localePicker
-		JComboBox<LocaleWrapper> localePicker = new JComboBox<LocaleWrapper>();
 		List<LocaleWrapper> locales = new ArrayList<LocaleWrapper>();
 		for (Locale l : Lang.getPossibleLocales()) {
 			if (!l.getLanguage().isEmpty()) {
@@ -63,54 +96,58 @@ public class ShowSettingsDialogAction implements ActionListener {
 			}
 		}
 		localePicker.setModel(new DefaultComboBoxModel<LocaleWrapper>(locales.toArray(new LocaleWrapper[0])));
+		
 		// Set current as selected
 		Locale currentL = new Locale(BEATsSettings.LANGUAGE.getStringValue(), BEATsSettings.COUNTRY.getStringValue());
 		for (LocaleWrapper lw : locales) {
 			if (lw.getLocale().equals(currentL))
 				localePicker.getModel().setSelectedItem(lw);
 		}
-		localePicker.getModel().addListDataListener(new ListDataListener() {
-			@Override
-			public void intervalAdded(ListDataEvent e) {
-			}
-
-			@Override
-			public void intervalRemoved(ListDataEvent e) {
-			}
-
-			@Override
-			public void contentsChanged(ListDataEvent e) {
-				Locale l = ((LocaleWrapper) localePicker.getSelectedItem()).getLocale();
-				BEATsSettings.LANGUAGE.setStringValue(l.getLanguage());
-				BEATsSettings.COUNTRY.setStringValue(l.getCountry());
-				BEATsSettings.savePreferences();
-			}
-		});
 		content.add(localePicker);
 		
-		// Reset Settings Button
-		JButton resetDefault = new JButton(new AbstractAction() {
+		// BACKUPS
+		content.add(new JLabel(Lang.getUI("settings.label.backup.enabled")));
+		content.add(backupEnabled);
+		backupEnabled.addActionListener(new AbstractAction() {
 			private static final long serialVersionUID = 1L;
+			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(BEATsSettings.resetDefaultPreferences()) {
-					JOptionPane.showMessageDialog(content, Lang.getUI("settings.resetSucceeded"));
-				} else {
-					JOptionPane.showMessageDialog(content, Lang.getUI("settings.resetFailed"));
-				}
+				backupFrequency.setEnabled(backupEnabled.isSelected());
+				backupAmount.setEnabled(backupEnabled.isSelected());
+				backupSize.setEnabled(backupEnabled.isSelected());
 			}
 		});
-		resetDefault.setText(Lang.getUI("settings.reset"));
-		content.add(resetDefault);
-
-		// Warning label
-		JPanel descr = new JPanel();
-		descr.setBorder(BorderFactory.createLineBorder(Color.red));
-		descr.add(new JLabel(Lang.getUI("settings.descr")));
-		content.add(descr);
-
-		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), content, Lang.getUI("menu.tools.settings"),
-				JOptionPane.PLAIN_MESSAGE);
+		backupFrequency.setEnabled(backupEnabled.isSelected());
+		backupAmount.setEnabled(backupEnabled.isSelected());
+		backupSize.setEnabled(backupEnabled.isSelected());
+		
+		content.add(new JLabel(Lang.getUI("settings.label.backup.time")));
+		content.add(backupFrequency);
+		content.add(new JLabel(Lang.getUI("settings.label.backup.amount")));
+		content.add(backupAmount);
+		content.add(new JLabel(Lang.getUI("settings.label.backup.totalsize")));
+		content.add(backupSize);
+		return content;
+	}
+	
+	private void saveSettings() {
+		Locale l = ((LocaleWrapper) localePicker.getSelectedItem()).getLocale();
+		BEATsSettings.LANGUAGE.setStringValue(l.getLanguage());
+		BEATsSettings.COUNTRY.setStringValue(l.getCountry());
+		
+		BEATsSettings.BACKUPS_ENABLED.setBoolValue(backupEnabled.isSelected());
+		int freq = (int) backupFrequency.getValue();
+		freq = (freq < 1 ? 1 : (freq > 99 ? 99 : freq));
+		BEATsSettings.BACKUPS_TIMEBETWEEN.setIntValue(freq);
+		int amount = (int) backupAmount.getValue();
+		amount = (amount < 1 ? 1 : (amount > 99 ? 99 : amount));
+		BEATsSettings.BACKUPS_MAXAMOUNT.setIntValue(amount);
+		int size = (int) backupSize.getValue();
+		size = (size < 1 ? 1 : (size > 999 ? 999 : size));
+		BEATsSettings.BACKUPS_MAXSIZE.setIntValue(size);
+		
+		BEATsSettings.savePreferences();
 	}
 
 	private static class LocaleWrapper {

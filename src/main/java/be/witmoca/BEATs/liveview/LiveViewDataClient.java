@@ -65,6 +65,27 @@ public class LiveViewDataClient implements ActionListener {
 		}
 	}
 
+	public static void closeAllClients() {		
+		synchronized (connections) {			
+			// close all sockets of lvdc's, the lvdc loop will take care of cleanup
+			for (LiveViewDataClient lvdc : connections) {
+				try {
+					if (!lvdc.s.isClosed())
+						lvdc.s.close();
+					// clear out all listeners
+					synchronized (lvdc.dcListeners) {
+						lvdc.dcListeners.clear();
+					}
+					synchronized (cscListeners) {
+						cscListeners.clear();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	/**
 	 * 
 	 * @param address
@@ -85,67 +106,68 @@ public class LiveViewDataClient implements ActionListener {
 	public InetAddress getInetAddress() {
 		return s.getInetAddress();
 	}
-	
+
 	public String getName() {
 		return this.getInetAddress().getHostName();
 	}
-	
+
 	public LiveViewSerializable getContent() {
-		synchronized(content) {
+		synchronized (content) {
 			return content.clone();
 		}
 	}
-	
+
 	public static Set<LiveViewDataClient> getConnections() {
 		Set<LiveViewDataClient> conset = new HashSet<LiveViewDataClient>();
-		synchronized(connections) {
+		synchronized (connections) {
 			conset.addAll(connections);
 		}
 		return conset;
 	}
-	
+
 	/**
 	 * Check if this LVDC is active (and cleanup if it isn't)
+	 * 
 	 * @return true if active
 	 */
 	public boolean isActive() {
-		if(s.isClosed() && UPDATE_TIMER.isRunning()) {
+		if (s.isClosed() && UPDATE_TIMER.isRunning()) {
 			UPDATE_TIMER.stop();
 			UPDATE_TIMER.removeActionListener(this);
 			connections.remove(this);
 			fireConnectionsSetChanged();
 		}
-		return !s.isClosed() ;
+		return !s.isClosed();
 	}
-	
+
 	public static void addConnectionsSetChangedListener(ConnectionsSetChangedListener cscl) {
-		synchronized(cscListeners) {
+		synchronized (cscListeners) {
 			cscListeners.add(cscl);
 		}
 	}
-	
+
 	public static void fireConnectionsSetChanged() {
-		List<ConnectionsSetChangedListener> notifylist = new ArrayList<ConnectionsSetChangedListener>();		
-		synchronized(cscListeners) {
+		List<ConnectionsSetChangedListener> notifylist = new ArrayList<ConnectionsSetChangedListener>();
+		synchronized (cscListeners) {
 			notifylist.addAll(cscListeners);
 		}
-		for(ConnectionsSetChangedListener cscl : notifylist) {
+		for (ConnectionsSetChangedListener cscl : notifylist) {
 			cscl.connectionsSetChanged();
 		}
 	}
-	
+
 	public void addDataChangedListener(DataChangedListener dcl) {
-		synchronized(dcListeners) {
+		synchronized (dcListeners) {
 			dcListeners.add(dcl);
 		}
 	}
-	
+
 	public void fireDataChanged() {
 		List<DataChangedListener> notifylist = new ArrayList<DataChangedListener>();
-		synchronized(dcListeners) {
+		synchronized (dcListeners) {
 			notifylist.addAll(dcListeners);
 		}
-		for(DataChangedListener dcl : notifylist) {
+		for (DataChangedListener dcl : notifylist) {
 			dcl.tableChanged();
 		}
 	}

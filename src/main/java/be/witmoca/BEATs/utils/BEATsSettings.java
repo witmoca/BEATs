@@ -37,6 +37,10 @@ public enum BEATsSettings {
 	COUNTRY,
 	LAST_FILE_PATH,
 	LOCAL_PORT,
+	BACKUPS_ENABLED,
+	BACKUPS_TIMEBETWEEN,
+	BACKUPS_MAXAMOUNT,
+	BACKUPS_MAXSIZE,	
 	LIVESHARE_PORT,
 	LIVESHARE_SERVER_ENABLED,
 	LIVESHARE_SERVER_MAXCONNECTIONS,
@@ -57,12 +61,20 @@ public enum BEATsSettings {
 		return Integer.parseInt(userSettings.getProperty(this.name()));
 	}
 	
+	public void setIntValue(int val) {
+		userSettings.setProperty(this.name(), Integer.toString(val));
+	}
+	
 	/**
 	 * Warning: defaults to false if unreadable/not a boolean
 	 * @return boolean value of property
 	 */
 	public boolean getBoolValue() {
 		return Boolean.parseBoolean(userSettings.getProperty(this.name()));
+	}
+	
+	public void setBoolValue(boolean val) {
+		userSettings.setProperty(this.name(), Boolean.toString(val));
 	}
 	
 	
@@ -81,7 +93,9 @@ public enum BEATsSettings {
 		}
 
 		// Install settings
-		Locale.setDefault(new Locale(LANGUAGE.getStringValue(), COUNTRY.getStringValue()));
+		Locale l = new Locale(LANGUAGE.getStringValue(), COUNTRY.getStringValue());
+		Locale.setDefault(l);
+		Lang.setNewLocale(l);
 	}
 
 	public static void savePreferences() {

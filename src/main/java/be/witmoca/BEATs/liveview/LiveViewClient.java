@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,11 +24,15 @@ import be.witmoca.BEATs.utils.BEATsSettings;
  *
  */
 public class LiveViewClient implements ActionListener {
-	private static final int CONN_TRY_TIMEOUT = 50; // try to connect for X milliseconds to every server
+	private static final int CONN_TRY_TIMEOUT = 500; // try to connect for X milliseconds to every server
 	private static final int CONN_TIMEOUT_MS = 10 * 1000; // timeout between messages
+	
+	private static LiveViewClient lvc;
+	
 	private final Timer UPDATE_TIMER = new Timer((int) TimeUnit.SECONDS.toMillis(2), this);
 	private final List<InetSocketAddress> watchServers = new ArrayList<InetSocketAddress>();
 
+	
 	private LiveViewClient()
 	{
 		// TODO better saving of IP & PORT
@@ -41,7 +46,11 @@ public class LiveViewClient implements ActionListener {
 	}
 
 	public static void startClient() {
-		new LiveViewClient();
+		lvc = new LiveViewClient();
+	}
+	
+	public static void stopClient() {
+		lvc.UPDATE_TIMER.stop();
 	}
 
 	@Override
@@ -68,9 +77,11 @@ public class LiveViewClient implements ActionListener {
 						}
 					}
 
-				} catch (IOException e1) {
-				} catch (ClassNotFoundException e2) {
-				}
+				} catch (SocketTimeoutException e1) {
+					
+				} catch (IOException | ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} 
 			}
 		}
 	}

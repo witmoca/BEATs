@@ -55,4 +55,8 @@ public class Lang {
 		}
 		return locales;
 	}
+
+	public static void setNewLocale(Locale newLocale) {
+		UiBundle = ResourceBundle.getBundle(UI_BASE, newLocale);
+	}
 }

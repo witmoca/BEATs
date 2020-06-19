@@ -31,20 +31,27 @@ import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import javax.swing.SwingUtilities;
 
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
 
 public class SingleInstanceManager implements Runnable {
 	private static final int PORT = BEATsSettings.LOCAL_PORT.getIntValue();
+	private static SingleInstanceManager runningManager;
+	
 	private final ServerSocket ss;
-
+	
+	
 	public static boolean start(File loadFile) {
 		try {
 			ServerSocket socket = new ServerSocket(PORT);
-			(new Thread(new SingleInstanceManager(socket))).start();
-			return true; // This is the only instance
+			SingleInstanceManager tmp = new SingleInstanceManager(socket);
+			(new Thread(tmp)).start();
+			// This is the only instance at this point (ServerSocket constructor fails otherwise)
+			runningManager = tmp;
+			return true; 
 		} catch (BindException b) {
 			if (loadFile != null) {
 				// This is not the only instance => send data and exit
@@ -62,14 +69,39 @@ public class SingleInstanceManager implements Runnable {
 		}
 		return false;
 	}
+	
+	/*
+	 * Stops the singleInstanceManager
+	 * Necessary when restarting the application
+	 */
+	public static void stopSingleInstanceManager() {
+		if(runningManager != null) {
+			runningManager.stopRunning();
+		}
+	}
+	
+	private void stopRunning() {
+		if(!ss.isClosed()) {
+			try {
+				ss.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	private SingleInstanceManager(ServerSocket ss) {
 		this.ss = ss;
+		try {
+			ss.setSoTimeout(20);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void run() {
-		while (true) {
+		while (!ss.isClosed()) {
 			Socket s = null;
 			try {
 				// socket object to receive incoming client requests
@@ -86,13 +118,23 @@ public class SingleInstanceManager implements Runnable {
 						}
 					});
 				}
-			} catch (Exception e) {
-				try {
-					s.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
+			} catch (SocketTimeoutException e1) {
+				// timeout => reloop
+			} catch (IOException e) {
+				if(!ss.isClosed()) {
+					try {
+						s.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					e.printStackTrace();
 				}
-				e.printStackTrace();
+			}
+		}
+		if(!ss.isClosed()) {
+			try {
+				ss.close();
+			} catch (IOException e) {
 			}
 		}
 	}
