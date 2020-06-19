@@ -124,6 +124,12 @@ class ApplicationMenubar extends JMenuBar {
 		serverMonitor.setEnabled(BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue());
 		LiveShareMenu.add(serverMonitor);
 		
+		JMenuItem clientConnections = new JMenuItem(Lang.getUI("menu.liveshare.clientconnections"));
+		clientConnections.setMnemonic(KeyEvent.VK_C);
+		clientConnections.addActionListener(new ShowLiveShareClientConnections());
+		clientConnections.setEnabled(BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue());
+		LiveShareMenu.add(clientConnections);
+		
 		this.add(LiveShareMenu);
 
 		// HELP
