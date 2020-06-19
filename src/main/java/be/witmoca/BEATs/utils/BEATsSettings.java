@@ -93,7 +93,9 @@ public enum BEATsSettings {
 		}
 
 		// Install settings
-		Locale.setDefault(new Locale(LANGUAGE.getStringValue(), COUNTRY.getStringValue()));
+		Locale l = new Locale(LANGUAGE.getStringValue(), COUNTRY.getStringValue());
+		Locale.setDefault(l);
+		Lang.setNewLocale(l);
 	}
 
 	public static void savePreferences() {
