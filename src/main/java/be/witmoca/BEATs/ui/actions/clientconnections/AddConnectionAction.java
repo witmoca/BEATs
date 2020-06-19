@@ -31,9 +31,11 @@ import javax.swing.AbstractAction;
 */
 public class AddConnectionAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
+	private final CCListModel ccl;
 	
-	public AddConnectionAction() {
+	public AddConnectionAction(CCListModel ccl) {
 		super("+");
+		this.ccl = ccl;
 	}
 
 	/* (non-Javadoc)
@@ -43,6 +45,7 @@ public class AddConnectionAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 
+		ccl.UpdateContent();
 	}
 
 }

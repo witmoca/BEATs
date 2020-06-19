@@ -54,14 +54,15 @@ public class ShowLiveShareClientConnections implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		JPanel content = new JPanel(new BorderLayout(10, 10));
 		
-		JList<String> CCList = new JList<String>(new CCListModel());
+		CCListModel ccl = new CCListModel();
+		JList<String> CCList = new JList<String>(ccl);
 		content.add(new JScrollPane(CCList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
 				BorderLayout.CENTER);
 		
 		// button panel
 		JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
 		buttonPanel.setBorder(BorderFactory.createEtchedBorder());
-		buttonPanel.add(wrapAction(new AddConnectionAction()));
+		buttonPanel.add(wrapAction(new AddConnectionAction(ccl)));
 		
 		content.add(buttonPanel, BorderLayout.EAST);
 		
