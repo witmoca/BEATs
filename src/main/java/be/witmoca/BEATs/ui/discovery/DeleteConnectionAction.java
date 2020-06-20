@@ -3,23 +3,15 @@
  */
 package be.witmoca.BEATs.ui.discovery;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
-import be.witmoca.BEATs.ui.ApplicationWindow;
-import be.witmoca.BEATs.utils.Lang;
+import be.witmoca.BEATs.utils.BEATsSettings;
+import be.witmoca.BEATs.utils.UiIcon;
 
 /*
 *
@@ -40,40 +32,31 @@ import be.witmoca.BEATs.utils.Lang;
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: ShowLiveServerClientConnections.java
+* File: DeleteConnectionAction.java
 * Created: 2020
 */
-public class ShowLiveShareClientConnections implements ActionListener {
+public class DeleteConnectionAction extends AbstractAction {
+	private static final long serialVersionUID = 1L;
+	private final JList<String> model;
 	
+	DeleteConnectionAction(JList<String> model){
+		super(null, UiIcon.DELETE.getIcon());
+		this.model = model;
+	}
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JPanel content = new JPanel(new BorderLayout(10, 10));
+		if (!(e.getSource() instanceof Component) || model.getSelectedIndex() == -1 || model.getModel().getSize() == 0)
+			return;
 		
-		CCListModel ccl = new CCListModel();
-		JList<String> CCList = new JList<String>(ccl);
-		content.add(new JScrollPane(CCList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
-				BorderLayout.CENTER);
+		List<String> hosts = new ArrayList<String>(BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.getListValue());
+		hosts.remove(model.getSelectedValue());
+		BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.setListValue(hosts);
+		BEATsSettings.savePreferences();
 		
-		// button panel
-		JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
-		buttonPanel.setBorder(BorderFactory.createEtchedBorder());
-		buttonPanel.add(wrapAction(new AddConnectionAction(ccl)));
-		buttonPanel.add(wrapAction(new DeleteConnectionAction(CCList)));
-		
-		content.add(buttonPanel, BorderLayout.EAST);
-		
-		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
-				content, Lang.getUI("menu.liveshare.clientconnections"), JOptionPane.PLAIN_MESSAGE);
+		((CCListModel) model.getModel()).UpdateContent();
 	}
 
-	private JComponent wrapAction(Action a) {
-		JPanel p = new JPanel();
-		JButton b = new JButton(a);
-		b.setPreferredSize(new Dimension(60, 25));
-		p.add(b);
-		return p;
-	}
 }

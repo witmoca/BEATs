@@ -47,7 +47,7 @@ import be.witmoca.BEATs.utils.BEATsSettings;
 public class DiscoveryServer implements Runnable {
 	private static final String PING = "BEATS_CONNECT_PING";
 	private static final String SEPARATOR = ";";
-	private static final Long PRUNE_TIME_S = 30L;
+	private static final Long PRUNE_TIME_S = 5L;
 	private static final Long PING_MIN_RESPONSETIME_NS = 500 * 1000 * 1000L; // Min. time between ping responses in nS
 	private static final Long PING_BROADCAST_TIMER_MS = 300L;
 	private static DiscoveryServer currentServ;
