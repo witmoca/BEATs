@@ -11,12 +11,12 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.Timer;
 
+import be.witmoca.BEATs.discovery.DiscoveryServer;
 import be.witmoca.BEATs.utils.BEATsSettings;
 
 /**
@@ -30,18 +30,11 @@ public class LiveShareClient implements ActionListener {
 	private static LiveShareClient lvc;
 	
 	private final Timer UPDATE_TIMER = new Timer((int) TimeUnit.SECONDS.toMillis(2), this);
-	private final List<InetSocketAddress> watchServers = new ArrayList<InetSocketAddress>();
+	private final List<String> watchServers = BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.getListValue();
 
 	
 	private LiveShareClient()
 	{
-		// TODO better saving of IP & PORT
-		// TODO save HOSTNAME instead of IP & resolve hostname
-		String ip = BEATsSettings.LIVESHARE_CLIENT_IP_LIST.getStringValue();
-		int port = Integer.parseInt(BEATsSettings.LIVESHARE_CLIENT_PORT_LIST.getStringValue());
-		InetSocketAddress isa = new InetSocketAddress(ip, port);
-		watchServers.add(isa);
-
 		UPDATE_TIMER.start();
 	}
 
@@ -55,9 +48,10 @@ public class LiveShareClient implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		for (InetSocketAddress isa : watchServers) {
+		for (String host : watchServers) {
+			InetSocketAddress isa = DiscoveryServer.resolveHostToAddress(host);
 			// for every server that can be resolved and has no LiveShareDataClient associated
-			if (isa.isUnresolved() == false && LiveShareDataClient.isClientRunning(isa.getAddress()) == false) {
+			if (isa != null && isa.isUnresolved() == false && LiveShareDataClient.isClientRunning(isa.getAddress()) == false) {
 				try (Socket s = new Socket()) {
 					s.connect(isa, CONN_TRY_TIMEOUT);
 					s.setSoTimeout(CONN_TIMEOUT_MS);

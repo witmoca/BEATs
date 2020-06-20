@@ -10,6 +10,8 @@ import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import be.witmoca.BEATs.utils.BEATsSettings;
+
 /*
 *
 +===============================================================================+
@@ -33,7 +35,7 @@ import javax.swing.event.ListDataListener;
 * Created: 2020
 */
 public class CCListModel implements ListModel<String> {
-	private List<ListEntry> content= new ArrayList<ListEntry>();
+	private List<String> content= new ArrayList<String>();
 	private List<ListDataListener> ldl = new ArrayList<ListDataListener>();
 	
 	public CCListModel() {
@@ -47,7 +49,7 @@ public class CCListModel implements ListModel<String> {
 
 	@Override
 	public String getElementAt(int index) {
-		return content.get(index).toString();
+		return content.get(index);
 	}
 
 	@Override
@@ -61,23 +63,10 @@ public class CCListModel implements ListModel<String> {
 	}
 	
 	public void UpdateContent() {
-		// TODO: read content from BEATsSettings and display these using ListEntry objects
-		
+		content = BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.getListValue();
 		// update listeners
 		for(ListDataListener l : ldl) {
 			l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize()));
-		}
-	}
-
-	private static class ListEntry {
-		private ListEntry(String ip, int port, String hostName) {
-			
-		}
-
-		@Override
-		public String toString() {
-			// TODO Auto-generated method stub
-			return super.toString();
 		}
 	}
 }

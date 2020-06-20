@@ -9,6 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -49,8 +52,7 @@ public enum BEATsSettings {
 	LIVESHARE_SERVER_HOSTNAME,
 	LIVESHARE_SERVER_MAXCONNECTIONS,
 	LIVESHARE_CLIENT_ENABLED,
-	LIVESHARE_CLIENT_IP_LIST,
-	LIVESHARE_CLIENT_PORT_LIST;
+	LIVESHARE_CLIENT_HOSTLIST;
 	
 
 	public String getStringValue() {
@@ -79,6 +81,19 @@ public enum BEATsSettings {
 	
 	public void setBoolValue(boolean val) {
 		userSettings.setProperty(this.name(), Boolean.toString(val));
+	}
+	
+	public List<String> getListValue(){
+		String v = userSettings.getProperty(this.name(),"").trim();
+		if(v.isEmpty()) {
+			return new ArrayList<String>();
+		} else {
+			return Arrays.asList(v.split(";"));
+		}
+	}
+	
+	public void setListValue(List<String> val) {
+		userSettings.setProperty(this.name(), String.join(";", val));
 	}
 	
 	

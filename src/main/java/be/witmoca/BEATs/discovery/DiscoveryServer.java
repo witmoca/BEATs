@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -179,6 +180,16 @@ public class DiscoveryServer implements Runnable {
 			}
 			return null;
 		}
+	}
+	
+	public static InetSocketAddress resolveHostToAddress(String hostname) {
+		if(isRunning()) {
+			DiscoveryListEntry entry = currentServ.resolveHost(hostname);
+			if(entry == null)
+				return null;
+			return new InetSocketAddress(entry.getIp(), entry.getPort());
+		}
+		return null;
 	}
 	
 	private void deleteEntry(String hostname) {

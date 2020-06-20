@@ -6,7 +6,9 @@ package be.witmoca.BEATs.ui.discovery;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JList;
@@ -20,6 +22,7 @@ import javax.swing.event.ListDataListener;
 import be.witmoca.BEATs.discovery.DiscoveryListEntry;
 import be.witmoca.BEATs.discovery.DiscoveryServer;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
 
 /*
@@ -80,7 +83,10 @@ public class AddConnectionAction extends AbstractAction {
 		
 		if(result == 0) {
 			// save selected item in dlm
-			
+			Set<String> hosts = new HashSet<String>(BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.getListValue());
+			hosts.add(dlm.getEntry(discoveryList.getSelectedIndex()).getHostname());
+			BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.setListValue(new ArrayList<String>(hosts));
+			BEATsSettings.savePreferences();
 			ccl.UpdateContent();
 		}
 	}
@@ -120,6 +126,10 @@ public class AddConnectionAction extends AbstractAction {
 			content.clear();
 			content.addAll(newcontent);
 			fireContentChanged();			
+		}
+		
+		private DiscoveryListEntry getEntry(int index) {
+			return content.get(index);
 		}
 	}
 	
