@@ -157,7 +157,9 @@ public class AddConnectionAction extends AbstractAction {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			this.dlm.setContent(DiscoveryServer.getDiscovered());
+			List<DiscoveryListEntry> l = DiscoveryServer.getDiscovered();
+			l.sort((o1, o2) -> o1.getHostname().compareTo(o2.getHostname()));
+			this.dlm.setContent(l);
 		}
 	}
 }

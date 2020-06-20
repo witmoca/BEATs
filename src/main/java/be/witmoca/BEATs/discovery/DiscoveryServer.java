@@ -242,7 +242,6 @@ public class DiscoveryServer implements Runnable {
 		return new TimerTask() {
 			private final List<InterfaceAddress> ias = new ArrayList<InterfaceAddress>();
 		
-			
 			@Override
 			public void run() {
 				if(ias.isEmpty()) {
