@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.actions;
+package be.witmoca.BEATs.ui.discovery;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -19,8 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import be.witmoca.BEATs.ui.ApplicationWindow;
-import be.witmoca.BEATs.ui.actions.clientconnections.AddConnectionAction;
-import be.witmoca.BEATs.ui.actions.clientconnections.CCListModel;
 import be.witmoca.BEATs.utils.Lang;
 
 /*

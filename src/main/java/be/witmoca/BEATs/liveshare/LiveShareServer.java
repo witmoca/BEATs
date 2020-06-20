@@ -50,12 +50,20 @@ public class LiveShareServer implements Runnable {
 				oos.flush();
 				try(ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream())){
 					// Catch incoming connection requests
-					if (ois.readObject().equals(LiveShareMessage.BEATS_CONNECT_REQUEST)) {
-						// start new connection handler and return the port for the client to connect to
-						int port = LiveShareDataServer.startNewDataServer();
-						oos.writeObject(LiveShareMessage.BEATS_CONNECT_ACCEPTED);
-						oos.writeInt(port);
-						oos.flush();
+					Object in = ois.readObject();
+					if (in instanceof LiveShareMessage) {
+						LiveShareMessage lsm = (LiveShareMessage) in;
+						switch(lsm) {
+							case BEATS_CONNECT_REQUEST:
+								// start new connection handler and return the port for the client to connect to
+								int port = LiveShareDataServer.startNewDataServer();
+								oos.writeObject(LiveShareMessage.BEATS_CONNECT_ACCEPTED);
+								oos.writeInt(port);
+								oos.flush();
+								break;
+						default:
+							break;
+						}					
 					}
 				}
 			} catch (ClassNotFoundException e) {

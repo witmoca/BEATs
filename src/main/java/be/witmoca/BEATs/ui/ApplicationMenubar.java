@@ -38,6 +38,7 @@ import be.witmoca.BEATs.connection.actions.ImportFileAction;
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.connection.actions.SaveFileAction;
 import be.witmoca.BEATs.ui.actions.*;
+import be.witmoca.BEATs.ui.discovery.ShowLiveShareClientConnections;
 import be.witmoca.BEATs.ui.genremanager.GenreManagerShowAction;
 import be.witmoca.BEATs.ui.playlistmanager.PlaylistManagerShowAction;
 import be.witmoca.BEATs.utils.BEATsSettings;

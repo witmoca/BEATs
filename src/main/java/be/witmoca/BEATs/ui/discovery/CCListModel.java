@@ -1,11 +1,14 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.actions.clientconnections;
+package be.witmoca.BEATs.ui.discovery;
 
-import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.AbstractAction;
+import javax.swing.ListModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 /*
 *
@@ -26,26 +29,55 @@ import javax.swing.AbstractAction;
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: AddConnectionAction.java
+* File: CCListModel.java
 * Created: 2020
 */
-public class AddConnectionAction extends AbstractAction {
-	private static final long serialVersionUID = 1L;
-	private final CCListModel ccl;
+public class CCListModel implements ListModel<String> {
+	private List<ListEntry> content= new ArrayList<ListEntry>();
+	private List<ListDataListener> ldl = new ArrayList<ListDataListener>();
 	
-	public AddConnectionAction(CCListModel ccl) {
-		super("+");
-		this.ccl = ccl;
+	public CCListModel() {
+		UpdateContent();
 	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
+	
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
-		ccl.UpdateContent();
+	public int getSize() {
+		return content.size();
 	}
 
+	@Override
+	public String getElementAt(int index) {
+		return content.get(index).toString();
+	}
+
+	@Override
+	public void addListDataListener(ListDataListener l) {
+		ldl.add(l);
+	}
+
+	@Override
+	public void removeListDataListener(ListDataListener l) {
+		ldl.remove(l);
+	}
+	
+	public void UpdateContent() {
+		// TODO: read content from BEATsSettings and display these using ListEntry objects
+		
+		// update listeners
+		for(ListDataListener l : ldl) {
+			l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize()));
+		}
+	}
+
+	private static class ListEntry {
+		private ListEntry(String ip, int port, String hostName) {
+			
+		}
+
+		@Override
+		public String toString() {
+			// TODO Auto-generated method stub
+			return super.toString();
+		}
+	}
 }

@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -36,6 +38,7 @@ public enum BEATsSettings {
 	LANGUAGE,
 	COUNTRY,
 	LAST_FILE_PATH,
+	DISCOVERY_PORT,
 	LOCAL_PORT,
 	BACKUPS_ENABLED,
 	BACKUPS_TIMEBETWEEN,
@@ -43,6 +46,7 @@ public enum BEATsSettings {
 	BACKUPS_MAXSIZE,	
 	LIVESHARE_SERVER_ENABLED,
 	LIVESHARE_SERVER_PORT,
+	LIVESHARE_SERVER_HOSTNAME,
 	LIVESHARE_SERVER_MAXCONNECTIONS,
 	LIVESHARE_CLIENT_ENABLED,
 	LIVESHARE_CLIENT_IP_LIST,
@@ -119,8 +123,21 @@ public enum BEATsSettings {
 		defaultSettings.load(BEATsSettings.class.getClassLoader().getResourceAsStream("Text/DefaultSettings.properties"));
 
 		// Overwrite default settings with system defaults
+		// locale
 		defaultSettings.setProperty(LANGUAGE.name(), Locale.getDefault().getLanguage());
 		defaultSettings.setProperty(COUNTRY.name(), Locale.getDefault().getCountry());
+		// hostname
+		try
+		{
+		    InetAddress addr;
+		    addr = InetAddress.getLocalHost();
+		    defaultSettings.setProperty(LIVESHARE_SERVER_HOSTNAME.name(), addr.getHostName());
+		}
+		catch (UnknownHostException ex)
+		{
+			 defaultSettings.setProperty(LIVESHARE_SERVER_HOSTNAME.name(), "BEATsHost-" + (Math.random() * 9000 + 1000 )); // pasta a number (1000-9999) at the end of the hostname 
+		}
+		
 		return defaultSettings;
 	}
 	

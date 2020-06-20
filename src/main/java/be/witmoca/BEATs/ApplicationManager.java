@@ -35,6 +35,7 @@ import java.util.concurrent.FutureTask;
 import javax.swing.SwingUtilities;
 
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
+import be.witmoca.BEATs.discovery.DiscoveryServer;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.liveshare.LiveShareClient;
 import be.witmoca.BEATs.liveshare.LiveShareServer;
@@ -75,6 +76,10 @@ public class ApplicationManager {
 			// Startup LiveShare client
 			if (BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue())
 				LiveShareClient.startClient();
+			
+			// Startup Discovery
+			if (BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue() || BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue())
+				DiscoveryServer.startServer();
 			
 		} catch (IOException e) {
 			fatalError(e);

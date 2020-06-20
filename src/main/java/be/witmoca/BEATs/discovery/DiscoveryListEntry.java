@@ -1,14 +1,9 @@
 /**
  * 
  */
-package be.witmoca.BEATs.ui.actions.clientconnections;
+package be.witmoca.BEATs.discovery;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.ListModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import java.time.LocalTime;
 
 /*
 *
@@ -29,55 +24,35 @@ import javax.swing.event.ListDataListener;
 |    limitations under the License.                                             |
 +===============================================================================+
 *
-* File: CCListModel.java
+* File: DiscoveryListEntry.java
 * Created: 2020
 */
-public class CCListModel implements ListModel<String> {
-	private List<ListEntry> content= new ArrayList<ListEntry>();
-	private List<ListDataListener> ldl = new ArrayList<ListDataListener>();
+public class DiscoveryListEntry {
+	private final String hostname;
+	private final int port;
+	private final String ip;
+	private final LocalTime timestamp;
 	
-	public CCListModel() {
-		UpdateContent();
-	}
-	
-	@Override
-	public int getSize() {
-		return content.size();
+	public DiscoveryListEntry(String hostname, int port, String ip){
+		this.ip = ip;
+		this.hostname = hostname;
+		this.port = port;
+		this.timestamp = LocalTime.now();
 	}
 
-	@Override
-	public String getElementAt(int index) {
-		return content.get(index).toString();
+	public String getHostname() {
+		return hostname;
 	}
 
-	@Override
-	public void addListDataListener(ListDataListener l) {
-		ldl.add(l);
+	public int getPort() {
+		return port;
 	}
 
-	@Override
-	public void removeListDataListener(ListDataListener l) {
-		ldl.remove(l);
-	}
-	
-	public void UpdateContent() {
-		// TODO: read content from BEATsSettings and display these using ListEntry objects
-		
-		// update listeners
-		for(ListDataListener l : ldl) {
-			l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize()));
-		}
+	public LocalTime getTimestamp() {
+		return timestamp;
 	}
 
-	private static class ListEntry {
-		private ListEntry(String ip, int port, String hostName) {
-			
-		}
-
-		@Override
-		public String toString() {
-			// TODO Auto-generated method stub
-			return super.toString();
-		}
+	public String getIp() {
+		return ip;
 	}
 }

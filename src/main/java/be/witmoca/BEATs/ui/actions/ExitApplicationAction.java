@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import be.witmoca.BEATs.connection.ConnectionException;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.actions.CheckFileSavedAction;
+import be.witmoca.BEATs.discovery.DiscoveryServer;
 import be.witmoca.BEATs.liveshare.LiveShareClient;
 import be.witmoca.BEATs.liveshare.LiveShareDataClient;
 import be.witmoca.BEATs.liveshare.LiveShareDataServer;
@@ -65,7 +66,10 @@ public class ExitApplicationAction implements ActionListener {
 		
 		// KILL LiveShare Client & data pollerss
 		LiveShareClient.stopClient();
-		LiveShareDataClient.closeAllClients();		
+		LiveShareDataClient.closeAllClients();	
+		
+		// Kill Discovery
+		DiscoveryServer.stopServer();
 
 		// KILL DB Connection
 		try {
