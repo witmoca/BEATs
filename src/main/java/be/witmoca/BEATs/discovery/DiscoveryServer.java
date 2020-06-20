@@ -48,7 +48,7 @@ public class DiscoveryServer implements Runnable {
 	private static final String SEPARATOR = ";";
 	private static final Long PRUNE_TIME_S = 30L;
 	private static final Long PING_MIN_RESPONSETIME_NS = 500 * 1000 * 1000L; // Min. time between ping responses in nS
-	private static final Long PING_BROADCAST_TIMER_MS = 1L;
+	private static final Long PING_BROADCAST_TIMER_MS = 300L;
 	private static DiscoveryServer currentServ;
 	private final AtomicBoolean turnedOn = new AtomicBoolean(true);
 	private final DatagramSocket sendSocket;
@@ -58,7 +58,7 @@ public class DiscoveryServer implements Runnable {
 	private final byte[] pingMsg = ("BEATS_CONNECT_PING" + SEPARATOR + BEATsSettings.LIVESHARE_SERVER_HOSTNAME.getStringValue() + SEPARATOR + BEATsSettings.LIVESHARE_SERVER_PORT.getStringValue()).getBytes();
 	private final int discoveryPort =  BEATsSettings.DISCOVERY_PORT.getIntValue();
 	private final List<DiscoveryListEntry> discovered = Collections.synchronizedList(new ArrayList<DiscoveryListEntry>());
-	private final Timer broadcastTimer = new Timer(true);
+	private Timer broadcastTimer;
 	
 	/**
 	 * Turn on server, do nothing if already on
@@ -209,12 +209,13 @@ public class DiscoveryServer implements Runnable {
 	
 	public static void startBroadcaster() {
 		if(isRunning()) {
+			currentServ.broadcastTimer = new Timer(true);
 			currentServ.broadcastTimer.schedule(getBroadcaster(currentServ), PING_BROADCAST_TIMER_MS, PING_BROADCAST_TIMER_MS);
 		}
 	}
 	
 	public static void stopBroadcaster() {
-		if(isRunning()) {
+		if(isRunning() && currentServ.broadcastTimer != null) {
 			currentServ.broadcastTimer.cancel();
 		}
 	}
@@ -239,24 +240,28 @@ public class DiscoveryServer implements Runnable {
 	
 	private static TimerTask getBroadcaster(DiscoveryServer ds) {
 		return new TimerTask() {
+			private final List<InterfaceAddress> ias = new ArrayList<InterfaceAddress>();
+		
+			
 			@Override
 			public void run() {
-				List<InterfaceAddress> ias = new ArrayList<InterfaceAddress>();	
-				try {
-					Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-					while(interfaces.hasMoreElements()) {
-						NetworkInterface ni = interfaces.nextElement();
-						if(ni.isUp() && !ni.isLoopback()) {
-							for(InterfaceAddress ia : ni.getInterfaceAddresses()) {
-								// interface should have broadcast (filters out ipv6 as well)
-								if(ia.getBroadcast() != null) {
-									ias.add(ia);
+				if(ias.isEmpty()) {
+					try {
+						Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+						while(interfaces.hasMoreElements()) {
+							NetworkInterface ni = interfaces.nextElement();
+							if(ni.isUp() && !ni.isLoopback()) {
+								for(InterfaceAddress ia : ni.getInterfaceAddresses()) {
+									// interface should have broadcast (filters out ipv6 as well)
+									if(ia.getBroadcast() != null) {
+										ias.add(ia);
+									}
 								}
 							}
 						}
+					} catch (SocketException e1) {
+						e1.printStackTrace();
 					}
-				} catch (SocketException e1) {
-					e1.printStackTrace();
 				}
 				ds.sendBroadcast(ias);
 			}
