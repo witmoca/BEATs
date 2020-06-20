@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.Timer;
+import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import be.witmoca.BEATs.discovery.DiscoveryListEntry;
@@ -62,12 +63,21 @@ public class AddConnectionAction extends AbstractAction {
 		JList<String> discoveryList = new JList<String>(dlm);
 		
 		Timer REFRESH_TIMER = new Timer(LIST_UPDATE_DELAY_MS, new UpdateAction(dlm));
+		
+		// start broadcasting
+		DiscoveryServer.startBroadcaster();
+		// start gui updating
 		REFRESH_TIMER.start();
 		
 		String options[] = {Lang.getUI("action.ok"), Lang.getUI("action.cancel")};
 		int result = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(), new JScrollPane(discoveryList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
-				Lang.getUI("menu.liveshare.clientconnections"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);		
+				Lang.getUI("menu.liveshare.clientconnections"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);	
+		
+		// stop gui updating
 		REFRESH_TIMER.stop();
+		// stop broadcasting
+		DiscoveryServer.stopBroadcaster();
+		
 		if(result == 0) {
 			// save selected item in dlm
 			
@@ -100,9 +110,16 @@ public class AddConnectionAction extends AbstractAction {
 			ldl.remove(l);
 		}
 		
+		private void fireContentChanged() {
+			for(ListDataListener l : ldl) {
+				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, content.size()));
+			}
+		}
+		
 		private void setContent(List<DiscoveryListEntry> newcontent) {
 			content.clear();
 			content.addAll(newcontent);
+			fireContentChanged();			
 		}
 	}
 	

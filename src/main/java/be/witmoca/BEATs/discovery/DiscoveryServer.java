@@ -101,7 +101,6 @@ public class DiscoveryServer implements Runnable {
 	}
 
 	public DiscoveryServer() throws SocketException {
-		System.out.println(new String(pingMsg));
 		this.receiveSocket = new DatagramSocket(discoveryPort);
 		this.sendSocket = new DatagramSocket();
 		this.incoming = new DatagramPacket(incomingBuffer, incomingBuffer.length);
@@ -119,26 +118,30 @@ public class DiscoveryServer implements Runnable {
 				if(pieces.length != 3)
 					continue;
 				// Ignore if not a ping message
-				if(!pieces[0].equals(PING))
+				if(!pieces[0].trim().equals(PING))
 					continue;
-				
-				DiscoveryListEntry newEntry = new DiscoveryListEntry(pieces[1], Integer.parseInt(pieces[2]), incoming.getAddress().getHostAddress());
+
+				DiscoveryListEntry newEntry = new DiscoveryListEntry(pieces[1].trim(), Integer.parseInt(pieces[2].trim()), incoming.getAddress().getHostAddress());
 				DiscoveryListEntry resolved = resolveHost(newEntry.getHostname());
+				
+				
 				// Host is known already?
 				if(resolved != null) {
-					// replace existing info about this host
-					deleteEntry(pieces[1]);
-					discovered.add(newEntry);
-					
-					// do not send back if not enough time has passed
-					if(!resolved.getTimestamp().plusNanos(PING_MIN_RESPONSETIME_NS).isBefore(LocalTime.now())) {
+					// only update when enough time has passed
+					if(resolved.getTimestamp().plusNanos(PING_MIN_RESPONSETIME_NS).isBefore(LocalTime.now())) {
+						// replace existing info about this host
+						deleteEntry(pieces[1]);
+						discovered.add(newEntry);
 						sendPingResponse(incoming.getAddress());
 					}
+					// If host is known, but too recent than ignore it
 				} else {
 					// totally new entry
 					discovered.add(newEntry);
 				}
+				
 			} catch (NumberFormatException e){
+				e.printStackTrace();
 				// port wasn't a number? => ignore packet
 			} catch (SocketException e) {
 				// Only print stacktrace if DiscoveryServer isn't shutting down
@@ -243,7 +246,7 @@ public class DiscoveryServer implements Runnable {
 					Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
 					while(interfaces.hasMoreElements()) {
 						NetworkInterface ni = interfaces.nextElement();
-						if(ni.isUp() /*&& !ni.isLoopback()*/) {
+						if(ni.isUp() && !ni.isLoopback()) {
 							for(InterfaceAddress ia : ni.getInterfaceAddresses()) {
 								// interface should have broadcast (filters out ipv6 as well)
 								if(ia.getBroadcast() != null) {
