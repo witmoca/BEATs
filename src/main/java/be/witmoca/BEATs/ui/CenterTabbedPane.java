@@ -22,10 +22,12 @@
 */
 package be.witmoca.BEATs.ui;
 
+import java.util.List;
+
 import javax.swing.JTabbedPane;
 
 import be.witmoca.BEATs.liveshare.ConnectionsSetChangedListener;
-import be.witmoca.BEATs.liveshare.LiveShareDataClient;
+import be.witmoca.BEATs.liveshare.LiveShareClient;
 import be.witmoca.BEATs.ui.archivepanel.ArchivePanel;
 import be.witmoca.BEATs.ui.artistcatalog.ArtistCatalog;
 import be.witmoca.BEATs.ui.liveshare.LiveShareTabbedPane;
@@ -46,22 +48,23 @@ class CenterTabbedPane extends JTabbedPane implements ConnectionsSetChangedListe
 		this.addTab(Lang.getUI("center.songcatalog"), new SongCatalog());
 		
 		dynamicTabRange = this.getTabCount();
-		LiveShareDataClient.addConnectionsSetChangedListener(this);
+		LiveShareClient.addConnectionsSetChangedListener(this);
 	}
 
 	@Override
-	public void connectionsSetChanged() {
+	public void connectionsSetChanged(LiveShareClient lsc) {
+		List<String> servers = lsc.getConnectedServerNames();
 		// Cleanup inactive tabs
 		for(int tab = this.getTabCount()-1 ; tab >= dynamicTabRange; tab--) {
-			if(! ((LiveShareTabbedPane) this.getTabComponentAt(tab)).isLvdcActive()){
+			if(!servers.contains(this.getTitleAt(tab))){
 				this.removeTabAt(tab);
 			}
 		}
 		
 		// add  tabs as appropriate
-		for(LiveShareDataClient lvdc : LiveShareDataClient.getConnections()) {
-			if(lvdc.isActive() && this.indexOfTab(lvdc.getName()) == -1){
-				this.addTab(lvdc.getName(), new LiveShareTabbedPane(lvdc));
+		for(String server : servers) {
+			if(this.indexOfTab(server) == -1){
+				this.addTab(server, new LiveShareTabbedPane(lsc, server));
 			}
 		}
 	}

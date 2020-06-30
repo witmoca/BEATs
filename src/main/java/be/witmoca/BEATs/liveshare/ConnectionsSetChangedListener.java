@@ -8,5 +8,5 @@ package be.witmoca.BEATs.liveshare;
  *
  */
 public interface ConnectionsSetChangedListener {
-	public void connectionsSetChanged();
+	public void connectionsSetChanged(LiveShareClient lsc);
 }

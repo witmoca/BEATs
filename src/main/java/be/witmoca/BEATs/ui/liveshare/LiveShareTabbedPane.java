@@ -27,23 +27,25 @@ import java.util.List;
 import javax.swing.JTabbedPane;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.liveshare.LiveShareDataClient;
+import be.witmoca.BEATs.liveshare.LiveShareClient;
 
 public class LiveShareTabbedPane extends JTabbedPane implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
-	private final LiveShareDataClient lvdc;
+	private final LiveShareClient lvc;
+	private final String serverName;
 	
-	public LiveShareTabbedPane(LiveShareDataClient lvdc) {
+	public LiveShareTabbedPane(LiveShareClient lvc, String name) {
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		this.lvdc = lvdc;
+		this.lvc = lvc;
+		this.serverName = name;
 
 		this.tableChanged();
-		lvdc.addDataChangedListener(this);
+		lvc.addDataChangedListener(this);
 	}
 
 	@Override
 	public void tableChanged() {
-		List<String> playlistNames = this.lvdc.getContent().getPlaylists();
+		List<String> playlistNames = this.lvc.getContent(this.getName()).getPlaylists();
 
 		// Remove deleted tabs 
 		for(int tabIndex = this.getTabCount() - 1; tabIndex >= 0 ; tabIndex--) {
@@ -59,7 +61,7 @@ public class LiveShareTabbedPane extends JTabbedPane implements DataChangedListe
 			String tabName = tabIndex < this.getTabCount() ? this.getTitleAt(tabIndex) : "";
 			String expectedName = playlistNames.get(tabIndex);
 			if(!expectedName.equals(tabName)){
-				this.insertTab(expectedName, null, new LiveSharePanel(expectedName,lvdc), null, tabIndex);
+				this.insertTab(expectedName, null, new LiveSharePanel(expectedName, lvc, serverName), null, tabIndex);
 			}
 		}
 		// In case any mishaps occur
@@ -69,9 +71,5 @@ public class LiveShareTabbedPane extends JTabbedPane implements DataChangedListe
 				this.remove(i);
 			}
 		}
-	}
-	
-	public boolean isLvdcActive() {
-		return this.lvdc.isActive();
 	}
 }

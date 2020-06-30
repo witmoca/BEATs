@@ -31,7 +31,6 @@ import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.actions.CheckFileSavedAction;
 import be.witmoca.BEATs.discovery.DiscoveryServer;
 import be.witmoca.BEATs.liveshare.LiveShareClient;
-import be.witmoca.BEATs.liveshare.LiveShareDataClient;
 import be.witmoca.BEATs.liveshare.LiveShareDataServer;
 import be.witmoca.BEATs.liveshare.LiveShareServer;
 import be.witmoca.BEATs.ui.ApplicationWindow;
@@ -66,7 +65,6 @@ public class ExitApplicationAction implements ActionListener {
 		
 		// KILL LiveShare Client & data pollerss
 		LiveShareClient.stopClient();
-		LiveShareDataClient.closeAllClients();	
 		
 		// Kill Discovery
 		DiscoveryServer.stopServer();

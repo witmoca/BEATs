@@ -28,7 +28,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.liveshare.LiveShareDataClient;
+import be.witmoca.BEATs.liveshare.LiveShareClient;
 import be.witmoca.BEATs.ui.components.PlaylistEntry;
 import be.witmoca.BEATs.utils.Lang;
 
@@ -39,21 +39,23 @@ public class LiveShareTableModel extends AbstractTableModel implements DataChang
 	
 	private final List<PlaylistEntry> playlistList = new ArrayList<PlaylistEntry>();
 	private final String playlistName;
-	private final LiveShareDataClient lvdc;
+	private final LiveShareClient lsc;
+	private final String serverName;
 	
-	LiveShareTableModel(String playlistName, LiveShareDataClient lvdc) {
+	LiveShareTableModel(String playlistName, LiveShareClient lsc, String serverName) {
 		super();
 		this.playlistName = playlistName;
-		this.lvdc = lvdc;
+		this.lsc = lsc;
+		this.serverName = serverName;
 		
 		tableChanged();
-		lvdc.addDataChangedListener(this);
+		lsc.addDataChangedListener(this);
 	}
 
 	@Override
 	public void tableChanged() {
 		playlistList.clear();
-		playlistList.addAll(lvdc.getContent().getPlaylistContents(playlistName));
+		playlistList.addAll(lsc.getContent(this.serverName).getPlaylistContents(playlistName));
 		
 		this.fireTableDataChanged();
 	}

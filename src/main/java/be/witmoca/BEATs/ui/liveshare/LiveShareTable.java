@@ -6,7 +6,7 @@ package be.witmoca.BEATs.ui.liveshare;
 import javax.swing.table.TableRowSorter;
 
 import be.witmoca.BEATs.clipboard.TransferableSongList;
-import be.witmoca.BEATs.liveshare.LiveShareDataClient;
+import be.witmoca.BEATs.liveshare.LiveShareClient;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.components.SongTableCopyOnlyTransferHandler;
 import be.witmoca.BEATs.ui.liveshare.actions.LiveShareKeyBindings;
@@ -19,8 +19,8 @@ import be.witmoca.BEATs.ui.liveshare.actions.LiveSharePopupMenu;
 public class LiveShareTable extends SongTable {
 	private static final long serialVersionUID = 1L;
 	
-	public LiveShareTable(String playlistName, LiveShareDataClient lvdc) {
-		super(new LiveShareTableModel(playlistName, lvdc));
+	public LiveShareTable(String playlistName, LiveShareClient lsc, String serverName) {
+		super(new LiveShareTableModel(playlistName, lsc, serverName));
 		
 		// Add standard single column rowsorter
 		TableRowSorter<LiveShareTableModel> srt = new TableRowSorter<LiveShareTableModel>(
