@@ -119,6 +119,12 @@ class ApplicationMenubar extends JMenuBar {
 		JMenu LiveShareMenu = new JMenu(Lang.getUI("menu.liveshare"));
 		fileMenu.setMnemonic(KeyEvent.VK_L);
 		
+		JMenuItem clientMonitor = new JMenuItem(Lang.getUI("menu.liveshare.clientmonitor"));
+		clientMonitor.setMnemonic(KeyEvent.VK_C);
+		clientMonitor.addActionListener(new ShowLiveShareClientMonitor());
+		clientMonitor.setEnabled(BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue());
+		LiveShareMenu.add(clientMonitor);
+		
 		JMenuItem serverMonitor = new JMenuItem(Lang.getUI("menu.liveshare.servermonitor"));
 		serverMonitor.setMnemonic(KeyEvent.VK_S);
 		serverMonitor.addActionListener(new ShowLiveShareServerMonitor());

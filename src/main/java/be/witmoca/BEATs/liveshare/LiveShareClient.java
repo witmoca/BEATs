@@ -42,7 +42,7 @@ public class LiveShareClient implements ActionListener {
 	private final Map<String, Socket> connectedClients = new HashMap<String, Socket>();	
 	private final Map<String, ObjectOutputStream> outputStreams = new HashMap<String, ObjectOutputStream>();	
 	private final Map<String, ObjectInputStream> inputStreams = new HashMap<String, ObjectInputStream>();	
-	private final Map<String, LiveShareSerializable> content = new HashMap<String, LiveShareSerializable>();
+	private final Map<String, LiveShareSerializable> content = Collections.synchronizedMap(new HashMap<String, LiveShareSerializable>());
 	private final Set<ConnectionsSetChangedListener> cscListeners = Collections
 			.synchronizedSet(new HashSet<ConnectionsSetChangedListener>());
 	private final Set<DataChangedListener> dcListeners = Collections
@@ -66,6 +66,8 @@ public class LiveShareClient implements ActionListener {
 		Boolean connectionsChanged = false;
 		/* Connect to more servers if possible */
 		if(watchServers.size() != connectedClients.size()) {
+			// turn on broadcaster to find servers
+			DiscoveryServer.startBroadcaster();
 			// Missing servers list (copy + detract connected)
 			List<String> missing = Arrays.asList(watchServers.toArray(new String[0]));
 			missing.removeAll(connectedClients.keySet());
@@ -106,6 +108,9 @@ public class LiveShareClient implements ActionListener {
 					} 
 				}
 			}
+		} else {
+			// No need to find anymore servers
+			DiscoveryServer.stopBroadcaster();
 		}
 		
 		
@@ -164,7 +169,7 @@ public class LiveShareClient implements ActionListener {
 		List<ConnectionsSetChangedListener> notifylist = new ArrayList<ConnectionsSetChangedListener>();
 		synchronized (lvc.cscListeners) {
 			/*cleanup list */
-			lvc.cscListeners.removeAll(null);
+			lvc.cscListeners.remove(null);
 			notifylist.addAll(lvc.cscListeners);
 		}
 		for (ConnectionsSetChangedListener cscl : notifylist) {
@@ -182,7 +187,7 @@ public class LiveShareClient implements ActionListener {
 		List<DataChangedListener> notifylist = new ArrayList<DataChangedListener>();
 		synchronized (dcListeners) {
 			// cleanup list
-			notifylist.removeAll(null);
+			notifylist.remove(null);
 			notifylist.addAll(dcListeners);
 		}
 		for (DataChangedListener dcl : notifylist) {
@@ -191,6 +196,8 @@ public class LiveShareClient implements ActionListener {
 	}
 	
 	public LiveShareSerializable getContent(String serverName) {
-		return this.content.get(serverName);
+		synchronized (content) {
+			return this.content.get(serverName);
+		}
 	}
 }

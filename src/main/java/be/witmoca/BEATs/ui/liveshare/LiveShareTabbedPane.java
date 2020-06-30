@@ -22,12 +22,14 @@
 */
 package be.witmoca.BEATs.ui.liveshare;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JTabbedPane;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
 import be.witmoca.BEATs.liveshare.LiveShareClient;
+import be.witmoca.BEATs.liveshare.LiveShareSerializable;
 
 public class LiveShareTabbedPane extends JTabbedPane implements DataChangedListener {
 	private static final long serialVersionUID = 1L;
@@ -45,8 +47,8 @@ public class LiveShareTabbedPane extends JTabbedPane implements DataChangedListe
 
 	@Override
 	public void tableChanged() {
-		List<String> playlistNames = this.lvc.getContent(this.getName()).getPlaylists();
-
+		LiveShareSerializable lss = this.lvc.getContent(this.getName());
+		List<String> playlistNames = lss == null ? Collections.emptyList() : lss.getPlaylists();
 		// Remove deleted tabs 
 		for(int tabIndex = this.getTabCount() - 1; tabIndex >= 0 ; tabIndex--) {
 			String tabName = this.getTitleAt(tabIndex);

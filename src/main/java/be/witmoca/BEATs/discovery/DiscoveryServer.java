@@ -81,6 +81,7 @@ public class DiscoveryServer implements Runnable {
 	 * Turn off server
 	 */
 	public static void stopServer() {
+		stopBroadcaster();
 		if (currentServ != null) {
 			currentServ.turnedOn.set(false);
 			currentServ.receiveSocket.close(); // receive is always waiting, so force it closed
@@ -220,13 +221,15 @@ public class DiscoveryServer implements Runnable {
 	
 	public static void startBroadcaster() {
 		if(isRunning()) {
+			if(currentServ.broadcastTimer != null)
+				currentServ.broadcastTimer.cancel();
 			currentServ.broadcastTimer = new Timer(true);
 			currentServ.broadcastTimer.schedule(getBroadcaster(currentServ), PING_BROADCAST_TIMER_MS, PING_BROADCAST_TIMER_MS);
 		}
 	}
 	
 	public static void stopBroadcaster() {
-		if(isRunning() && currentServ.broadcastTimer != null) {
+		if(currentServ != null && currentServ.broadcastTimer != null) {
 			currentServ.broadcastTimer.cancel();
 		}
 	}

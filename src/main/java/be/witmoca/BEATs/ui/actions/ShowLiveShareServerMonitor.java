@@ -28,12 +28,14 @@ public class ShowLiveShareServerMonitor implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JTable monitor = new JTable(new ServerMonitorModel());
+		ServerMonitorModel smm = new ServerMonitorModel();
+		JTable monitor = new JTable(smm);
 
 		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
 				new JScrollPane(monitor, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
 				Lang.getUI("menu.liveshare.servermonitor"), JOptionPane.PLAIN_MESSAGE);
+		smm.stopTimer();
 	}
 	
 	
@@ -41,7 +43,7 @@ public class ShowLiveShareServerMonitor implements ActionListener {
 	
 	private class ServerMonitorModel extends AbstractTableModel implements ActionListener {
 		private static final long serialVersionUID = 1L;
-		private final Timer UPDATE_TIMER = new Timer((int) TimeUnit.SECONDS.toMillis(2), this);
+		private final Timer UPDATE_TIMER = new Timer((int) TimeUnit.SECONDS.toMillis(1), this);
 		
 		List<String[]> content = new ArrayList<String[]>();
 		
@@ -79,7 +81,7 @@ public class ShowLiveShareServerMonitor implements ActionListener {
 
 		@Override
 		public int getColumnCount() {
-			return 2;
+			return COLUMN_NAME.length;
 		}
 
 		@Override
@@ -94,6 +96,8 @@ public class ShowLiveShareServerMonitor implements ActionListener {
 			return COLUMN_NAME[column];
 		}
 		
-		
+		public void stopTimer() {
+			UPDATE_TIMER.stop();
+		}
 	}
 }
