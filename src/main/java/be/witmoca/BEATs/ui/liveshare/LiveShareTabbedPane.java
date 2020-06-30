@@ -40,15 +40,15 @@ public class LiveShareTabbedPane extends JTabbedPane implements DataChangedListe
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
 		this.lvc = lvc;
 		this.serverName = name;
-
 		this.tableChanged();
 		lvc.addDataChangedListener(this);
 	}
 
 	@Override
 	public void tableChanged() {
-		LiveShareSerializable lss = this.lvc.getContent(this.getName());
-		List<String> playlistNames = lss == null ? Collections.emptyList() : lss.getPlaylists();
+		LiveShareSerializable lss = this.lvc.getContent(this.serverName);
+		List<String> playlistNames = (lss == null ? Collections.emptyList() : lss.getPlaylists());
+
 		// Remove deleted tabs 
 		for(int tabIndex = this.getTabCount() - 1; tabIndex >= 0 ; tabIndex--) {
 			String tabName = this.getTitleAt(tabIndex);

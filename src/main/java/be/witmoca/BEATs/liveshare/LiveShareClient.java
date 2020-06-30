@@ -153,6 +153,9 @@ public class LiveShareClient implements ActionListener {
 		if(connectionsChanged ) {
 			fireConnectionsSetChanged();
 		}
+		
+		if(connectedClients.size() > 0)
+			fireDataChanged();
 	}
 	
 	public List<String> getConnectedServerNames(){
