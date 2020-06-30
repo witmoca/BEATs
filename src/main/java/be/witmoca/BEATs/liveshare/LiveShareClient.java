@@ -48,13 +48,14 @@ public class LiveShareClient implements ActionListener {
 	private final Set<DataChangedListener> dcListeners = Collections
 			.synchronizedSet(new HashSet<DataChangedListener>());
 	
-	private LiveShareClient()
+	private LiveShareClient(boolean start)
 	{
-		UPDATE_TIMER.start();
+		if(start)
+			UPDATE_TIMER.start();
 	}
 
-	public static void startClient() {
-		lvc = new LiveShareClient();
+	public static void startClient(boolean start) {
+		lvc = new LiveShareClient(start);
 	}
 	
 	public static void stopClient() {

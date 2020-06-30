@@ -74,8 +74,7 @@ public class ApplicationManager {
 				LiveShareServer.startServer();
 			
 			// Startup LiveShare client
-			if (BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue())
-				LiveShareClient.startClient();
+			LiveShareClient.startClient(BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue());
 			
 			// Startup Discovery
 			if (BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue() || BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue())
