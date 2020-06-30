@@ -146,7 +146,7 @@ public class LiveShareClient implements ActionListener {
 
 		/* Connections Changed */
 		if(connectionsChanged ) {
-			// TODO
+			fireConnectionsSetChanged();
 		}
 	}
 	
