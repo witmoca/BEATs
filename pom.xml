@@ -5,7 +5,7 @@
 
 	<groupId>be.witmoca</groupId>
 	<artifactId>BEATs</artifactId>
-	<version>1.1.0</version>
+	<version>1.2.0-rc1</version>
 	<packaging>jar</packaging>
 
 	<name>BEATs (Burning Ember Archival Tool Suite)</name>
@@ -102,6 +102,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.3.0</version>
 				<executions>
 					<execution>
 						<id>create-standalone</id>
@@ -127,7 +128,9 @@
 
 			<!-- Copy resources on the correct phase -->
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
 				<executions>
 					<!-- Copy main resources -->
 					<execution>
