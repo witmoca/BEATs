@@ -244,8 +244,11 @@ public class DiscoveryServer implements Runnable {
 				InetAddress broadcast = ia.getBroadcast();
 				DatagramPacket pingPacket = new DatagramPacket(pingMsg, pingMsg.length, broadcast, discoveryPort);
 				try {
-					sendSocket.send(pingPacket);
+					// Ignore if broadcast address is 0.0.0.0 (openVPN tunnel might return this, among other things)
+					if(!broadcast.getHostAddress().equals("0.0.0.0"))
+						sendSocket.send(pingPacket);
 				} catch (IOException e) {
+					System.err.println("Sending failed to ip adress " + broadcast + " on interface " + ia.getAddress());
 					e.printStackTrace();
 				}
 			}
