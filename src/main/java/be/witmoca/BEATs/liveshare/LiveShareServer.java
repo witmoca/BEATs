@@ -57,8 +57,13 @@ public class LiveShareServer implements Runnable {
 							case BEATS_CONNECT_REQUEST:
 								// start new connection handler and return the port for the client to connect to
 								int port = LiveShareDataServer.startNewDataServer();
-								oos.writeObject(LiveShareMessage.BEATS_CONNECT_ACCEPTED);
-								oos.writeInt(port);
+								if(port == -1) {
+									// refused
+									oos.writeObject(LiveShareMessage.BEATS_CONNECT_REFUSED);
+								} else {
+									oos.writeObject(LiveShareMessage.BEATS_CONNECT_ACCEPTED);
+									oos.writeInt(port);
+								}
 								oos.flush();
 								break;
 						default:

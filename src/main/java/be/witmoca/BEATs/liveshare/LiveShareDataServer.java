@@ -38,18 +38,20 @@ public class LiveShareDataServer implements Runnable, DataChangedListener {
 	/**
 	 * Spins off a dataserver
 	 * 
-	 * @return Port of the DataServer
+	 * @return Port of the DataServer, -1 if too many connections
 	 * @throws IOException
 	 */
 	public static int startNewDataServer() throws IOException {
 		// Anatomically check: over connection limit?
 		if (connectionCount.getAndIncrement() >= BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.getIntValue()) {
 			connectionCount.decrementAndGet();
-			throw new IOException("Maximum connections limit reached!");
+			return -1;
 		}
 
 		ServerSocket ss = new ServerSocket(0, 50); // Do not specifiy a host ip here! => The server should be visible on all Networks on the device
-		(new Thread(new LiveShareDataServer(ss))).start();
+		Thread t = new Thread(new LiveShareDataServer(ss));
+		t.setDaemon(false);
+		t.start();
 		return ss.getLocalPort();
 	}
 	
@@ -105,11 +107,6 @@ public class LiveShareDataServer implements Runnable, DataChangedListener {
 									oos.writeObject(LiveShareSerializable.createSnapShot());
 									oos.flush();
 									playlistChanged.set(false);
-									break;
-								case BEATS_DATA_CHECK_CHANGED:
-									oos.writeObject(LiveShareMessage.BEATS_DATA_CHECK_CHANGED);
-									oos.writeBoolean(playlistChanged.get());
-									oos.flush();
 									break;
 							default:
 								break;							

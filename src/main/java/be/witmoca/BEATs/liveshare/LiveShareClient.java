@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +65,7 @@ public class LiveShareClient implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Boolean connectionsChanged = false;
+		Boolean connectionsChanged = cleanupConnections();
 		/* Connect to more servers if possible */
 		if(watchServers.size() != connectedClients.size()) {
 			// turn on broadcaster to find servers
@@ -114,21 +115,7 @@ public class LiveShareClient implements ActionListener {
 			DiscoveryServer.stopBroadcaster();
 		}
 		
-		
-		/* Cleanup connections */
-		List<String> cleanup = new ArrayList<String>();
-		for(String server : connectedClients.keySet()) {	
-			if(connectedClients.get(server).isClosed()) {
-				cleanup.add(server);
-				connectionsChanged = true;
-			}
-		}
-		for(String c: cleanup) {
-			connectedClients.remove(c);
-			inputStreams.remove(c);
-			outputStreams.remove(c);
-			content.remove(c);
-		}
+		connectionsChanged |= cleanupConnections();
 		
 		/* Update Data */
 		for(String server : connectedClients.keySet()) {
@@ -143,12 +130,16 @@ public class LiveShareClient implements ActionListener {
 				if (LiveShareMessage.BEATS_DATA_REQUEST_FULL.equals(ois.readObject())) {
 					content.put(server, (LiveShareSerializable) ois.readObject());
 				}			
+			} catch (SocketException e1) {
+				System.err.println("LiveShareClient SocketException:\n" + e1);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 			}			
 		}
+		
+		connectionsChanged |= cleanupConnections();
 
 		/* Connections Changed */
 		if(connectionsChanged ) {
@@ -157,6 +148,25 @@ public class LiveShareClient implements ActionListener {
 		
 		if(connectedClients.size() > 0)
 			fireDataChanged();
+	}
+	
+	private boolean cleanupConnections() {
+		boolean connectionsChanged = false;
+		/* Cleanup connections */
+		List<String> cleanup = new ArrayList<String>();
+		for(String server : connectedClients.keySet()) {	
+			if(connectedClients.get(server).isClosed()) {
+				cleanup.add(server);
+				connectionsChanged = true;
+			}
+		}
+		for(String c: cleanup) {
+			connectedClients.remove(c);
+			inputStreams.remove(c);
+			outputStreams.remove(c);
+			content.remove(c);
+		}
+		return connectionsChanged;
 	}
 	
 	public List<String> getConnectedServerNames(){

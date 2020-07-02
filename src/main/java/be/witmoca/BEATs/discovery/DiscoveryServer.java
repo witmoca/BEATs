@@ -122,8 +122,22 @@ public class DiscoveryServer implements Runnable {
 				// Ignore if not a ping message
 				if(!pieces[0].trim().equals(PING))
 					continue;
+				
+				int port = 0;
+				try {
+					port = Integer.parseInt(pieces[2].trim());
+					if(port <= 0 || port > 65535) {
+						// Ignore if not a valid port
+						System.err.println("Caught wrong port on discovery receiver (out of bounds): " + pieces[2]);
+						continue;
+					}
+				} catch (NumberFormatException e) {
+					// ignore if not a number
+					System.err.println("Caught wrong port on discovery receiver (not an integer): " + pieces[2]);
+					continue;
+				}
 
-				DiscoveryListEntry newEntry = new DiscoveryListEntry(pieces[1].trim(), Integer.parseInt(pieces[2].trim()), incoming.getAddress().getHostAddress());
+				DiscoveryListEntry newEntry = new DiscoveryListEntry(pieces[1].trim(), port, incoming.getAddress().getHostAddress());
 				DiscoveryListEntry resolved = resolveHost(newEntry.getHostname());
 				
 				
