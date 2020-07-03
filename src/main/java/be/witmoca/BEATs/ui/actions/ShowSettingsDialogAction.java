@@ -56,7 +56,6 @@ public class ShowSettingsDialogAction implements ActionListener {
 	private JFormattedTextField backupSize;
 	private JFormattedTextField backupFrequency;
 	private JCheckBox liveShareServerEnabled;
-	private JFormattedTextField liveShareServerPort;
 	private JFormattedTextField liveShareServerMaxConnections;
 	private JCheckBox liveShareClientEnabled;
 	
@@ -96,7 +95,6 @@ public class ShowSettingsDialogAction implements ActionListener {
 		backupSize = new JFormattedTextField(BEATsSettings.BACKUPS_MAXSIZE.getIntValue());
 		backupFrequency = new JFormattedTextField(BEATsSettings.BACKUPS_TIMEBETWEEN.getIntValue());		
 		liveShareServerEnabled = new JCheckBox("", BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue());
-		liveShareServerPort = new JFormattedTextField(BEATsSettings.LIVESHARE_SERVER_PORT.getIntValue());
 		liveShareServerMaxConnections = new JFormattedTextField(BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.getIntValue());
 		liveShareClientEnabled = new JCheckBox("", BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue());
 		
@@ -169,17 +167,13 @@ public class ShowSettingsDialogAction implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				liveShareServerPort.setEnabled(liveShareServerEnabled.isSelected());	
+			public void actionPerformed(ActionEvent e) {	
 				liveShareServerMaxConnections.setEnabled(liveShareServerEnabled.isSelected());	
 			}
 			
 		});
-		liveShareServerPort.setEnabled(liveShareServerEnabled.isSelected());	
 		liveShareServerMaxConnections.setEnabled(liveShareServerEnabled.isSelected());	
 		
-		content.add(new JLabel(Lang.getUI("settings.label.liveshare.server.port")));
-		content.add(liveShareServerPort);
 		content.add(new JLabel(Lang.getUI("settings.label.liveshare.server.maxcon")));
 		content.add(liveShareServerMaxConnections);
 		
@@ -211,9 +205,6 @@ public class ShowSettingsDialogAction implements ActionListener {
 		BEATsSettings.BACKUPS_MAXSIZE.setIntValue(size);
 		
 		BEATsSettings.LIVESHARE_SERVER_ENABLED.setBoolValue(liveShareServerEnabled.isSelected());
-		int port = (int) liveShareServerPort.getValue();
-		port = (port < 1 ? 1 : (port > 65535 ? 65535 : port));
-		BEATsSettings.LIVESHARE_SERVER_PORT.setIntValue(port);
 		int maxcon = (int) liveShareServerMaxConnections.getValue();
 		maxcon = (maxcon < 1 ? 1 : (maxcon > 99 ? 99 : maxcon));
 		BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.setIntValue(maxcon);

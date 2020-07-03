@@ -19,7 +19,6 @@ import javax.swing.Timer;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import be.witmoca.BEATs.discovery.DiscoveryListEntry;
 import be.witmoca.BEATs.discovery.DiscoveryServer;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.BEATsSettings;
@@ -84,7 +83,7 @@ public class AddConnectionAction extends AbstractAction {
 		if(result == 0) {
 			// save selected item in dlm
 			Set<String> hosts = new HashSet<String>(BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.getListValue());
-			hosts.add(dlm.getEntry(discoveryList.getSelectedIndex()).getHostname());
+			hosts.add(dlm.getElementAt(discoveryList.getSelectedIndex()));
 			BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.setListValue(new ArrayList<String>(hosts));
 			BEATsSettings.savePreferences();
 			ccl.UpdateContent();
@@ -92,7 +91,7 @@ public class AddConnectionAction extends AbstractAction {
 	}
 	
 	private static class DiscoveryListModel implements ListModel<String>{
-		private final List<DiscoveryListEntry> content = new ArrayList<DiscoveryListEntry>();
+		private final List<String> content = new ArrayList<String>();
 		private final List<ListDataListener> ldl = new ArrayList<ListDataListener>();
 		
 		@Override
@@ -102,8 +101,7 @@ public class AddConnectionAction extends AbstractAction {
 
 		@Override
 		public String getElementAt(int index) {
-			DiscoveryListEntry d = content.get(index);
-			return d.getHostname() + " " + d.getIp() + " " + d.getPort();
+			return content.get(index);
 		}
 
 		@Override
@@ -122,14 +120,10 @@ public class AddConnectionAction extends AbstractAction {
 			}
 		}
 		
-		private void setContent(List<DiscoveryListEntry> newcontent) {
+		private void setContent(List<String> newcontent) {
 			content.clear();
 			content.addAll(newcontent);
 			fireContentChanged();			
-		}
-		
-		private DiscoveryListEntry getEntry(int index) {
-			return content.get(index);
 		}
 	}
 	
@@ -167,9 +161,7 @@ public class AddConnectionAction extends AbstractAction {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			List<DiscoveryListEntry> l = DiscoveryServer.getDiscovered();
-			l.sort((o1, o2) -> o1.getHostname().compareTo(o2.getHostname()));
-			this.dlm.setContent(l);
+			this.dlm.setContent(DiscoveryServer.getDiscoveredSorted());
 		}
 	}
 }

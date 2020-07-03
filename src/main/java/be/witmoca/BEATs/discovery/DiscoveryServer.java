@@ -7,15 +7,19 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -45,21 +49,22 @@ import be.witmoca.BEATs.utils.BEATsSettings;
 * Created: 2020
 */
 public class DiscoveryServer implements Runnable {
+	private static final int DISCOVERY_PORT = 41525;
 	private static final String PING = "BEATS_CONNECT_PING";
 	private static final String SEPARATOR = ";";
 	private static final Long PRUNE_TIME_S = 5L;
+	private static final int RECEIVE_TIMEOUT = 1000; // every second, timeout and prune discovered
 	private static final Long PING_MIN_RESPONSETIME_NS = 500 * 1000 * 1000L; // Min. time between ping responses in nS
 	private static final Long PING_BROADCAST_TIMER_MS = 300L;
 	private static DiscoveryServer currentServ;
 	private final AtomicBoolean turnedOn = new AtomicBoolean(true);
-	private final DatagramSocket sendSocket;
-	private final DatagramSocket receiveSocket;
 	private final DatagramPacket incoming;
 	private final byte[] incomingBuffer = new byte[1500];
-	private final byte[] pingMsg = ("BEATS_CONNECT_PING" + SEPARATOR + BEATsSettings.LIVESHARE_SERVER_HOSTNAME.getStringValue() + SEPARATOR + BEATsSettings.LIVESHARE_SERVER_PORT.getStringValue()).getBytes();
-	private final int discoveryPort =  BEATsSettings.DISCOVERY_PORT.getIntValue();
-	private final List<DiscoveryListEntry> discovered = Collections.synchronizedList(new ArrayList<DiscoveryListEntry>());
+	private final byte[] pingMsg = ("BEATS_CONNECT_PING" + SEPARATOR + BEATsSettings.LIVESHARE_SERVER_HOSTNAME.getStringValue()).getBytes();
+	private final Map<String, LocalTime> discovered = Collections.synchronizedMap(new HashMap<String, LocalTime>());
 	private Timer broadcastTimer;
+	private DatagramSocket sendSocket;
+	private DatagramSocket receiveSocket;
 	
 	/**
 	 * Turn on server, do nothing if already on
@@ -92,19 +97,18 @@ public class DiscoveryServer implements Runnable {
 		return (currentServ != null && currentServ.turnedOn.get() == true);
 	}
 	
-	public static List<DiscoveryListEntry> getDiscovered(){
-		List<DiscoveryListEntry> returnlist = new ArrayList<DiscoveryListEntry>();
+	public static List<String> getDiscoveredSorted(){
+		List<String> returnList = new ArrayList<String>();
 		if(isRunning()) {
 			synchronized(currentServ.discovered) {
-				returnlist.addAll(currentServ.discovered);
+				returnList.addAll(currentServ.discovered.keySet());
 			}
 		}
-		return returnlist;
+		returnList.sort((o1,o2) -> o1.compareTo(o2));
+		return returnList;
 	}
 
 	public DiscoveryServer() throws SocketException {
-		this.receiveSocket = new DatagramSocket(discoveryPort);
-		this.sendSocket = new DatagramSocket();
 		this.incoming = new DatagramPacket(incomingBuffer, incomingBuffer.length);
 	}
 
@@ -112,58 +116,55 @@ public class DiscoveryServer implements Runnable {
 	public void run() {
 		while (turnedOn.get()) {
 			try {
+				// (re)start sockets if not open
+				if(this.receiveSocket == null || this.receiveSocket.isClosed()) {
+					this.receiveSocket = new DatagramSocket(DISCOVERY_PORT);
+					this.receiveSocket.setSoTimeout(RECEIVE_TIMEOUT);
+				}
+				if(this.sendSocket == null || this.sendSocket.isClosed()) {
+					this.sendSocket = new DatagramSocket();
+				}
+				
+				// Prune list of stagnant values
+				Set<String> pruneSet = new HashSet<String>();
+				synchronized(discovered) {
+					discovered.forEach((h, t) -> {
+						if(t.plusSeconds(PRUNE_TIME_S).isBefore(LocalTime.now())) {
+							pruneSet.add(h);
+						}
+					});
+					for(String host: pruneSet) {
+						discovered.remove(host);
+					}
+				}
+	
 				// Receive
 				this.receiveSocket.receive(incoming);
 				String received = new String(incoming.getData());
 				String[] pieces = received.split(SEPARATOR);
 				// Ignore if size of message not okay
-				if(pieces.length != 3)
+				if(pieces.length != 2)
 					continue;
 				// Ignore if not a ping message
 				if(!pieces[0].trim().equals(PING))
 					continue;
-				
-				int port = 0;
-				try {
-					port = Integer.parseInt(pieces[2].trim());
-					if(port <= 0 || port > 65535) {
-						// Ignore if not a valid port
-						System.err.println("Caught wrong port on discovery receiver (out of bounds): " + pieces[2]);
-						continue;
-					}
-				} catch (NumberFormatException e) {
-					// ignore if not a number
-					System.err.println("Caught wrong port on discovery receiver (not an integer): " + pieces[2]);
-					continue;
-				}
 
-				DiscoveryListEntry newEntry = new DiscoveryListEntry(pieces[1].trim(), port, incoming.getAddress().getHostAddress());
-				DiscoveryListEntry resolved = resolveHost(newEntry.getHostname());
+				String newEntry = pieces[1].trim();
+				LocalTime lastSeen = discovered.get(newEntry);
 				
-				
-				// Host is known already?
-				if(resolved != null) {
-					// only update when enough time has passed
-					if(resolved.getTimestamp().plusNanos(PING_MIN_RESPONSETIME_NS).isBefore(LocalTime.now())) {
-						// replace existing info about this host
-						deleteEntry(pieces[1]);
-						discovered.add(newEntry);
-						sendPingResponse(incoming.getAddress());
-					}
-					// If host is known, but too recent than ignore it
-				} else {
-					// totally new entry
-					discovered.add(newEntry);
+				// only update if new OR enough time has passed
+				if(lastSeen == null ||  lastSeen.plusNanos(PING_MIN_RESPONSETIME_NS).isBefore(LocalTime.now())) {		
+					discovered.put(newEntry, LocalTime.now());
+					sendPingResponse(incoming.getAddress());
 				}
-				
-			} catch (NumberFormatException e){
-				e.printStackTrace();
-				// port wasn't a number? => ignore packet
+			} catch (SocketTimeoutException e) {
+				// ignore, timeout has happend (it's time to prune!)
 			} catch (SocketException e) {
 				// Only print stacktrace if DiscoveryServer isn't shutting down
 				if(turnedOn.get()) {
 					e.printStackTrace();
 				}
+				// Socket will be restarted automatically in next loop
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -173,58 +174,12 @@ public class DiscoveryServer implements Runnable {
 	}
 	
 	/**
-	 * 
-	 * @param hostname The hostname to resolve
-	 * @return The entry containing the resolved hostname, or null when not found
-	 */
-	private DiscoveryListEntry resolveHost(String hostname) {
-		synchronized(discovered) {
-			// prune all entry's in discovered
-			LocalTime pruneLimit = LocalTime.now().minusSeconds(PRUNE_TIME_S);
-			for(int i = discovered.size()-1 ; i >= 0; i--) {
-				if(discovered.get(i).getTimestamp().isBefore(pruneLimit)) {
-					discovered.remove(i);
-				}
-			}
-			
-			// find  entry
-			for(DiscoveryListEntry dle : discovered) {
-				if(dle.getHostname().equals(hostname)) {
-					return dle;
-				}
-			}
-			return null;
-		}
-	}
-	
-	public static InetSocketAddress resolveHostToAddress(String hostname) {
-		if(isRunning()) {
-			DiscoveryListEntry entry = currentServ.resolveHost(hostname);
-			if(entry == null)
-				return null;
-			return new InetSocketAddress(entry.getIp(), entry.getPort());
-		}
-		return null;
-	}
-	
-	private void deleteEntry(String hostname) {
-		synchronized(discovered) {
-			for(int i = discovered.size()-1 ; i >= 0; i--) {
-				if(discovered.get(i).getHostname().equals(hostname)) {
-					discovered.remove(i);
-					return;
-				}
-			}
-		}
-	}
-	
-	/**
 	 * Send a ping response to a single receiver
-	 * @param reciever
+	 * @param receiver
 	 */
-	private void sendPingResponse(InetAddress reciever) {
+	private void sendPingResponse(InetAddress receiver) {
 		synchronized(sendSocket) {
-			DatagramPacket pingPacket = new DatagramPacket(pingMsg, pingMsg.length, reciever , discoveryPort);
+			DatagramPacket pingPacket = new DatagramPacket(pingMsg, pingMsg.length, receiver , DISCOVERY_PORT);
 			try {
 				sendSocket.send(pingPacket);
 			} catch (IOException e) {
@@ -256,7 +211,7 @@ public class DiscoveryServer implements Runnable {
 		synchronized(sendSocket) {
 			for(InterfaceAddress ia : ias) {
 				InetAddress broadcast = ia.getBroadcast();
-				DatagramPacket pingPacket = new DatagramPacket(pingMsg, pingMsg.length, broadcast, discoveryPort);
+				DatagramPacket pingPacket = new DatagramPacket(pingMsg, pingMsg.length, broadcast, DISCOVERY_PORT);
 				try {
 					// Ignore if broadcast address is 0.0.0.0 (openVPN tunnel might return this, among other things)
 					if(!broadcast.getHostAddress().equals("0.0.0.0"))

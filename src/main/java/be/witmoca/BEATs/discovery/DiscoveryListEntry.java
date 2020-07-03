@@ -29,14 +29,10 @@ import java.time.LocalTime;
 */
 public class DiscoveryListEntry {
 	private final String hostname;
-	private final int port;
-	private final String ip;
 	private final LocalTime timestamp;
 	
-	public DiscoveryListEntry(String hostname, int port, String ip){
-		this.ip = ip;
+	public DiscoveryListEntry(String hostname){
 		this.hostname = hostname;
-		this.port = port;
 		this.timestamp = LocalTime.now();
 	}
 
@@ -44,15 +40,7 @@ public class DiscoveryListEntry {
 		return hostname;
 	}
 
-	public int getPort() {
-		return port;
-	}
-
 	public LocalTime getTimestamp() {
 		return timestamp;
-	}
-
-	public String getIp() {
-		return ip;
 	}
 }

@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.Timer;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
-import be.witmoca.BEATs.discovery.DiscoveryServer;
 import be.witmoca.BEATs.utils.BEATsSettings;
 
 /**
@@ -68,13 +67,11 @@ public class LiveShareClient implements ActionListener {
 		Boolean connectionsChanged = cleanupConnections();
 		/* Connect to more servers if possible */
 		if(watchServers.size() != connectedClients.size()) {
-			// turn on broadcaster to find servers
-			DiscoveryServer.startBroadcaster();
 			// Missing servers list (copy + detract connected)
 			List<String> missing = Arrays.asList(watchServers.toArray(new String[0]));
 			missing.removeAll(connectedClients.keySet());
 			for(String newServer : missing) {
-				InetSocketAddress isa = DiscoveryServer.resolveHostToAddress(newServer);
+				InetSocketAddress isa = new InetSocketAddress(newServer, LiveShareServer.SERVER_PORT);
 				// for every server that can be resolved => setup connection
 				if (isa != null && isa.isUnresolved() == false) {
 					try (Socket s = new Socket()) {
@@ -110,9 +107,6 @@ public class LiveShareClient implements ActionListener {
 					} 
 				}
 			}
-		} else {
-			// No need to find anymore servers
-			DiscoveryServer.stopBroadcaster();
 		}
 		
 		connectionsChanged |= cleanupConnections();

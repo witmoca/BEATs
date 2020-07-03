@@ -10,14 +10,12 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import be.witmoca.BEATs.utils.BEATsSettings;
-
 /**
  * @author Witmoca
  *
  */
 public class LiveShareServer implements Runnable {
-	private static final int PORT = BEATsSettings.LIVESHARE_SERVER_PORT.getIntValue();
+	static final int SERVER_PORT = 41527;
 	private static LiveShareServer currentServer;
 	private final ServerSocket serverSocket;
 
@@ -26,7 +24,7 @@ public class LiveShareServer implements Runnable {
 	}
 
 	public static void startServer() throws IOException {
-		currentServer = new LiveShareServer(new ServerSocket(PORT, 50)); // Do not specifiy a host ip here! => The server should be visible on all Networks on the device
+		currentServer = new LiveShareServer(new ServerSocket(SERVER_PORT, 50)); // Do not specifiy a host ip here! => The server should be visible on all Networks on the device
 		(new Thread(currentServer)).start();
 	}
 	

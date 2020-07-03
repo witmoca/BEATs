@@ -18,7 +18,6 @@ import javax.swing.JTable;
 import javax.swing.Timer;
 import javax.swing.table.AbstractTableModel;
 
-import be.witmoca.BEATs.discovery.DiscoveryListEntry;
 import be.witmoca.BEATs.discovery.DiscoveryServer;
 import be.witmoca.BEATs.liveshare.ConnectionsSetChangedListener;
 import be.witmoca.BEATs.liveshare.LiveShareClient;
@@ -104,11 +103,11 @@ public class ShowLiveShareClientMonitor implements ActionListener {
 			// build status
 			// start from "not found"
 			for(String s : watchServers)
-				status.put(s, "-");
+				status.put(s, Lang.getUI("action.no"));
 			// add "discovered"
-			List<DiscoveryListEntry> discovered = DiscoveryServer.getDiscovered();
-			for(DiscoveryListEntry dle : discovered)
-				status.put(dle.getHostname(), dle.getIp());
+			List<String> discovered = DiscoveryServer.getDiscoveredSorted();
+			for(String dle : discovered)
+				status.put(dle, Lang.getUI("action.yes"));
 			
 			this.fireTableDataChanged();
 		}
