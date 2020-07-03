@@ -15,7 +15,7 @@ import java.net.Socket;
  *
  */
 public class LiveShareServer implements Runnable {
-	static final int SERVER_PORT = 41527;
+	public static final int SERVER_PORT = 41527;
 	private static LiveShareServer currentServer;
 	private final ServerSocket serverSocket;
 

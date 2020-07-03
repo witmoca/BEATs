@@ -5,6 +5,7 @@ package be.witmoca.BEATs.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +20,8 @@ import javax.swing.Timer;
 import javax.swing.table.AbstractTableModel;
 
 import be.witmoca.BEATs.discovery.DiscoveryServer;
-import be.witmoca.BEATs.liveshare.ConnectionsSetChangedListener;
 import be.witmoca.BEATs.liveshare.LiveShareClient;
+import be.witmoca.BEATs.liveshare.LiveShareServer;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
@@ -35,28 +36,29 @@ public class ShowLiveShareClientMonitor implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		ClientMonitorModel ccm = new ClientMonitorModel();
 		JTable monitor = new JTable(ccm);
-
+		DiscoveryServer.startBroadcaster(); // start discovering, otherwise "discovered" will always be "no"
+		
 		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
 				new JScrollPane(monitor, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
 				Lang.getUI("menu.liveshare.clientmonitor"), JOptionPane.PLAIN_MESSAGE);
 		
+		DiscoveryServer.stopBroadcaster();
 		ccm.stopTimer();
 	}
 	
-	private static final String COLUMN_NAME[] = { "Server","Ip", "Connected" };
+	private static final String COLUMN_NAME[] = { "Server","Discovered by protocol", "Connected", "Resolved" };
 	
-	private class ClientMonitorModel extends AbstractTableModel implements ActionListener, ConnectionsSetChangedListener {
+	private class ClientMonitorModel extends AbstractTableModel implements ActionListener {
 		private static final long serialVersionUID = 1L;
 		private final Timer UPDATE_TIMER = new Timer((int) TimeUnit.SECONDS.toMillis(1), this);
-		private final Map<String, String> status = new HashMap<String, String>();
+		private final Map<String, String> discovered = new HashMap<String, String>();
 		private List<String> watchServers = Collections.emptyList();
 		private List<String> connectedServers = Collections.emptyList(); 
 		
 		private ClientMonitorModel() {
 			UPDATE_TIMER.setInitialDelay(300);
 			UPDATE_TIMER.start();
-			LiveShareClient.addConnectionsSetChangedListener(this);
 		}
 		
 		@Override
@@ -80,9 +82,11 @@ public class ShowLiveShareClientMonitor implements ActionListener {
 				case 0: 
 					return watchServers.get(row);
 				case 1: 
-					return status.get(watchServers.get(row));
+					return discovered.get(watchServers.get(row));
 				case 2:
 					return connectedServers.contains(watchServers.get(row)) ? Lang.getUI("action.yes") : Lang.getUI("action.no");
+				case 3:
+					return (new InetSocketAddress(watchServers.get(row), LiveShareServer.SERVER_PORT).isUnresolved() ? Lang.getUI("action.no") : Lang.getUI("action.yes"));
 				default:
 					return null;
 			}
@@ -95,30 +99,25 @@ public class ShowLiveShareClientMonitor implements ActionListener {
 			watchServers.sort((c1, c2) -> c1.compareTo(c2));
 			
 			// prune all status leftovers
-			Set<String> delete = status.keySet();
+			Set<String> delete = discovered.keySet();
 			delete.removeAll(watchServers);
 			for(String del : delete)
-				status.remove(del);
+				discovered.remove(del);
 			
-			// build status
 			// start from "not found"
 			for(String s : watchServers)
-				status.put(s, Lang.getUI("action.no"));
-			// add "discovered"
-			List<String> discovered = DiscoveryServer.getDiscoveredSorted();
-			for(String dle : discovered)
-				status.put(dle, Lang.getUI("action.yes"));
+				discovered.put(s, Lang.getUI("action.no"));
+			// add if "discovered"
+			DiscoveryServer.getDiscoveredSorted().forEach(d -> discovered.put(d, Lang.getUI("action.yes")));
+			
+			// Updated Connected list
+			this.connectedServers = LiveShareClient.getLvc() == null ? Collections.emptyList() : LiveShareClient.getLvc().getConnectedServerNames();
 			
 			this.fireTableDataChanged();
 		}
 		
 		public void stopTimer() {
 			UPDATE_TIMER.stop();
-		}
-
-		@Override
-		public void connectionsSetChanged(LiveShareClient lsc) {
-			this.connectedServers = lsc.getConnectedServerNames();
 		}
 	}
 }

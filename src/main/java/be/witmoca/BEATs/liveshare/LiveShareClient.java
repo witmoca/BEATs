@@ -55,11 +55,16 @@ public class LiveShareClient implements ActionListener {
 	}
 
 	public static void startClient(boolean start) {
-		lvc = new LiveShareClient(start);
+		if(getLvc() == null)
+			lvc = new LiveShareClient(start);
 	}
 	
 	public static void stopClient() {
-		lvc.UPDATE_TIMER.stop();
+		getLvc().UPDATE_TIMER.stop();
+	}
+	
+	public static LiveShareClient getLvc() {
+		return lvc;
 	}
 
 	@Override
@@ -180,20 +185,22 @@ public class LiveShareClient implements ActionListener {
 	}
 	
 	public static void addConnectionsSetChangedListener(ConnectionsSetChangedListener cscl) {
-		synchronized (lvc.cscListeners) {
-			lvc.cscListeners.add(cscl);
+		if(getLvc() != null) {
+			synchronized (getLvc().cscListeners) {
+				getLvc().cscListeners.add(cscl);
+			}
 		}
 	}
 
-	public static void fireConnectionsSetChanged() {
-		List<ConnectionsSetChangedListener> notifylist = new ArrayList<ConnectionsSetChangedListener>();
-		synchronized (lvc.cscListeners) {
-			/*cleanup list */
-			lvc.cscListeners.remove(null);
-			notifylist.addAll(lvc.cscListeners);
-		}
-		for (ConnectionsSetChangedListener cscl : notifylist) {
-			cscl.connectionsSetChanged(lvc);
+	public void fireConnectionsSetChanged() {
+			List<ConnectionsSetChangedListener> notifylist = new ArrayList<ConnectionsSetChangedListener>();
+			synchronized (cscListeners) {
+				/*cleanup list */
+				cscListeners.remove(null);
+				notifylist.addAll(cscListeners);
+			}
+			for (ConnectionsSetChangedListener cscl : notifylist) {
+				cscl.connectionsSetChanged(this);
 		}
 	}
 
