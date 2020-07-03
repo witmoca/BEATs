@@ -67,19 +67,7 @@ public class ApplicationManager {
 			if (!SingleInstanceManager.start(loadFile))
 				return false; // Already running
 			// Register a new standard output
-			ResourceLoader.registerStandardErrorLog();
-			
-			// Startup LiveShare server
-			if (BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue())
-				LiveShareServer.startServer();
-			
-			// Startup LiveShare client
-			LiveShareClient.startClient(BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue());
-			
-			// Startup Discovery
-			if (BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue() || BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue())
-				DiscoveryServer.startServer();
-			
+			ResourceLoader.registerStandardErrorLog();			
 		} catch (IOException e) {
 			fatalError(e);
 			return false;
@@ -109,6 +97,18 @@ public class ApplicationManager {
 			fatalError(e1);
 			return false;
 		} 
+		
+		/* Application is fully up and running now */
+		// Startup LiveShare server
+		if (BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue())
+			LiveShareServer.startServer();
+		
+		// Startup LiveShare client
+		LiveShareClient.startClient(BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue());
+		
+		// Startup Discovery
+		if (BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue() || BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue())
+			DiscoveryServer.startServer();
 		
 		// Make sure to reset previous value
 		ExitApplicationAction.restartAfterClose.set(false);

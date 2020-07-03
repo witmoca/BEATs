@@ -23,9 +23,15 @@ public class LiveShareServer implements Runnable {
 		this.serverSocket = socket;
 	}
 
-	public static void startServer() throws IOException {
-		currentServer = new LiveShareServer(new ServerSocket(SERVER_PORT, 50)); // Do not specifiy a host ip here! => The server should be visible on all Networks on the device
-		(new Thread(currentServer)).start();
+	public static void startServer() {
+		try {
+			 // Do not specifiy a host ip here! => The server should be visible on all Networks on the device
+			currentServer = new LiveShareServer(new ServerSocket(SERVER_PORT, 50));
+			(new Thread(currentServer)).start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		
 	}
 	
 	public static void closeServer() {

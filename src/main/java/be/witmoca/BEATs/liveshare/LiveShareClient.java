@@ -34,24 +34,29 @@ import be.witmoca.BEATs.utils.BEATsSettings;
 public class LiveShareClient implements ActionListener {
 	private static final int CONN_TRY_TIMEOUT = 500; // try to connect for X milliseconds to every resolved server
 	private static final int CONN_TIMEOUT_MS = 1000; // timeout between messages
+	private static final int TIMER_UPDATE_PERIOD_S = 1; // Update frequency in seconds
+	private static final int TIMER_INITIAL_DELAY_MS = 10 * 1000; // initial startup time (a few seconds to give slow CPU's time to load more naturally)
+	private static final Set<ConnectionsSetChangedListener> cscListeners = Collections
+			.synchronizedSet(new HashSet<ConnectionsSetChangedListener>());
 	
 	private static LiveShareClient lvc;
 	
-	private final Timer UPDATE_TIMER = new Timer((int) TimeUnit.SECONDS.toMillis(1), this);
+	private final Timer UPDATE_TIMER = new Timer((int) TimeUnit.SECONDS.toMillis(TIMER_UPDATE_PERIOD_S), this);
 	private List<String> watchServers;
 	private final Map<String, Socket> connectedClients = new HashMap<String, Socket>();	
 	private final Map<String, ObjectOutputStream> outputStreams = new HashMap<String, ObjectOutputStream>();	
 	private final Map<String, ObjectInputStream> inputStreams = new HashMap<String, ObjectInputStream>();	
 	private final Map<String, LiveShareSerializable> content = Collections.synchronizedMap(new HashMap<String, LiveShareSerializable>());
-	private final Set<ConnectionsSetChangedListener> cscListeners = Collections
-			.synchronizedSet(new HashSet<ConnectionsSetChangedListener>());
+	
 	private final Set<DataChangedListener> dcListeners = Collections
 			.synchronizedSet(new HashSet<DataChangedListener>());
 	
 	private LiveShareClient(boolean start)
 	{
-		if(start)
+		if(start) {
+			UPDATE_TIMER.setInitialDelay(TIMER_INITIAL_DELAY_MS);
 			UPDATE_TIMER.start();
+		}
 	}
 
 	public static void startClient(boolean start) {
@@ -185,10 +190,8 @@ public class LiveShareClient implements ActionListener {
 	}
 	
 	public static void addConnectionsSetChangedListener(ConnectionsSetChangedListener cscl) {
-		if(getLvc() != null) {
-			synchronized (getLvc().cscListeners) {
-				getLvc().cscListeners.add(cscl);
-			}
+		synchronized (cscListeners) {
+			cscListeners.add(cscl);
 		}
 	}
 
@@ -196,7 +199,7 @@ public class LiveShareClient implements ActionListener {
 			List<ConnectionsSetChangedListener> notifylist = new ArrayList<ConnectionsSetChangedListener>();
 			synchronized (cscListeners) {
 				/*cleanup list */
-				cscListeners.remove(null);
+				while(cscListeners.remove(null)); // remove all null elements
 				notifylist.addAll(cscListeners);
 			}
 			for (ConnectionsSetChangedListener cscl : notifylist) {
