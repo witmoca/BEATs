@@ -104,7 +104,7 @@ public class DiscoveryServer implements Runnable {
 				returnList.addAll(currentServ.discovered.keySet());
 			}
 		}
-		returnList.sort((o1,o2) -> o1.compareTo(o2));
+		returnList.sort(null);
 		return returnList;
 	}
 
