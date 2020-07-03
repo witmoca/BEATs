@@ -38,7 +38,7 @@ public class LiveShareClient implements ActionListener {
 	private static LiveShareClient lvc;
 	
 	private final Timer UPDATE_TIMER = new Timer((int) TimeUnit.SECONDS.toMillis(1), this);
-	private final List<String> watchServers = BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.getListValue();
+	private List<String> watchServers;
 	private final Map<String, Socket> connectedClients = new HashMap<String, Socket>();	
 	private final Map<String, ObjectOutputStream> outputStreams = new HashMap<String, ObjectOutputStream>();	
 	private final Map<String, ObjectInputStream> inputStreams = new HashMap<String, ObjectInputStream>();	
@@ -64,11 +64,16 @@ public class LiveShareClient implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		// Refresh server list
+		watchServers = BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.getListValue();
+		
+		// Prune servers that where deleted from watchlist
+		
 		Boolean connectionsChanged = cleanupConnections();
 		/* Connect to more servers if possible */
 		if(watchServers.size() != connectedClients.size()) {
 			// Missing servers list (copy + detract connected)
-			List<String> missing = Arrays.asList(watchServers.toArray(new String[0]));
+			List<String> missing = new ArrayList<String>(watchServers);
 			missing.removeAll(connectedClients.keySet());
 			for(String newServer : missing) {
 				InetSocketAddress isa = new InetSocketAddress(newServer, LiveShareServer.SERVER_PORT);
@@ -146,25 +151,32 @@ public class LiveShareClient implements ActionListener {
 	
 	private boolean cleanupConnections() {
 		boolean connectionsChanged = false;
-		/* Cleanup connections */
+		/* Cleanup closed connections & servers deleted from watchlists */
 		List<String> cleanup = new ArrayList<String>();
 		for(String server : connectedClients.keySet()) {	
-			if(connectedClients.get(server).isClosed()) {
+			if(connectedClients.get(server).isClosed() || !watchServers.contains(server)) {
 				cleanup.add(server);
 				connectionsChanged = true;
 			}
 		}
 		for(String c: cleanup) {
-			connectedClients.remove(c);
-			inputStreams.remove(c);
-			outputStreams.remove(c);
-			content.remove(c);
+			try {
+				if(!connectedClients.get(c).isClosed()) {
+					connectedClients.get(c).close();
+				}
+				connectedClients.remove(c);
+				inputStreams.remove(c);
+				outputStreams.remove(c);
+				content.remove(c);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return connectionsChanged;
 	}
 	
 	public List<String> getConnectedServerNames(){
-		return  Arrays.asList(connectedClients.keySet().toArray(new String[0]));
+		return Arrays.asList(connectedClients.keySet().toArray(new String[0]));
 	}
 	
 	public static void addConnectionsSetChangedListener(ConnectionsSetChangedListener cscl) {
