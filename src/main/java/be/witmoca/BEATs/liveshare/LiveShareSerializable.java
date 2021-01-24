@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import be.witmoca.BEATs.connection.CommonSQL;
@@ -22,10 +23,10 @@ public class LiveShareSerializable implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 	// HashMap = serializable
 	private final HashMap<String, List<PlaylistEntry>> content = new HashMap<String, List<PlaylistEntry>>();
-	private final List<String> playlistNames = new ArrayList<String>(); // double info, but array list is ordered!
 
 	private LiveShareSerializable(boolean empty) throws SQLException {
 		if (!empty) {
+			List<String> playlistNames = new ArrayList<String>();
 			playlistNames.addAll(CommonSQL.getPlaylists());
 			try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
 					"SELECT rowid, Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = ? ORDER BY rowid")) {
@@ -53,13 +54,15 @@ public class LiveShareSerializable implements Serializable, Cloneable {
 	
 	public static LiveShareSerializable createEmpty() {
 		try {
-			return new LiveShareSerializable(false);
+			return new LiveShareSerializable(true);
 		} catch (SQLException e) {
 			return null;
 		}
 	}
 
 	public List<String> getPlaylists() {
+		List<String> playlistNames = new ArrayList<String>(content.keySet());
+		Collections.sort(playlistNames);
 		return playlistNames;
 	}
 	

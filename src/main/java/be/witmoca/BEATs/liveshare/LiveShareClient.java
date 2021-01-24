@@ -137,8 +137,11 @@ public class LiveShareClient implements ActionListener {
 				oos.flush();
 				// process update
 				if (LiveShareMessage.BEATS_DATA_REQUEST_FULL.equals(ois.readObject())) {
-					content.put(server, (LiveShareSerializable) ois.readObject());
-				}			
+					// Should the read object be null (so no connection, bad data, timeout, etc) then ignore update
+					LiveShareSerializable updatedLss = (LiveShareSerializable) ois.readObject();
+					if(updatedLss != null)
+						content.put(server, updatedLss);
+				}
 			} catch (SocketException e1) {
 				System.err.println("LiveShareClient SocketException:\n" + e1);
 			} catch (IOException e1) {
@@ -164,7 +167,7 @@ public class LiveShareClient implements ActionListener {
 		/* Cleanup closed connections & servers deleted from watchlists */
 		List<String> cleanup = new ArrayList<String>();
 		for(String server : connectedClients.keySet()) {	
-			if(connectedClients.get(server).isClosed() || !watchServers.contains(server)) {
+			if(connectedClients.get(server).isClosed() || !connectedClients.get(server).isConnected() || !watchServers.contains(server)) {
 				cleanup.add(server);
 				connectionsChanged = true;
 			}
