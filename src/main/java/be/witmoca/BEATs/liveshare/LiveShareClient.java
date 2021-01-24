@@ -145,12 +145,14 @@ public class LiveShareClient implements ActionListener {
 						connectedClients.get(server).close();
 					}
 				}
-			} catch (SocketException e1) {
-				System.err.println("LiveShareClient SocketException:\n" + e1);
-			} catch (IOException e1) {
+			} catch (IOException | ClassNotFoundException e1) {
 				e1.printStackTrace();
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
+				try {
+					connectedClients.get(server).close();
+				} catch (IOException e2) {
+					System.err.println("[LiveShareClient] Failed to close socket for host " + connectedClients.get(server) + " after connection failure.");
+					e2.printStackTrace();
+				}
 			}			
 		}
 		
