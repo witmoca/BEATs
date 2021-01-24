@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,6 +144,14 @@ public class LiveShareClient implements ActionListener {
 					else {
 						connectedClients.get(server).close();
 					}
+				}
+			} catch (SocketException e1) {
+				// SocketExceptions are common: peer not available, connection closed, etc
+				try {
+					connectedClients.get(server).close();
+				} catch (IOException e2) {
+					System.err.println("[LiveShareClient] Failed to close socket for host " + connectedClients.get(server) + " after connection failure.");
+					e2.printStackTrace();
 				}
 			} catch (IOException | ClassNotFoundException e1) {
 				e1.printStackTrace();
