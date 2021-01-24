@@ -40,4 +40,19 @@ public class PlaylistEntry implements Serializable{
 	public int getROWID() {
 		return ROWID;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+
+		PlaylistEntry other = (PlaylistEntry) obj;
+		// Order of this is such that it "Fails fast". This will speed up full playlist compares
+		if (ROWID != other.ROWID || !SONG.equals(other.SONG) || !ARTIST.equals(other.ARTIST) || !COMMENT.equals(other.COMMENT))
+			return false;
+
+		return true;
+	}
 }

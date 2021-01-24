@@ -54,10 +54,15 @@ public class LiveShareTableModel extends AbstractTableModel implements DataChang
 
 	@Override
 	public void tableChanged() {
-		playlistList.clear();
-		playlistList.addAll(lsc.getContent(this.serverName).getPlaylistContents(playlistName));
+		List<PlaylistEntry> newItems = lsc.getContent(this.serverName).getPlaylistContents(playlistName);
 		
-		this.fireTableDataChanged();
+		// This compares both lists completely. Make sure that the items have a fast (or at least fast failing) and correct equals function
+		if(!playlistList.equals(newItems)) {
+			// Update list
+			playlistList.clear();
+			playlistList.addAll(newItems);
+			this.fireTableDataChanged();
+		}
 	}
 
 	@Override
