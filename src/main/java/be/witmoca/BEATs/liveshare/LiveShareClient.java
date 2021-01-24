@@ -170,7 +170,7 @@ public class LiveShareClient implements ActionListener {
 		/* Cleanup closed connections & servers deleted from watchlists */
 		List<String> cleanup = new ArrayList<String>();
 		for(String server : connectedClients.keySet()) {	
-			if(connectedClients.get(server).isClosed() || !connectedClients.get(server).isConnected() || !watchServers.contains(server)) {
+			if(connectedClients.get(server).isClosed() || !watchServers.contains(server)) {
 				connectionsChanged = true;
 				cleanup.add(server);
 			}
@@ -233,7 +233,7 @@ public class LiveShareClient implements ActionListener {
 	
 	public LiveShareSerializable getContent(String serverName) {
 		synchronized (content) {
-			return this.content.get(serverName);
+			return this.content.getOrDefault(serverName, LiveShareSerializable.createEmpty());
 		}
 	}
 }

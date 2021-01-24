@@ -67,7 +67,7 @@ public class LiveShareSerializable implements Serializable, Cloneable {
 	}
 	
 	public List<PlaylistEntry> getPlaylistContents(String playlistName){
-		return content.get(playlistName);
+		return content.getOrDefault(playlistName, Collections.emptyList());
 	}
 
 	@Override
