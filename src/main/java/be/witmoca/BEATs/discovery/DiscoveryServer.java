@@ -60,12 +60,13 @@ public class DiscoveryServer implements Runnable {
 	private final AtomicBoolean turnedOn = new AtomicBoolean(true);
 	private final DatagramPacket incoming;
 	private final byte[] incomingBuffer = new byte[1500];
-	private final byte[] pingMsg = ("BEATS_CONNECT_PING" + SEPARATOR + BEATsSettings.LIVESHARE_SERVER_HOSTNAME.getStringValue()).getBytes();
+	private final byte[] pingMsg = ("BEATS_CONNECT_PING" + SEPARATOR
+			+ BEATsSettings.LIVESHARE_SERVER_HOSTNAME.getStringValue()).getBytes();
 	private final Map<String, LocalTime> discovered = Collections.synchronizedMap(new HashMap<String, LocalTime>());
 	private Timer broadcastTimer;
 	private DatagramSocket sendSocket;
 	private DatagramSocket receiveSocket;
-	
+
 	/**
 	 * Turn on server, do nothing if already on
 	 */
@@ -92,15 +93,15 @@ public class DiscoveryServer implements Runnable {
 			currentServ.receiveSocket.close(); // receive is always waiting, so force it closed
 		}
 	}
-	
+
 	private static boolean isRunning() {
 		return (currentServ != null && currentServ.turnedOn.get() == true);
 	}
-	
-	public static List<String> getDiscoveredSorted(){
+
+	public static List<String> getDiscoveredSorted() {
 		List<String> returnList = new ArrayList<String>();
-		if(isRunning()) {
-			synchronized(currentServ.discovered) {
+		if (isRunning()) {
+			synchronized (currentServ.discovered) {
 				returnList.addAll(currentServ.discovered.keySet());
 			}
 		}
@@ -117,43 +118,43 @@ public class DiscoveryServer implements Runnable {
 		while (turnedOn.get()) {
 			try {
 				// (re)start sockets if not open
-				if(this.receiveSocket == null || this.receiveSocket.isClosed()) {
+				if (this.receiveSocket == null || this.receiveSocket.isClosed()) {
 					this.receiveSocket = new DatagramSocket(DISCOVERY_PORT);
 					this.receiveSocket.setSoTimeout(RECEIVE_TIMEOUT);
 				}
-				if(this.sendSocket == null || this.sendSocket.isClosed()) {
+				if (this.sendSocket == null || this.sendSocket.isClosed()) {
 					this.sendSocket = new DatagramSocket();
 				}
-				
+
 				// Prune list of stagnant values
 				Set<String> pruneSet = new HashSet<String>();
-				synchronized(discovered) {
+				synchronized (discovered) {
 					discovered.forEach((h, t) -> {
-						if(t.plusSeconds(PRUNE_TIME_S).isBefore(LocalTime.now())) {
+						if (t.plusSeconds(PRUNE_TIME_S).isBefore(LocalTime.now())) {
 							pruneSet.add(h);
 						}
 					});
-					for(String host: pruneSet) {
+					for (String host : pruneSet) {
 						discovered.remove(host);
 					}
 				}
-	
+
 				// Receive
 				this.receiveSocket.receive(incoming);
 				String received = new String(incoming.getData());
 				String[] pieces = received.split(SEPARATOR);
 				// Ignore if size of message not okay
-				if(pieces.length != 2)
+				if (pieces.length != 2)
 					continue;
 				// Ignore if not a ping message
-				if(!pieces[0].trim().equals(PING))
+				if (!pieces[0].trim().equals(PING))
 					continue;
 
 				String newEntry = pieces[1].trim();
 				LocalTime lastSeen = discovered.get(newEntry);
-				
+
 				// only update if new OR enough time has passed
-				if(lastSeen == null ||  lastSeen.plusNanos(PING_MIN_RESPONSETIME_NS).isBefore(LocalTime.now())) {		
+				if (lastSeen == null || lastSeen.plusNanos(PING_MIN_RESPONSETIME_NS).isBefore(LocalTime.now())) {
 					discovered.put(newEntry, LocalTime.now());
 					sendPingResponse(incoming.getAddress());
 				}
@@ -161,7 +162,7 @@ public class DiscoveryServer implements Runnable {
 				// ignore, timeout has happend (it's time to prune!)
 			} catch (SocketException e) {
 				// Only print stacktrace if DiscoveryServer isn't shutting down
-				if(turnedOn.get()) {
+				if (turnedOn.get()) {
 					e.printStackTrace();
 				}
 				// Socket will be restarted automatically in next loop
@@ -172,14 +173,15 @@ public class DiscoveryServer implements Runnable {
 		// Before terminating, make sure that no broadcaster is running
 		stopBroadcaster();
 	}
-	
+
 	/**
 	 * Send a ping response to a single receiver
+	 * 
 	 * @param receiver
 	 */
 	private void sendPingResponse(InetAddress receiver) {
-		synchronized(sendSocket) {
-			DatagramPacket pingPacket = new DatagramPacket(pingMsg, pingMsg.length, receiver , DISCOVERY_PORT);
+		synchronized (sendSocket) {
+			DatagramPacket pingPacket = new DatagramPacket(pingMsg, pingMsg.length, receiver, DISCOVERY_PORT);
 			try {
 				sendSocket.send(pingPacket);
 			} catch (IOException e) {
@@ -187,35 +189,35 @@ public class DiscoveryServer implements Runnable {
 			}
 		}
 	}
-	
+
 	public static void startBroadcaster() {
-		if(isRunning()) {
-			if(currentServ.broadcastTimer != null)
+		if (isRunning()) {
+			if (currentServ.broadcastTimer != null)
 				currentServ.broadcastTimer.cancel();
 			currentServ.broadcastTimer = new Timer(true);
-			currentServ.broadcastTimer.schedule(getBroadcaster(currentServ), PING_BROADCAST_TIMER_MS, PING_BROADCAST_TIMER_MS);
+			currentServ.broadcastTimer.schedule(getBroadcaster(currentServ), PING_BROADCAST_TIMER_MS,
+					PING_BROADCAST_TIMER_MS);
 		}
 	}
-	
+
 	public static void stopBroadcaster() {
-		if(currentServ != null && currentServ.broadcastTimer != null) {
+		if (currentServ != null && currentServ.broadcastTimer != null) {
 			currentServ.broadcastTimer.cancel();
 		}
 	}
-	
+
 	/**
 	 * Send a ping broadcast
+	 * 
 	 * @param ias
 	 */
 	private void sendBroadcast(List<InterfaceAddress> ias) {
-		synchronized(sendSocket) {
-			for(InterfaceAddress ia : ias) {
+		synchronized (sendSocket) {
+			for (InterfaceAddress ia : ias) {
 				InetAddress broadcast = ia.getBroadcast();
 				DatagramPacket pingPacket = new DatagramPacket(pingMsg, pingMsg.length, broadcast, DISCOVERY_PORT);
 				try {
-					// Ignore if broadcast address is 0.0.0.0 (openVPN tunnel might return this, among other things)
-					if(!broadcast.getHostAddress().equals("0.0.0.0"))
-						sendSocket.send(pingPacket);
+					sendSocket.send(pingPacket);
 				} catch (IOException e) {
 					System.err.println("Sending failed to ip adress " + broadcast + " on interface " + ia.getAddress());
 					e.printStackTrace();
@@ -223,32 +225,32 @@ public class DiscoveryServer implements Runnable {
 			}
 		}
 	}
-	
+
 	private static TimerTask getBroadcaster(DiscoveryServer ds) {
 		return new TimerTask() {
-			private final List<InterfaceAddress> ias = new ArrayList<InterfaceAddress>();
-		
 			@Override
 			public void run() {
-				if(ias.isEmpty()) {
-					try {
-						Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-						while(interfaces.hasMoreElements()) {
-							NetworkInterface ni = interfaces.nextElement();
-							if(ni.isUp() && !ni.isLoopback()) {
-								for(InterfaceAddress ia : ni.getInterfaceAddresses()) {
-									// interface should have broadcast (filters out ipv6 as well)
-									if(ia.getBroadcast() != null) {
-										ias.add(ia);
-									}
+				try {
+					Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+					List<InterfaceAddress> ias = new ArrayList<InterfaceAddress>();
+					while (interfaces.hasMoreElements()) {
+						NetworkInterface ni = interfaces.nextElement();
+						if (ni.isUp() && !ni.isLoopback()) {
+							for (InterfaceAddress ia : ni.getInterfaceAddresses()) {
+								// interface should have broadcast (filters out ipv6 as well)
+								// Ignore if broadcast address starts with 0. (0.0.0.0/8 = defined as "current
+								// network", used in i.e. OVPN)
+								if (ia.getBroadcast() != null && !ia.getBroadcast().getHostAddress().startsWith("0.") ) {
+									ias.add(ia);
 								}
 							}
 						}
-					} catch (SocketException e1) {
-						e1.printStackTrace();
 					}
+
+					ds.sendBroadcast(ias);
+				} catch (SocketException e) {
+					e.printStackTrace();
 				}
-				ds.sendBroadcast(ias);
 			}
 		};
 	}
