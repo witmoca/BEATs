@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.ResourceLoader;
-import be.witmoca.BEATs.utils.StaticSettings;
+import be.witmoca.BEATs.utils.AppVersion;
 
 /*
 *
@@ -40,7 +40,7 @@ public class ShowAboutDialogAction implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		List<String> lines = ResourceLoader.ReadResource("Text/About");
 		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
-				String.join("\n", lines) + "\n\nVersion: " + StaticSettings.getAppVersionString(),
+				String.join("\n", lines) + "\n\nVersion: " + AppVersion.getInternalAppVersion().toString(),
 				Lang.getUI("menu.about"), JOptionPane.PLAIN_MESSAGE);
 	}
 }

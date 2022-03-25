@@ -100,9 +100,8 @@ public class VersionChecker extends SwingWorker<Boolean,String> {
 			this.publish("Version Tag Mismatch: " + versionTag); 
 			return false;
 		}
-		int latestVersion = (Integer.parseInt(matcher.group(1)) * 1000000) + (Integer.parseInt(matcher.group(2)) * 1000)
-				+ Integer.parseInt(matcher.group(3));
-		if (StaticSettings.getAppVersionInt() < latestVersion) {
+		AppVersion latestVersion = new AppVersion(Integer.parseInt(matcher.group(1)), (Integer.parseInt(matcher.group(2))), Integer.parseInt(matcher.group(3)),"");
+		if (AppVersion.getInternalAppVersion().compareTo(latestVersion) < 0) {
 			this.publish("New version found: " + matcher.group(0));
 			return true;
 		}

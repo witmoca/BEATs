@@ -40,7 +40,7 @@ import org.sqlite.SQLiteConnection;
 import org.sqlite.SQLiteErrorCode;
 
 import be.witmoca.BEATs.utils.ResourceLoader;
-import be.witmoca.BEATs.utils.StaticSettings;
+import be.witmoca.BEATs.utils.AppVersion;
 
 public class SQLConnection implements AutoCloseable {
 	private static final int APPLICATION_ID = 0x77776462;
@@ -185,7 +185,7 @@ public class SQLConnection implements AutoCloseable {
 		SQLiteConfig config = new SQLiteConfig();
 		if (!existing) {
 			// Add application_id & user_version (only add these on a new db)
-			config.setUserVersion(StaticSettings.getAppVersionInt());
+			config.setUserVersion(AppVersion.getInternalAppVersion().getAppVersionInt());
 			config.setApplicationId(APPLICATION_ID);
 		}
 		// Enforce foreign key correctness
@@ -221,14 +221,14 @@ public class SQLConnection implements AutoCloseable {
 																										// a
 																										// value! (0 as
 																										// default)
-				int fileVersion = appversionCheckIdResult.getInt(1);
-				if (fileVersion > StaticSettings.getAppVersionInt()) {
+				AppVersion fileVersion = new AppVersion(appversionCheckIdResult.getInt(1), "");
+				if (AppVersion.getInternalAppVersion().compareTo(fileVersion) < 0) {
 					// File is newer than app => update app
 					throw new ConnectionException(ConnectionException.ConnState.APP_OUTDATED, null);
-				} else if ((fileVersion / 1000000) < StaticSettings.getAppVersionMajor()) {
+				} else if ((fileVersion.getVERSION_MAJOR()) < AppVersion.getInternalAppVersion().getVERSION_MAJOR()) {
 					// Major version of file < major version of app => not compatible
 					throw new ConnectionException(ConnectionException.ConnState.DB_OUTDATED, null);
-				}
+				} // TODO: implement update of version to 1.3.0 (and update pragma user_version)
 			}
 
 			// Check foreign keys
