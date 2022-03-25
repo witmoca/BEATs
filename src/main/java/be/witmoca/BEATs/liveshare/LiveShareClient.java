@@ -5,6 +5,7 @@ package be.witmoca.BEATs.liveshare;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -145,8 +146,9 @@ public class LiveShareClient implements ActionListener {
 						connectedClients.get(server).close();
 					}
 				}
-			} catch (SocketException e1) {
+			} catch (EOFException | SocketException e1) {
 				// SocketExceptions are common: peer not available, connection closed, etc
+				// EOFExceptions are also common: the full serialised object did not make it (EOF is also fatal, the stream is in an indeterminate state)
 				try {
 					connectedClients.get(server).close();
 				} catch (IOException e2) {
