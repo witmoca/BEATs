@@ -41,7 +41,7 @@ import be.witmoca.BEATs.utils.Lang;
 public class ArchiveTableModel extends AbstractTableModel implements DataChangedListener, ContainsEpisodeColumn {
 	private static final long serialVersionUID = 1L;
 	private static final String COLUMN_NAME[] = { Lang.getUI("col.artist"), Lang.getUI("col.song"),
-			Lang.getUI("col.episode"), Lang.getUI("col.genre"), Lang.getUI("col.comment") };
+			Lang.getUI("col.episode"), Lang.getUI("col.genre"), Lang.getUI("col.comment"), Lang.getUI("col.origin")};
 	private List<ArchiveEntry> archive = new ArrayList<ArchiveEntry>();
 
 	public ArchiveTableModel() {
@@ -56,11 +56,11 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 		archive.clear(); // clear() is (probably) faster as the backing array doesn't get resized (just
 							// turned into null values), so reinserting goes fast
 		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
-				"SELECT SongsInArchive.rowid, ArtistName, Title, SongsInArchive.EpisodeId, EpisodeDate, GenreName, Comment FROM SongsInArchive,Song, Episode WHERE SongsInArchive.SongId = Song.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeId")) {
+				"SELECT SongsInArchive.rowid, Song.ArtistName, Title, SongsInArchive.EpisodeId, EpisodeDate, GenreName, Comment, Local FROM SongsInArchive,Song,Episode,Artist WHERE SongsInArchive.SongId = Song.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeId AND Song.ArtistName = Artist.ArtistName")) {
 			ResultSet value = getValue.executeQuery();
 			while (value.next()) {
 				archive.add(new ArchiveEntry(value.getInt(1), value.getString(2), value.getString(3), value.getInt(4),
-						value.getInt(5), value.getString(6), value.getString(7)));
+						value.getInt(5), value.getString(6), value.getString(7), value.getInt(8) == 1 ? "local" : "not local"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -110,8 +110,9 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 		private final String EPISODE_DATE;
 		private final String Genre;
 		private final String COMMENT;
+		private final String ORIGIN;
 
-		ArchiveEntry(int rowid, String artist, String song, int episode, int epDate, String Genre, String comment) {
+		ArchiveEntry(int rowid, String artist, String song, int episode, int epDate, String Genre, String comment, String origin) {
 			this.ROWID = rowid;
 			this.ARTIST = artist;
 			this.SONG = song;
@@ -119,6 +120,7 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 			this.EPISODE_DATE = DateTimeFormatter.ofPattern("dd/MM/uu").format(LocalDate.ofEpochDay(epDate));
 			this.Genre = Genre;
 			this.COMMENT = comment;
+			this.ORIGIN = origin;
 		}
 
 		Object getColumn(int i) {
@@ -133,6 +135,8 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 				return this.Genre;
 			case 4:
 				return this.COMMENT;
+			case 5:
+				return this.ORIGIN;
 			default:
 				return null;
 			}
