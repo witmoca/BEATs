@@ -87,8 +87,8 @@ class RenameArtistAction extends AbstractAction {
 		// the old reference
 		try {
 			// First: insert (with original value of local)
-			boolean isLocal = CommonSQL.isArtistLocal(artist);
-			String renamed = CommonSQL.addArtist(newName.getText(), isLocal);
+			String origin = CommonSQL.getArtistOrigin(artist);
+			String renamed = CommonSQL.addArtist(newName.getText(), origin);
 
 			if (artist.equals(renamed))
 				return;

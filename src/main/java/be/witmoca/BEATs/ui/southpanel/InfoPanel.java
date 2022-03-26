@@ -22,6 +22,7 @@ import javax.swing.event.ListSelectionListener;
 
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.utils.Lang;
+import be.witmoca.BEATs.utils.OriginHelper;
 
 /*
 *
@@ -51,7 +52,7 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 	private final JLabel artistLabel = new JLabel("");
 	private final JLabel songLast = new JLabel("");
 	private final JLabel artistLast = new JLabel("");
-	private final JLabel artistLocal = new JLabel("");
+	private final JLabel artistOrigin = new JLabel("");
 	private final int artistColumn;
 	private final int songColumn;
 
@@ -101,9 +102,9 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 		right.weighty = 1; // The last box (the most south one) takes all the whitespace (and postions the
 							// element in the north-west
 		left.insets = new Insets(0, 10, 5, 10); // only the bottom one needs a bottom inset
-		add(new JLabel(Lang.getUI("infoPanel.local") + ":"), left);
+		add(new JLabel(Lang.getUI("col.origin") + ":"), left);
 		right.insets = new Insets(0, 10, 5, 10); // only the bottom one needs a bottom inset
-		add(artistLocal, right);
+		add(artistOrigin, right);
 
 		tracking = trackingTable;
 		trackingTable.getSelectionModel().addListSelectionListener(this);
@@ -139,14 +140,14 @@ class InfoPanel extends JPanel implements ListSelectionListener {
 			songLabel.setText(Lang.getUI("infoPanel.unknownSong"));
 			songLast.setText("");
 			artistLast.setText("");
-			artistLocal.setText("");
+			artistOrigin.setText("");
 
 			try (PreparedStatement selArtist = SQLConnection.getDbConn().prepareStatement(
-					"SELECT Local, count(*) FROM Artist, Song, SongsInArchive WHERE Artist.ArtistName = Song.ArtistName AND Song.SongId = SongsInArchive.SongId AND Artist.ArtistName = ?")) {
+					"SELECT Origin, count(*) FROM Artist, Song, SongsInArchive WHERE Artist.ArtistName = Song.ArtistName AND Song.SongId = SongsInArchive.SongId AND Artist.ArtistName = ?")) {
 				selArtist.setString(1, artist);
 				ResultSet rs = selArtist.executeQuery();
 				if (rs.next() && rs.getInt(2) != 0) {
-					artistLocal.setText(rs.getBoolean(1) ? Lang.getUI("action.yes") : Lang.getUI("action.no"));
+					artistOrigin.setText(rs.getString(1) +  " (" + OriginHelper.getDisplayStringFromOriginCode(rs.getString(1)) + ")");
 					artistLabel.setText(artist + " (" + rs.getInt(2) + " " + Lang.getUI("infoPanel.timesPlayed") + ")");
 				} else {
 					return;

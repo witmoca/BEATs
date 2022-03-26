@@ -170,7 +170,7 @@ public class ImportFileAction implements ActionListener {
 			}
 			CommonSQL.addEpisode(aflNr, aflDatum);
 			CommonSQL.addGenre(aflCode);
-			artiest = CommonSQL.addArtist(artiest, belgisch);
+			artiest = CommonSQL.addArtist(artiest, belgisch ? "BE" : "");
 			int songId = CommonSQL.addSong(titel, artiest);
 			CommonSQL.addSongInArchive(songId, aflNr, aflCode, commentaar);
 		}

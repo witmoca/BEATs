@@ -27,7 +27,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
-
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -38,6 +38,7 @@ import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistTableModel;
 import be.witmoca.BEATs.utils.Lang;
+import be.witmoca.BEATs.utils.OriginHelper;
 
 public class MoveToQueueAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
@@ -82,17 +83,23 @@ public class MoveToQueueAction extends AbstractAction {
 				}
 			} else {
 				// create new artist if he doesn't exist
-				// ask if artist is local
-				String options[] = { Lang.getUI("queue.moveToQueue.local"), Lang.getUI("queue.moveToQueue.notlocal"),
-						Lang.getUI("action.cancel") };
-				int answerLocal = JOptionPane.showOptionDialog(ApplicationWindow.getAPP_WINDOW(),
+				// ask about country of origin
+				
+				// Translate all country codes into readable countries  + unknown option
+				List<String> origins = OriginHelper.getDisplayOriginList();
+				
+				// Ask user
+				String answerOrigin = (String) JOptionPane.showInputDialog(ApplicationWindow.getAPP_WINDOW(),
 						rawArtist + " " + Lang.getUI("queue.moveToQueue.newArtist"),
 						Lang.getUI("queue.moveToQueue.newArtistTitle"), JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE, null, options, 2);
-				if (answerLocal == JOptionPane.CANCEL_OPTION || answerLocal == JOptionPane.CLOSED_OPTION) {
+						null, origins.toArray(), origins.get(0));
+				
+				if (answerOrigin == null) {
 					return; // CANCEL
 				}
-				CommonSQL.addArtist(rawArtist, (answerLocal == 0));
+				
+				// Translate back to 2-letter & add
+				CommonSQL.addArtist(rawArtist, OriginHelper.getOriginCodeFromDisplayString(answerOrigin));
 			}
 
 			// create song if it doesn't exist

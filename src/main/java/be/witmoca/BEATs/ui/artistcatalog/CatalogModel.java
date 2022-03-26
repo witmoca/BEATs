@@ -35,11 +35,12 @@ import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.components.ContainsEpisodeColumn;
 import be.witmoca.BEATs.utils.Lang;
+import be.witmoca.BEATs.utils.OriginHelper;
 
 class CatalogModel extends AbstractTableModel implements DataChangedListener, ContainsEpisodeColumn {
 	private static final long serialVersionUID = 1L;
 	private static final String COLUMN_NAME[] = { Lang.getUI("col.count"), Lang.getUI("col.artist"),
-			Lang.getUI("col.local"), Lang.getUI("catalog.lastEpisode") };
+			Lang.getUI("col.origin"), Lang.getUI("catalog.lastEpisode") };
 	private final ArrayList<row> content = new ArrayList<row>();
 
 	public CatalogModel() {
@@ -51,11 +52,11 @@ class CatalogModel extends AbstractTableModel implements DataChangedListener, Co
 	public void tableChanged() {
 		content.clear(); // clear is (likely) faster
 		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
-				"SELECT Artist.ArtistName, local, count(*), SongsInArchive.EpisodeId, Max(EpisodeDate) FROM Artist, Song, SongsInArchive, Episode WHERE Song.SongId = SongsInArchive.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeID AND Artist.ArtistName = Song.ArtistName GROUP BY Artist.ArtistName")) {
+				"SELECT Artist.ArtistName, Origin, count(*), SongsInArchive.EpisodeId, Max(EpisodeDate) FROM Artist, Song, SongsInArchive, Episode WHERE Song.SongId = SongsInArchive.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeID AND Artist.ArtistName = Song.ArtistName GROUP BY Artist.ArtistName")) {
 			ResultSet value = getValue.executeQuery();
 			// For every artist
 			while (value.next()) {
-				content.add(new row(value.getString(1), value.getInt(3), value.getBoolean(2), value.getInt(4),
+				content.add(new row(value.getString(1), value.getInt(3), OriginHelper.getDisplayStringFromOriginCode(value.getString(2)), value.getInt(4),
 						LocalDate.ofEpochDay(value.getLong(5))));
 			}
 			content.trimToSize();
@@ -118,15 +119,15 @@ class CatalogModel extends AbstractTableModel implements DataChangedListener, Co
 	private static class row {
 		private final String artist;
 		private final int count;
-		private final boolean local;
+		private final String origin;
 		private final int episode;
 		private final String episodeDate;
 
-		public row(String artist, int count, boolean local, int episode, LocalDate episodeDate) {
+		public row(String artist, int count, String origin, int episode, LocalDate episodeDate) {
 			super();
 			this.artist = artist;
 			this.count = count;
-			this.local = local;
+			this.origin = origin;
 			this.episode = episode;
 			this.episodeDate = DateTimeFormatter.ofPattern("dd/MM/uu").format(episodeDate);
 		}
@@ -138,7 +139,7 @@ class CatalogModel extends AbstractTableModel implements DataChangedListener, Co
 			case 1:
 				return artist;
 			case 2:
-				return local;
+				return origin;
 			case 3:
 				return episode;
 			}
@@ -152,12 +153,11 @@ class CatalogModel extends AbstractTableModel implements DataChangedListener, Co
 		static public Class<?> getColumnClass(int i) {
 			switch (i) {
 			case 1:
+			case 2:
 				return String.class;
 			case 0:
 			case 3:
 				return Integer.class;
-			case 2:
-				return Boolean.class;
 			}
 			return Object.class;
 		}

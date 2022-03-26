@@ -37,6 +37,7 @@ import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.components.ContainsEpisodeColumn;
 import be.witmoca.BEATs.utils.Lang;
+import be.witmoca.BEATs.utils.OriginHelper;
 
 public class ArchiveTableModel extends AbstractTableModel implements DataChangedListener, ContainsEpisodeColumn {
 	private static final long serialVersionUID = 1L;
@@ -56,11 +57,11 @@ public class ArchiveTableModel extends AbstractTableModel implements DataChanged
 		archive.clear(); // clear() is (probably) faster as the backing array doesn't get resized (just
 							// turned into null values), so reinserting goes fast
 		try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
-				"SELECT SongsInArchive.rowid, Song.ArtistName, Title, SongsInArchive.EpisodeId, EpisodeDate, GenreName, Comment, Local FROM SongsInArchive,Song,Episode,Artist WHERE SongsInArchive.SongId = Song.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeId AND Song.ArtistName = Artist.ArtistName")) {
+				"SELECT SongsInArchive.rowid, Song.ArtistName, Title, SongsInArchive.EpisodeId, EpisodeDate, GenreName, Comment, Origin FROM SongsInArchive,Song,Episode,Artist WHERE SongsInArchive.SongId = Song.SongId AND SongsInArchive.EpisodeId = Episode.EpisodeId AND Song.ArtistName = Artist.ArtistName")) {
 			ResultSet value = getValue.executeQuery();
 			while (value.next()) {
 				archive.add(new ArchiveEntry(value.getInt(1), value.getString(2), value.getString(3), value.getInt(4),
-						value.getInt(5), value.getString(6), value.getString(7), value.getInt(8) == 1 ? "local" : "not local"));
+						value.getInt(5), value.getString(6), value.getString(7), OriginHelper.getDisplayStringFromOriginCode(value.getString(8))));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

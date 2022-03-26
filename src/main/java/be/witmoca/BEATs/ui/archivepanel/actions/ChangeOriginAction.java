@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.Action;
-import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.TableModel;
@@ -20,6 +20,7 @@ import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.utils.Lang;
+import be.witmoca.BEATs.utils.OriginHelper;
 import be.witmoca.BEATs.utils.UiIcon;
 
 /*
@@ -44,11 +45,11 @@ import be.witmoca.BEATs.utils.UiIcon;
 * File: RenameAristAction.java
 * Created: 2018
 */
-class ChangeLocalAction extends MultisongChangeAbstractAction {
+class ChangeOriginAction extends MultisongChangeAbstractAction {
 	private static final long serialVersionUID = 1L;
 
-	ChangeLocalAction(SongTable table) {
-		super(table, Lang.getUI("col.local"));
+	ChangeOriginAction(SongTable table) {
+		super(table, Lang.getUI("col.origin"));
 		this.putValue(Action.SMALL_ICON, UiIcon.EDIT_W.getIcon());
 	}
 
@@ -62,10 +63,10 @@ class ChangeLocalAction extends MultisongChangeAbstractAction {
 		}
 
 		
-		boolean isFirstLocal;
+		String firstOrigin;
 
 		try {
-			isFirstLocal = CommonSQL.isArtistLocal((String) tm.getValueAt(indices[0], 0));
+			firstOrigin = CommonSQL.getArtistOrigin((String) tm.getValueAt(indices[0], 0));
 		} catch (SQLException e2) {
 			e2.printStackTrace();
 			return;
@@ -73,23 +74,23 @@ class ChangeLocalAction extends MultisongChangeAbstractAction {
 
 		// USER UI interaction
 		JPanel userPanel = new JPanel();
-		JCheckBox localBox = new JCheckBox(Lang.getUI("changeLocalAction.descr"), isFirstLocal);
-		userPanel.add(localBox);
+		JComboBox<String> originBox = new JComboBox<>((String[]) OriginHelper.getDisplayOriginList().toArray());
+		userPanel.add(originBox);
 
-		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel, Lang.getUI("col.local"),
+		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel, Lang.getUI("col.origin"),
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
 			return; // cancelled
 		}
 
 		// Do nothing if there is a single select and it stays the same
-		if (localBox.isSelected() == isFirstLocal && indices.length == 1)
+		if (originBox.getSelectedItem() == firstOrigin && indices.length == 1)
 			return;
 
 		// MAKE CHANGES
 		// update artists
 		try {
 			for(String artist : artists) {
-				CommonSQL.updateLocalityOfArtist(localBox.isSelected(), artist);
+				CommonSQL.updateOriginOfArtist(OriginHelper.getOriginCodeFromDisplayString((String) originBox.getSelectedItem()), artist);
 			}
 			SQLConnection.getDbConn().commit(EnumSet.of(DataChangedType.ARTIST));
 		} catch (SQLException e1) {

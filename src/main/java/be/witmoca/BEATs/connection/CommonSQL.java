@@ -27,41 +27,43 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 
 import be.witmoca.BEATs.utils.StringUtils;
 
 public class CommonSQL {
 
-	public static String addArtist(String artistName, boolean local) throws SQLException {
+	public static String addArtist(String artistName, String origin) throws SQLException {
 		try (PreparedStatement add = SQLConnection.getDbConn()
 				.prepareStatement("INSERT OR IGNORE INTO artist VALUES (?, ?)")) {
 			String artist = StringUtils.ToUpperCamelCase(StringUtils.filterPrefix(artistName));
 			add.setString(1, artist);
-			add.setBoolean(2, local);
+			add.setString(2, checkOrigin(origin));
 			add.executeUpdate();
 			return artist;
 		}
 	}
 
-	public static boolean isArtistLocal(String artistName) throws SQLException {
-		try (PreparedStatement selLocal = SQLConnection.getDbConn()
-				.prepareStatement("SELECT local FROM Artist WHERE ArtistName = ?")) {
-			selLocal.setString(1, artistName);
-			ResultSet rs = selLocal.executeQuery();
+	public static String getArtistOrigin (String artistName) throws SQLException {
+		try (PreparedStatement selOrigin = SQLConnection.getDbConn()
+				.prepareStatement("SELECT Origin FROM Artist WHERE ArtistName = ?")) {
+			selOrigin.setString(1, artistName);
+			ResultSet rs = selOrigin.executeQuery();
 			if (!rs.next())
 				throw new SQLException(artistName + " is not present in artist table!");
-			return rs.getBoolean(1);
+			return rs.getString(1);
 		}
 	}
 
-	public static void updateLocalityOfArtist(boolean local, String artist) throws SQLException {
-		try (PreparedStatement updateLocal = SQLConnection.getDbConn()
-				.prepareStatement("UPDATE Artist SET local = ? WHERE ArtistName = ?")) {
-			updateLocal.setBoolean(1, local);
-			updateLocal.setString(2, artist);
-			updateLocal.executeUpdate();
+	public static void updateOriginOfArtist(String origin, String artist) throws SQLException {
+		try (PreparedStatement updateOrigin = SQLConnection.getDbConn()
+				.prepareStatement("UPDATE Artist SET Origin = ? WHERE ArtistName = ?")) {
+			updateOrigin.setString(1, checkOrigin(origin));
+			updateOrigin.setString(2, artist);
+			updateOrigin.executeUpdate();
 		}
 	}
 
@@ -450,5 +452,18 @@ public class CommonSQL {
 			del.setInt(1, songOrder);
 			del.executeUpdate();
 		}
+	}
+	
+	/**
+	 * 
+	 * @param origin Two letter country code, valid as defined in the Locale class
+	 * @return Capitalized two letter code, or empty string if invalid
+	 */
+	private static String checkOrigin(String origin) {
+		origin = origin.toUpperCase();
+		if(!Arrays.asList(Locale.getISOCountries()).contains(origin) )
+			return "";
+		return origin;
+		
 	}
 }

@@ -217,18 +217,16 @@ public class SQLConnection implements AutoCloseable {
 
 			// Check user_version
 			try (Statement versionCheck = Db.createStatement()) {
-				ResultSet appversionCheckIdResult = versionCheck.executeQuery("PRAGMA user_version"); // always returns
-																										// a
-																										// value! (0 as
-																										// default)
+				// always returns a value! (0 as default)
+				ResultSet appversionCheckIdResult = versionCheck.executeQuery("PRAGMA user_version"); 
 				AppVersion fileVersion = new AppVersion(appversionCheckIdResult.getInt(1), "");
 				if (AppVersion.getInternalAppVersion().compareTo(fileVersion) < 0) {
 					// File is newer than app => update app
 					throw new ConnectionException(ConnectionException.ConnState.APP_OUTDATED, null);
-				} else if ((fileVersion.getVERSION_MAJOR()) < AppVersion.getInternalAppVersion().getVERSION_MAJOR()) {
+				} else if (fileVersion.getVERSION_MAJOR() != AppVersion.getInternalAppVersion().getVERSION_MAJOR()) {
 					// Major version of file < major version of app => not compatible
 					throw new ConnectionException(ConnectionException.ConnState.DB_OUTDATED, null);
-				} // TODO: implement update of version to 1.3.0 (and update pragma user_version)
+				}
 			}
 
 			// Check foreign keys
