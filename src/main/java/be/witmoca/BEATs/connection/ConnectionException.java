@@ -35,8 +35,7 @@ public class ConnectionException extends Exception {
 		GENERAL_EXCEPTION, // General statement exception (usually sql syntax error)
 		APP_ID_INVALID, // Db Application id does not match application
 		APP_OUTDATED, // Db version is higher than the application version
-		DB_OUTDATED, // Major version of the DB is lower then Major of the application (suggest
-						// import instead)
+		DB_MAJOR_OUTDATED, // Major version is different
 		FOREIGN_KEYS_CONSTRAINTS, // Foreign key constraints failed
 		INTEGRITY_FAILED, // Db failed the integrity check
 		VACUUM_FAILED; // Db VACUUM failed

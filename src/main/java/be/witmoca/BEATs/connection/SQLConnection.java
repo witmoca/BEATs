@@ -225,7 +225,7 @@ public class SQLConnection implements AutoCloseable {
 					throw new ConnectionException(ConnectionException.ConnState.APP_OUTDATED, null);
 				} else if (fileVersion.getVERSION_MAJOR() != AppVersion.getInternalAppVersion().getVERSION_MAJOR()) {
 					// Major version of file < major version of app => not compatible
-					throw new ConnectionException(ConnectionException.ConnState.DB_OUTDATED, null);
+					throw new ConnectionException(ConnectionException.ConnState.DB_MAJOR_OUTDATED, null);
 				}
 			}
 
