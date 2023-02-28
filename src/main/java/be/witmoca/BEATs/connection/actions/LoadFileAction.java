@@ -15,6 +15,7 @@ import be.witmoca.BEATs.connection.ConnectionException;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
+import be.witmoca.BEATs.ui.actions.ExitApplicationAction;
 import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
 
@@ -159,6 +160,8 @@ public class LoadFileAction implements ActionListener {
 			// If flag is set, load empty file. If not, crash the application due to critical error
 			if(loadEmptyFile) {
 				getNewFileAction().actionPerformed(e);
+				// TODO make "newFileAction" on error supported -> now the UI elements do not work correctly!
+				(new ExitApplicationAction(false)).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, errorMessage));
 			} else {
 				System.exit(-1);
 			}
