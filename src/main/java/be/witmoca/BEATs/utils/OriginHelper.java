@@ -27,7 +27,7 @@ public class OriginHelper {
 			originMap.put(displayName, countryCode);
 		}
 		DISPLAY_ORIGINS = (origins.toArray(new String[0]));
-		Arrays.sort(DISPLAY_ORIGINS);
+		Arrays.sort(DISPLAY_ORIGINS,1, DISPLAY_ORIGINS.length);
 		ORIGIN_MAP = originMap;
 	}
 	
