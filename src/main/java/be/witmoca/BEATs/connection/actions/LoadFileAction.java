@@ -161,7 +161,7 @@ public class LoadFileAction implements ActionListener {
 			if(loadEmptyFile) {
 				getNewFileAction().actionPerformed(e);
 				// TODO make "newFileAction" on error supported -> now the UI elements do not work correctly!
-				(new ExitApplicationAction(false)).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, errorMessage));
+				(new ExitApplicationAction(true)).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, errorMessage));
 			} else {
 				System.exit(-1);
 			}
