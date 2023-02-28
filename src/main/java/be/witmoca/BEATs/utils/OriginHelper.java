@@ -22,11 +22,12 @@ public class OriginHelper {
 		originMap.put(Lang.getUI("action.unknown"), "");
 		
 		for(String countryCode : countries) {	
-			String displayName = new Locale("",countryCode).getDisplayCountry();
+			String displayName = new Locale("",countryCode).getDisplayCountry(Lang.getLocale());
 			origins.add(displayName);
 			originMap.put(displayName, countryCode);
 		}
 		DISPLAY_ORIGINS = (origins.toArray(new String[0]));
+		Arrays.sort(DISPLAY_ORIGINS);
 		ORIGIN_MAP = originMap;
 	}
 	
