@@ -68,7 +68,7 @@ public class SQLConnection implements AutoCloseable {
 		try {
 			Map<DataChangedListener, EnumSet<DataChangedType>> listenerMap = null;
 
-			// deal with the old connection (and log any listeneres on that connection)
+			// deal with the old connection (and log any listeners on that connection)
 			if (DbConn != null) {
 				listenerMap = new HashMap<>(DbConn.getDataListeners());
 				DbConn.close();
@@ -76,6 +76,19 @@ public class SQLConnection implements AutoCloseable {
 
 			// Create new connection
 			DbConn = new SQLConnection(loadFile);
+			
+			try {
+				// Do a sanity check
+				DbConn.contentCheck();
+				
+				// Vacuum database
+				DbConn.vacuum();
+			} catch (ConnectionException e1) {
+				// Error during sanity check or vacuum should not cause the internal database to be kept as 
+				// these error can only be caused by readable sqlite databases loaded from elsewhere
+				DbConn.close();
+				throw e1;
+			}
 
 			// Attach the old listeners if there where any
 			if (listenerMap != null) {
@@ -99,7 +112,7 @@ public class SQLConnection implements AutoCloseable {
 	/**
 	 * Opens a connection to the internal database, performs a recovery if necessary
 	 * (overrides loadFile behaviour), loads an external db into the internal db,
-	 * Performs sanity checks and optimisation
+	 * Sanity checks and vacuum need to be done right after calling this constructor
 	 * 
 	 * @param loadFile
 	 *            the file to load or {@code null} for an empty db
@@ -129,7 +142,9 @@ public class SQLConnection implements AutoCloseable {
 			}
 			throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e);
 		}
-
+		// Connection with the static internal DB is now open
+		
+		
 		// if beyond this point and dbExists => recovery
 		if (dbExists) {
 			recoveredDb = true;
@@ -146,9 +161,6 @@ public class SQLConnection implements AutoCloseable {
 				throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e);
 			}
 		}
-
-		this.contentCheck();
-		this.vacuum();
 	}
 
 	public void saveDatabase(String savePath, boolean isBackup) throws SQLException {
