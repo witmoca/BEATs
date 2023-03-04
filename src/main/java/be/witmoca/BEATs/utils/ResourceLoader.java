@@ -52,7 +52,7 @@ public class ResourceLoader {
 	private static final String ERR_LOG_EXT = ".err";
 
 	// Metadata
-	public static int bytesOfErrorData = 0;
+	public static long bytesOfErrorData = 0;
 
 	/**
 	 * Initialises the File/Folder tree needed for operation.
