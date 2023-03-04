@@ -106,7 +106,7 @@ class BackupHandler implements ActionListener {
 		BACKUP_TIMER.stop();
 	}
 
-	private static int countSize(List<File> files) {
+	private static long countSize(List<File> files) {
 		int i = 0;
 		for (File f : files) {
 			i += f.length();
