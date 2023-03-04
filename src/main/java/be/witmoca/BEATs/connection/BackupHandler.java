@@ -107,7 +107,7 @@ class BackupHandler implements ActionListener {
 	}
 
 	private static long countSize(List<File> files) {
-		int i = 0;
+		long i = 0;
 		for (File f : files) {
 			i += f.length();
 		}
