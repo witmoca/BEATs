@@ -35,6 +35,7 @@ import be.witmoca.BEATs.utils.BEATsSettings;
 public class LiveShareClient implements ActionListener {
 	private static final int CONN_TRY_TIMEOUT = 500; // try to connect for X milliseconds to every resolved server
 	private static final int CONN_TIMEOUT_MS = 1000; // timeout between messages
+	private static final int CONN_MAX_FAILS = BEATsSettings.LIVESHARE_CLIENT_ALLOWEDFAILS.getIntValue(); // Max amount of failed receives before connection is closed
 	private static final int TIMER_UPDATE_PERIOD_S = 1; // Update frequency in seconds
 	private static final int TIMER_INITIAL_DELAY_MS = 10 * 1000; // initial startup time (a few seconds to give slow CPU's time to load more naturally)
 	private static final Set<ConnectionsSetChangedListener> cscListeners = Collections
@@ -48,6 +49,7 @@ public class LiveShareClient implements ActionListener {
 	private final Map<String, ObjectOutputStream> outputStreams = new HashMap<String, ObjectOutputStream>();	
 	private final Map<String, ObjectInputStream> inputStreams = new HashMap<String, ObjectInputStream>();	
 	private final Map<String, LiveShareSerializable> content = Collections.synchronizedMap(new HashMap<String, LiveShareSerializable>());
+	private final Map<String, Integer> receiveFails = new HashMap<String, Integer>();
 	
 	private final Set<DataChangedListener> dcListeners = Collections
 			.synchronizedSet(new HashSet<DataChangedListener>());
@@ -106,6 +108,7 @@ public class LiveShareClient implements ActionListener {
 								if (o instanceof LiveShareMessage && LiveShareMessage.BEATS_CONNECT_ACCEPTED.equals(o)) {
 									Socket ns = new Socket(isa.getAddress(), ois.readInt());
 									connectedClients.put(newServer , ns);
+									receiveFails.put(newServer, 0);
 									ObjectOutputStream noos = new ObjectOutputStream(ns.getOutputStream());
 									noos.flush();
 									outputStreams.put(newServer, noos);
@@ -140,9 +143,12 @@ public class LiveShareClient implements ActionListener {
 				if (LiveShareMessage.BEATS_DATA_REQUEST_FULL.equals(ois.readObject())) {
 					// Should the read object be null (so no connection, bad data, timeout, etc) then close the connection (cleanup happens later)
 					LiveShareSerializable updatedLss = (LiveShareSerializable) ois.readObject();
-					if(updatedLss != null)
+					if(updatedLss != null) {
 						content.put(server, updatedLss);
-					else {
+						receiveFails.put(server, 0);
+					} else if(receiveFails.get(server) < CONN_MAX_FAILS) {
+						receiveFails.put(server, receiveFails.get(server)+1);
+					} else {
 						connectedClients.get(server).close();
 					}
 				}

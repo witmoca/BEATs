@@ -58,6 +58,7 @@ public class ShowSettingsDialogAction implements ActionListener {
 	private JCheckBox liveShareServerEnabled;
 	private JFormattedTextField liveShareServerMaxConnections;
 	private JCheckBox liveShareClientEnabled;
+	private JFormattedTextField liveShareClientMaxFails;
 	
 	public ShowSettingsDialogAction() {
 	}
@@ -97,6 +98,7 @@ public class ShowSettingsDialogAction implements ActionListener {
 		liveShareServerEnabled = new JCheckBox("", BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue());
 		liveShareServerMaxConnections = new JFormattedTextField(BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.getIntValue());
 		liveShareClientEnabled = new JCheckBox("", BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue());
+		liveShareClientMaxFails = new JFormattedTextField(BEATsSettings.LIVESHARE_CLIENT_ALLOWEDFAILS.getIntValue());
 		
 		JLabel languageTitle = new JLabel(Lang.getUI("settings.label.lang.title"));
 		Font titleFont = languageTitle.getFont();
@@ -185,6 +187,9 @@ public class ShowSettingsDialogAction implements ActionListener {
 		
 		content.add(new JLabel(Lang.getUI("settings.label.liveshare.client.enabled")));
 		content.add(liveShareClientEnabled);
+		
+		content.add(new JLabel(Lang.getUI("settings.label.liveshare.client.maxfails")));
+		content.add(liveShareClientMaxFails);
 		return content;
 	}
 	
@@ -210,6 +215,9 @@ public class ShowSettingsDialogAction implements ActionListener {
 		BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.setIntValue(maxcon);
 		
 		BEATsSettings.LIVESHARE_CLIENT_ENABLED.setBoolValue(liveShareClientEnabled.isSelected());
+		int maxclientfails = (int) liveShareClientMaxFails.getValue();
+		maxclientfails = (maxclientfails < 1 ? 1 : (maxclientfails > 99 ? 99 : maxclientfails));
+		BEATsSettings.LIVESHARE_CLIENT_ALLOWEDFAILS.setIntValue(maxclientfails);
 		
 		BEATsSettings.savePreferences();
 	}
