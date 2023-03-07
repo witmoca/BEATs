@@ -41,7 +41,7 @@ public class ConnectionException extends Exception {
 		VACUUM_FAILED; // Db VACUUM failed
 	}
 
-	ConnectionException(ConnState state, Throwable t) {
+	public ConnectionException(ConnState state, Throwable t) {
 		super(t);
 		if (state == null)
 			throw new IllegalArgumentException("state can't be null");

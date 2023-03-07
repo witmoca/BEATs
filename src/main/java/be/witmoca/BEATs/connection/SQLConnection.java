@@ -43,7 +43,8 @@ import be.witmoca.BEATs.utils.ResourceLoader;
 import be.witmoca.BEATs.utils.AppVersion;
 
 public class SQLConnection implements AutoCloseable {
-	private static final int APPLICATION_ID = 0x77776462;
+	public static final int APPLICATION_ID = 0x77776462;
+	private static final String CREATE_SQL = "Text/create.sql";
 	private static final String DB_LOC = ResourceLoader.DB_LOC;
 	private static boolean recoveredDb = false;
 
@@ -62,9 +63,10 @@ public class SQLConnection implements AutoCloseable {
 	 * 
 	 * @see SQLConnection#SQLConnection(File)
 	 * @param loadFile
+	 * @param skipSanity Skips the checking if a file is valid (for importing older file versions for example)
 	 * @throws ConnectionException
 	 */
-	public static void loadNewInternalDb(File loadFile) throws ConnectionException {
+	public static void loadNewInternalDb(File loadFile, boolean skipSanity) throws ConnectionException {
 		try {
 			Map<DataChangedListener, EnumSet<DataChangedType>> listenerMap = null;
 
@@ -79,8 +81,10 @@ public class SQLConnection implements AutoCloseable {
 			
 			try {
 				// Do a sanity check
-				DbConn.contentCheck();
-				
+				if(!skipSanity) {
+					DbConn.contentCheck();
+					DbConn.updateSettings();
+				}
 				// Vacuum database
 				DbConn.vacuum();
 			} catch (ConnectionException e1) {
@@ -97,8 +101,10 @@ public class SQLConnection implements AutoCloseable {
 				}
 			}
 
-			// Notify listeners
-			DbConn.announceDataRefresh();
+			// Notify listeners, unless 'insane' data as invalid data will cause issues
+			if(!skipSanity) {
+				DbConn.announceDataRefresh();	
+			}
 
 			// Start backups
 			BackupHandler.StartBackups();
@@ -131,7 +137,7 @@ public class SQLConnection implements AutoCloseable {
 			Db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + DB_LOC,
 					configSettings(dbExists).toProperties());
 			Db.setAutoCommit(false);
-			createTables();
+			executeSQLFile(CREATE_SQL);
 			Db.commit();
 		} catch (SQLException e) {
 			// all codes above 8 bits are extended codes (the lowest 8 bits still represent
@@ -184,6 +190,19 @@ public class SQLConnection implements AutoCloseable {
 			notifyDataChangedListeners(EnumSet.of(DataChangedType.META_DATA));
 		}
 	}
+	
+	/**
+	 * Update the db settings, such as the user_version, app_version, constraints, etc...
+	 * @throws SQLException 
+	 */
+	public void updateSettings() throws ConnectionException {
+		try {
+			configSettings(false).apply(Db);
+			Db.commit();
+		} catch (SQLException e) {
+			throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e);
+		}
+	}
 
 	/**
 	 * Create the connection settings for the sqlite connection
@@ -209,9 +228,9 @@ public class SQLConnection implements AutoCloseable {
 		return config;
 	}
 
-	private void createTables() throws SQLException {
+	public void executeSQLFile(String fileName) throws SQLException {
 		try (Statement createEmptyTables = Db.createStatement()) {
-			for (String createLine : ResourceLoader.ReadResource("Text/create.sql")) {
+			for (String createLine : ResourceLoader.ReadResource(fileName)) {
 				createEmptyTables.executeUpdate(createLine);
 			}
 		}

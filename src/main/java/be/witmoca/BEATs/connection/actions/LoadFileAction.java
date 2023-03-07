@@ -44,26 +44,32 @@ import be.witmoca.BEATs.utils.Lang;
 public class LoadFileAction implements ActionListener {
 	private final boolean showUi;
 	private final File loadFile;
+	private final boolean skipSanity;
 
-	private LoadFileAction(boolean showUi, File loadFile) {
+	private LoadFileAction(boolean showUi, File loadFile, boolean skipSanity) {
 		this.showUi = showUi;
 		this.loadFile = loadFile;
+		this.skipSanity = skipSanity;
 	}
 
 	public static ActionListener getNewFileAction() {
-		return new LoadFileAction(false, null);
+		return new LoadFileAction(false, null, false);
 	}
 
 	public static ActionListener getLoadFileActionWithUI() {
-		return new LoadFileAction(true, null);
+		return new LoadFileAction(true, null, false);
 	}
 
 	public static ActionListener getLoadFileActionWithUI(File suggestLocation) {
-		return new LoadFileAction(true, suggestLocation);
+		return new LoadFileAction(true, suggestLocation, false);
 	}
 
 	public static final ActionListener getLoadFileAction(File loadFile) {
-		return new LoadFileAction(false, loadFile);
+		return new LoadFileAction(false, loadFile, false);
+	}
+	
+	public static final ActionListener getLoadWithoutSanity(File loadFile) {
+		return new LoadFileAction(false, loadFile, true);
 	}
 
 	@Override
@@ -109,7 +115,7 @@ public class LoadFileAction implements ActionListener {
 		}
 
 		try {
-			SQLConnection.loadNewInternalDb(loadFile);
+			SQLConnection.loadNewInternalDb(loadFile, this.skipSanity);
 		} catch (ConnectionException e1) {
 			e1.printStackTrace();
 			String errorMessage = "";
