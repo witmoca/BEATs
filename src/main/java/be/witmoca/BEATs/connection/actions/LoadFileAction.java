@@ -6,7 +6,6 @@ package be.witmoca.BEATs.connection.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -117,7 +116,6 @@ public class LoadFileAction implements ActionListener {
 		try {
 			SQLConnection.loadNewInternalDb(loadFile, this.skipSanity);
 		} catch (ConnectionException e1) {
-			e1.printStackTrace();
 			String errorMessage = "";
 			boolean isRecoveredDb = SQLConnection.isRecoveredDb();
 			if (isRecoveredDb) {
@@ -140,9 +138,16 @@ public class LoadFileAction implements ActionListener {
 				errorMessage += "Another instance is already running.\nOnly one instance is allowed.";
 				break;
 			case DB_MAJOR_OUTDATED:
-				errorMessage += "This file was made with an older version of Burning Ember.\nPlease try to import instead.";
-				loadEmptyFile = true;
-				break;
+				JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("loadFileAction.importOlderVersion"), "Update",
+						JOptionPane.INFORMATION_MESSAGE);
+				try {
+					(new BEATsFileFilter()).importFile(loadFile);
+				} catch (Exception e2) {
+					e2.printStackTrace();
+					JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), e2.getLocalizedMessage(), "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				return;
 			case FOREIGN_KEYS_CONSTRAINTS:
 				errorMessage += "The loaded database contains errors.\n\n" + e1.getCause().getLocalizedMessage();
 				loadEmptyFile = true;
@@ -159,9 +164,9 @@ public class LoadFileAction implements ActionListener {
 				break;
 			}
 			
-			
 			JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), errorMessage, "Error",
-					JOptionPane.ERROR_MESSAGE);
+						JOptionPane.ERROR_MESSAGE);
+			e1.printStackTrace();
 			
 			// If flag is set, load empty file. If not, crash the application due to critical error
 			if(loadEmptyFile) {

@@ -68,7 +68,7 @@ public class BEATsFileFilter extends ImportableFileFilter {
 	@Override
 	public void importFile(File source) throws Exception {
 		// Load file without checking versions, etc
-		LoadFileAction.getLoadWithoutSanity(source).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "import"));;
+		LoadFileAction.getLoadWithoutSanity(source).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "import"));
 		SQLConnection db = SQLConnection.getDbConn();
 		
 		// Check application_id
@@ -97,12 +97,14 @@ public class BEATsFileFilter extends ImportableFileFilter {
 				// Save this file, with random filename in the backup directory
 				String importedFile = ResourceLoader.BACKUP_DIR + File.separator + "Import_1_" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE) + "_" + source.getName();
 				db.saveDatabase(importedFile, false);
+				db.close();
 				// Recursively import again
 				importFile(new File(importedFile).getAbsoluteFile());
-				break;
+				return;
 			// Current major version should be 2
 			case 2:
 				// just load like normal
+				db.close();
 				LoadFileAction.getLoadFileAction(source).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "load"));
 				return;
 			default:
