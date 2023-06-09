@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 public class OriginHelper {
 	private static final String[] DISPLAY_ORIGINS;
 	private static final Map<String,String> ORIGIN_MAP; // (displayname of country),(2 letter country code as specified in Locale.getISOCountries())
+	public static final String UNKNOWN_LOCALE_STRING = "";
 	
 	static {
 		String countries[] = Locale.getISOCountries();
@@ -19,7 +20,7 @@ public class OriginHelper {
 		
 		//Add unknown / empty
 		origins.add(Lang.getUI("action.unknown"));
-		originMap.put(Lang.getUI("action.unknown"), "");
+		originMap.put(Lang.getUI("action.unknown"), UNKNOWN_LOCALE_STRING);
 		
 		for(String countryCode : countries) {	
 			String displayName = new Locale("",countryCode).getDisplayCountry(Lang.getLocale());

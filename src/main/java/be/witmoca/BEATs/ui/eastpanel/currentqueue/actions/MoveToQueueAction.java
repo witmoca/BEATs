@@ -84,6 +84,11 @@ public class MoveToQueueAction extends AbstractAction {
 				}
 			} else {
 				// create new artist if he doesn't exist
+				CommonSQL.addArtist(rawArtist, OriginHelper.UNKNOWN_LOCALE_STRING);
+			}
+			
+			// Check if origin of artist is unknown (existing with unknown locale, or new one)
+			if (OriginHelper.UNKNOWN_LOCALE_STRING.equals(CommonSQL.getArtistOrigin(rawArtist).trim()) ) {
 				// ask about country of origin
 				
 				// Translate all country codes into readable countries  + unknown option
@@ -91,16 +96,14 @@ public class MoveToQueueAction extends AbstractAction {
 				
 				// Ask user
 				String answerOrigin = (String) JOptionPane.showInputDialog(ApplicationWindow.getAPP_WINDOW(),
-						rawArtist + " " + Lang.getUI("queue.moveToQueue.newArtist"),
-						Lang.getUI("queue.moveToQueue.newArtistTitle"), JOptionPane.YES_NO_CANCEL_OPTION,
+						rawArtist + ": " + Lang.getUI("queue.moveToQueue.unknownOrigin"),
+						Lang.getUI("queue.moveToQueue.unknownOriginTitle"), JOptionPane.QUESTION_MESSAGE,
 						null, origins.toArray(), origins.get(0));
 				
-				if (answerOrigin == null) {
-					return; // CANCEL
+				if (answerOrigin != null) {
+					// Translate back to 2-letter & add
+					CommonSQL.updateOriginOfArtist(OriginHelper.getOriginCodeFromDisplayString(answerOrigin), rawArtist);
 				}
-				
-				// Translate back to 2-letter & add
-				CommonSQL.addArtist(rawArtist, OriginHelper.getOriginCodeFromDisplayString(answerOrigin));
 			}
 
 			// create song if it doesn't exist
