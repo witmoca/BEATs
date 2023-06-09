@@ -35,20 +35,25 @@ import be.witmoca.BEATs.ui.playlistpanel.PlaylistsTabbedPane;
 import be.witmoca.BEATs.ui.songcatalog.SongCatalog;
 import be.witmoca.BEATs.utils.Lang;
 
-class CenterTabbedPane extends JTabbedPane implements ConnectionsSetChangedListener{
+public class CenterTabbedPane extends JTabbedPane implements ConnectionsSetChangedListener{
 	private static final long serialVersionUID = 1L;
 	private final int dynamicTabRange; // tab index where the dynamic range starts
+	private final ArchivePanel archivePanel = new ArchivePanel();
 
 	public CenterTabbedPane() {
 		super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
 
-		this.addTab(Lang.getUI("center.archive"), new ArchivePanel());
+		this.addTab(Lang.getUI("center.archive"), archivePanel);
 		this.addTab(Lang.getUI("center.playlists"), new PlaylistsTabbedPane());
 		this.addTab(Lang.getUI("center.artistcatalog"), new ArtistCatalog());
 		this.addTab(Lang.getUI("center.songcatalog"), new SongCatalog());
 		
 		dynamicTabRange = this.getTabCount();
 		LiveShareClient.addConnectionsSetChangedListener(this);
+	}
+
+	public ArchivePanel getArchivePanel() {
+		return archivePanel;
 	}
 
 	@Override

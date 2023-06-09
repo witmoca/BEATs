@@ -46,6 +46,17 @@ public class CommonSQL {
 			return artist;
 		}
 	}
+	
+	public static boolean isArtistExisting(String artistName) throws SQLException {
+		try (PreparedStatement findArtist = SQLConnection.getDbConn()
+				.prepareStatement("SELECT count(*) FROM artist WHERE ArtistName = ?")) {
+			findArtist.setString(1, artistName);
+			ResultSet rs = findArtist.executeQuery();
+			if (rs.next() && rs.getInt(1) > 0)
+				return true;
+		}
+		return false;
+	}
 
 	public static String getArtistOrigin (String artistName) throws SQLException {
 		try (PreparedStatement selOrigin = SQLConnection.getDbConn()

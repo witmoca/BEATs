@@ -37,5 +37,6 @@ public class PlaylistPopupMenu extends JPopupMenu {
 		this.add(new JMenuItem(ClipboardActionFactory.getPasteAction(assocTable)));
 		this.addSeparator();
 		this.add(new JMenuItem(new DeleteAction(assocTable)));
+		this.add(new JMenuItem(new JumpToLatestInArchiveAction(assocTable)));
 	}
 }

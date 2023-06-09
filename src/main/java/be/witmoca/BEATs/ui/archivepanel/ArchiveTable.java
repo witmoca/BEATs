@@ -32,11 +32,12 @@ import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.ui.components.SongTableCopyOnlyTransferHandler;
 import be.witmoca.BEATs.ui.t4j.MultisortTableHeaderCellRenderer;
 
-class ArchiveTable extends SongTable {
+public class ArchiveTable extends SongTable {
 	private static final long serialVersionUID = 1L;
-
+	private static final ArchiveTableModel tableModel = new ArchiveTableModel();
+	
 	public ArchiveTable() {
-		super(new ArchiveTableModel());
+		super(tableModel);
 
 		// Set custom renderer for the episode column
 		this.getColumnModel().getColumn(2).setCellRenderer(new EpisodeColumnRenderer());
@@ -74,5 +75,9 @@ class ArchiveTable extends SongTable {
 			list.addSong((String) model.getValueAt(i, 0), (String) model.getValueAt(i, 1), 0);
 		}		
 		return list;
+	}
+
+	public static ArchiveTableModel getTablemodel() {
+		return tableModel;
 	}
 }

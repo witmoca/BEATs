@@ -63,12 +63,10 @@ public class MoveToQueueAction extends AbstractAction {
 		try {
 			// Check if artist exists already
 			boolean artistExists = false;
-			try (PreparedStatement findArtist = SQLConnection.getDbConn()
-					.prepareStatement("SELECT count(*) FROM artist WHERE ArtistName = ?")) {
-				findArtist.setString(1, rawArtist);
-				ResultSet rs = findArtist.executeQuery();
-				if (rs.next() && rs.getInt(1) > 0)
-					artistExists = true;
+			try {
+				artistExists = CommonSQL.isArtistExisting(rawArtist);
+			} catch (SQLException e2) {
+				artistExists = false;
 			}
 
 			// if artist exist, find song

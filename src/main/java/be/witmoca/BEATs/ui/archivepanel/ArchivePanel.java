@@ -51,11 +51,24 @@ public class ArchivePanel extends JPanel {
 		this.add(archiveScrollPane, BorderLayout.CENTER);
 		this.add(southPanel, BorderLayout.SOUTH);
 
+		
+		JTable rowTable = new RowNumberTable(archiveTable, getDefaultSortKeys());
+		archiveScrollPane.setRowHeaderView(rowTable);
+		archiveScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
+	}
+
+	public ArchiveTable getArchiveTable() {
+		return archiveTable;
+	}
+	
+	public void resetToDefaultSort() {
+		archiveTable.getRowSorter().setSortKeys(getDefaultSortKeys());
+	}
+	
+	private List<SortKey> getDefaultSortKeys() {
 		List<SortKey> defaultSort = new ArrayList<SortKey>();
 		defaultSort.add(new SortKey(0, SortOrder.ASCENDING));
 		defaultSort.add(new SortKey(2, SortOrder.ASCENDING));
-		JTable rowTable = new RowNumberTable(archiveTable, defaultSort);
-		archiveScrollPane.setRowHeaderView(rowTable);
-		archiveScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
+		return defaultSort;
 	}
 }
