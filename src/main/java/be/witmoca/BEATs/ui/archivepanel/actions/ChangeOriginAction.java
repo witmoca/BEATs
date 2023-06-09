@@ -74,7 +74,7 @@ class ChangeOriginAction extends MultisongChangeAbstractAction {
 
 		// USER UI interaction
 		JPanel userPanel = new JPanel();
-		JComboBox<String> originBox = new JComboBox<>((String[]) OriginHelper.getDisplayOriginList().toArray());
+		JComboBox<String> originBox = new JComboBox<>(OriginHelper.getDisplayOriginList());
 		userPanel.add(originBox);
 
 		if (JOptionPane.showConfirmDialog(ApplicationWindow.getAPP_WINDOW(), userPanel, Lang.getUI("col.origin"),

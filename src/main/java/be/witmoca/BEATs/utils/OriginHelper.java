@@ -31,8 +31,8 @@ public class OriginHelper {
 		ORIGIN_MAP = originMap;
 	}
 	
-	public static List<String> getDisplayOriginList() {
-		return Arrays.asList(DISPLAY_ORIGINS);
+	public static String[] getDisplayOriginList() {
+		return DISPLAY_ORIGINS;
 	}
 	
 	public static String getOriginCodeFromDisplayString(String displayCountry) {

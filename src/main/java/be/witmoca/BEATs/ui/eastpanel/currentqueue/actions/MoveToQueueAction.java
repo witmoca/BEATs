@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -86,7 +87,7 @@ public class MoveToQueueAction extends AbstractAction {
 				// ask about country of origin
 				
 				// Translate all country codes into readable countries  + unknown option
-				List<String> origins = OriginHelper.getDisplayOriginList();
+				List<String> origins = Arrays.asList(OriginHelper.getDisplayOriginList());
 				
 				// Ask user
 				String answerOrigin = (String) JOptionPane.showInputDialog(ApplicationWindow.getAPP_WINDOW(),
