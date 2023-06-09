@@ -16,10 +16,12 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.ApplicationWindow;
 import be.witmoca.BEATs.ui.eastpanel.currentqueue.CurrentQueueListModel;
 import be.witmoca.BEATs.utils.Lang;
+import be.witmoca.BEATs.utils.OriginHelper;
 import be.witmoca.BEATs.utils.UiIcon;
 
 /*
@@ -74,7 +76,8 @@ class ShowInfoAction extends AbstractAction {
 		JLabel comment = new JLabel();
 		JLabel artistCount = new JLabel();
 		JLabel songCount = new JLabel();
-
+		JLabel origin = new JLabel();
+		
 		try {
 			// Get song data
 			try (PreparedStatement getSongData = SQLConnection.getDbConn().prepareStatement(
@@ -110,6 +113,8 @@ class ShowInfoAction extends AbstractAction {
 				else
 					songCount.setText("" + rs.getInt(1));
 			}
+			
+			origin.setText(OriginHelper.getDisplayStringFromOriginCode(CommonSQL.getArtistOrigin(artist.getText())));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			return;
@@ -126,6 +131,8 @@ class ShowInfoAction extends AbstractAction {
 		message.add(artistCount);
 		message.add(new JLabel(Lang.getUI("queue.info.songTimes") + ": "));
 		message.add(songCount);
+		message.add(new JLabel(Lang.getUI("col.origin") + ": "));
+		message.add(origin);
 		JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), message, Lang.getUI("queue.info"),
 				JOptionPane.PLAIN_MESSAGE);
 	}
