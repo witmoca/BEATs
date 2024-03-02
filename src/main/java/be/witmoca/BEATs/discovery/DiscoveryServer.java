@@ -141,7 +141,9 @@ public class DiscoveryServer implements Runnable {
 
 				// Receive
 				this.receiveSocket.receive(incoming);
-				String received = new String(incoming.getData());
+				// explicitly use the length of the byte array to init new string.
+				// Because the buffer has a fixed size, Offset and Lenght need to be specified explicitly in the copy to String
+				String received = new String(incoming.getData(),incoming.getOffset(),incoming.getLength());
 				String[] pieces = received.split(SEPARATOR);
 				// Ignore if size of message not okay
 				if (pieces.length != 2)
