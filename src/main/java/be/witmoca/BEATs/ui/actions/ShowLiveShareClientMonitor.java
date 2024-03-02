@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -99,7 +100,7 @@ public class ShowLiveShareClientMonitor implements ActionListener {
 			watchServers.sort((c1, c2) -> c1.compareTo(c2));
 			
 			// prune all status leftovers
-			Set<String> delete = discovered.keySet();
+			Set<String> delete = new HashSet<>(discovered.keySet());
 			delete.removeAll(watchServers);
 			for(String del : delete)
 				discovered.remove(del);
