@@ -12,8 +12,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.components.PlaylistEntry;
