@@ -22,8 +22,6 @@
 */
 package be.witmoca.BEATs.connection;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -32,78 +30,40 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
-
-import javax.swing.Timer;
 
 import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.ResourceLoader;
 
-class BackupHandler implements ActionListener {
-	private static final Timer BACKUP_TIMER = new Timer(1000, new BackupHandler()); // (default delay is overriden on every timer start)
+class BackupHandler {
+	private static Timer CURRENT_BACKUP_TIMER = null;
 	private static final String BACKUP_DIR = ResourceLoader.BACKUP_DIR;
 	
 	private static int MAX_BACKUP_COUNT = 10; // max X backups (default is overriden on every timer start)
 	private static int MAX_BACKUP_SIZE = 1024 * 1024 * 50; // max Mb size of backups folder (default is overriden on every timer start)
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// Safety, should the backup timer still be running with an invalid connection
-		if (SQLConnection.getDbConn() == null) {
-			StopBackups();
-			return;
-		}
-
-		// Check if there have been changes since last backup
-		if (!SQLConnection.getDbConn().isBackupNeeded())
-			return;
-
-		try {
-			// Do a save to the backup directory
-			String dateString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu_MM_dd-HH_mm_ss"));
-			File currentFile = SQLConnection.getDbConn().getCurrentFile();
-			String fileName = currentFile == null ? "New" : currentFile.getName();
-
-			SQLConnection.getDbConn().saveDatabase(BACKUP_DIR + File.separator + dateString + "-" + fileName, true);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-
-		// Do a cleanup of the existing backups if necessary
-		List<File> files = new ArrayList<File>(Arrays.asList((new File(BACKUP_DIR)).listFiles()));
-		// Sort all files in order of filename (as the filenames start with the date,
-		// this should order according to date)
-		files.sort(new Comparator<File>() {
-			@Override
-			public int compare(File o1, File o2) {
-				return o1.getName().compareToIgnoreCase(o2.getName());
-			}
-		});
-
-		for (int i = 0; countSize(files) > MAX_BACKUP_SIZE || files.size() - i > MAX_BACKUP_COUNT; i++) {
-			// Leave at least 1 backup
-			if (i == files.size() - 1)
-				break;
-			files.get(i).delete();
-		}
-	}
-
 	static void StartBackups() {
 		// reload values
 		int delay = (int) TimeUnit.MINUTES.toMillis(BEATsSettings.BACKUPS_TIMEBETWEEN.getIntValue());
-		BACKUP_TIMER.setDelay(delay);
-		BACKUP_TIMER.setInitialDelay(delay);
 		
 		MAX_BACKUP_COUNT = BEATsSettings.BACKUPS_MAXAMOUNT.getIntValue(); // max X backups
 		MAX_BACKUP_SIZE = 1024 * 1024 * BEATsSettings.BACKUPS_MAXSIZE.getIntValue(); // max Mb size of backups folder
 		
+		if(CURRENT_BACKUP_TIMER != null) {
+			StopBackups();
+		}
+		
 		// Only start if enabled
-		if(BEATsSettings.BACKUPS_ENABLED.getBoolValue())
-			BACKUP_TIMER.start();
+		if(BEATsSettings.BACKUPS_ENABLED.getBoolValue()) {
+			CURRENT_BACKUP_TIMER = new Timer(BackupHandler.class.getName() + "_Timer", false);
+			CURRENT_BACKUP_TIMER.schedule(new BackupTask(), delay, delay);
+		}
 	}
 
 	static void StopBackups() {
-		BACKUP_TIMER.stop();
+		CURRENT_BACKUP_TIMER.cancel();
 	}
 
 	private static long countSize(List<File> files) {
@@ -112,5 +72,49 @@ class BackupHandler implements ActionListener {
 			i += f.length();
 		}
 		return i;
+	}
+	
+	private static class BackupTask extends TimerTask {
+		@Override
+		public void run() {
+			// Safety, should the backup timer still be running with an invalid connection
+			if (SQLConnection.getDbConn() == null) {
+				StopBackups();
+				return;
+			}
+
+			// Check if there have been changes since last backup
+			if (!SQLConnection.getDbConn().isBackupNeeded())
+				return;
+
+			try {
+				// Do a save to the backup directory
+				String dateString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu_MM_dd-HH_mm_ss"));
+				File currentFile = SQLConnection.getDbConn().getCurrentFile();
+				String fileName = currentFile == null ? "New" : currentFile.getName();
+
+				SQLConnection.getDbConn().saveDatabase(BACKUP_DIR + File.separator + dateString + "-" + fileName, true);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+
+			// Do a cleanup of the existing backups if necessary
+			List<File> files = new ArrayList<File>(Arrays.asList((new File(BACKUP_DIR)).listFiles()));
+			// Sort all files in order of filename (as the filenames start with the date,
+			// this should order according to date)
+			files.sort(new Comparator<File>() {
+				@Override
+				public int compare(File o1, File o2) {
+					return o1.getName().compareToIgnoreCase(o2.getName());
+				}
+			});
+
+			for (int i = 0; countSize(files) > MAX_BACKUP_SIZE || files.size() - i > MAX_BACKUP_COUNT; i++) {
+				// Leave at least 1 backup
+				if (i == files.size() - 1)
+					break;
+				files.get(i).delete();
+			}
+		}
 	}
 }
