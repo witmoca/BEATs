@@ -36,11 +36,14 @@ public class EpisodeColumnRenderer extends DefaultTableCellRenderer {
 		if (table == null || !(table.getModel() instanceof ContainsEpisodeColumn))
 			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
+		// there is a difference between UI Row that needs to be rendered & the row that contains the actual value
+		// This is only necessary for the Date of the episode. The episode number is already correctly contained in 'Value'
+		int dateRow = row;
 		if (table.getRowSorter() != null)
-			row = table.getRowSorter().convertRowIndexToModel(row);
+			dateRow = table.getRowSorter().convertRowIndexToModel(row);
 
 		return super.getTableCellRendererComponent(table,
-				value + " (" + ((ContainsEpisodeColumn) table.getModel()).getEpisodeDate(row) + ")", isSelected,
+				value + " (" + ((ContainsEpisodeColumn) table.getModel()).getEpisodeDate(dateRow) + ")", isSelected,
 				hasFocus, row, column);
 	}
 }

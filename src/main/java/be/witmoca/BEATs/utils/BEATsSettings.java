@@ -3,6 +3,7 @@
  */
 package be.witmoca.BEATs.utils;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,6 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 
 /*
 *
@@ -113,6 +117,10 @@ public enum BEATsSettings {
 		Locale l = new Locale(LANGUAGE.getStringValue(), COUNTRY.getStringValue());
 		Locale.setDefault(l);
 		Lang.setNewLocale(l);
+
+		UIDefaults uiDefaults= UIManager.getLookAndFeelDefaults();
+		// Alternating color for table rows
+		uiDefaults.put("Table.alternateRowColor", new Color(240,240,255));
 	}
 
 	public static void savePreferences() {
