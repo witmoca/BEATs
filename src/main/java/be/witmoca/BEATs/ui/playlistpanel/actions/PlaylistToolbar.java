@@ -27,13 +27,13 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistTable;
+import be.witmoca.BEATs.ui.components.SongTable;
 import be.witmoca.BEATs.utils.UiUtils;
 
 public class PlaylistToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
-	public PlaylistToolbar(PlaylistTable table) {
+	public PlaylistToolbar(SongTable table) {
 		super(JToolBar.HORIZONTAL);
 
 		this.setFloatable(false);

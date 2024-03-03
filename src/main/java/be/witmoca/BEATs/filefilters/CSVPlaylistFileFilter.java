@@ -27,16 +27,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistTable;
+import javax.swing.JTable;
+
 import be.witmoca.BEATs.utils.Lang;
 
 public class CSVPlaylistFileFilter extends ImportableExportableFileFilter{
 	public static final String LINE_SEPARATOR = ",";
 	public static final String FIELD_SEPARATOR = "\"";
 	
-	public final PlaylistTable playlistTable;
+	public final JTable playlistTable;
 	
-	public CSVPlaylistFileFilter(PlaylistTable table) {
+	public CSVPlaylistFileFilter(JTable table) {
 		this.playlistTable = table;
 	}
 

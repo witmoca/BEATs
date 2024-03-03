@@ -8,10 +8,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 import be.witmoca.BEATs.filefilters.CSVPlaylistFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
-import be.witmoca.BEATs.ui.playlistpanel.PlaylistTable;
 import be.witmoca.BEATs.utils.Lang;
 import be.witmoca.BEATs.utils.UiIcon;
 
@@ -20,9 +20,9 @@ import be.witmoca.BEATs.utils.UiIcon;
  */
 public class ImportPlaylistAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
-	private final PlaylistTable playlistTable;
+	private final JTable playlistTable;
 	
-	ImportPlaylistAction(PlaylistTable table){
+	ImportPlaylistAction(JTable table){
 		super(Lang.getUI("action.import"), UiIcon.IMPORT.getIcon());
 		this.playlistTable = table;
 	}
