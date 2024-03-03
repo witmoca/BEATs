@@ -59,8 +59,10 @@ public class LiveShareDataServer implements Runnable, DataChangedListener {
 		synchronized(connections) {
 			for(LiveShareDataServer lvds : connections) {
 				try {
-					if(!lvds.serverSocket.isClosed())
+					if(!lvds.serverSocket.isClosed()) {
 						lvds.serverSocket.close();
+						lvds.clientSocket_local.close();
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -80,6 +82,7 @@ public class LiveShareDataServer implements Runnable, DataChangedListener {
 
 	@Override
 	public void run() {
+		// No need to sync here-> set is of type synchronised set
 		connections.add(this);
 		try {
 			// Sets the timeout, so that serverSocket.accept() doesn't wait endlessly
@@ -120,6 +123,14 @@ public class LiveShareDataServer implements Runnable, DataChangedListener {
 		} catch (ClassNotFoundException e) {
 		}
 		// Close datastream when done or error occurred
+		if(!this.serverSocket.isClosed()) {
+			try {
+				this.serverSocket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		// No need to sync here-> set is of type synchronised set
 		connections.remove(this);
 		connectionCount.decrementAndGet();
 	}
