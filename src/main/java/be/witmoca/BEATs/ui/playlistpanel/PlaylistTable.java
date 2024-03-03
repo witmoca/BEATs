@@ -60,6 +60,7 @@ public class PlaylistTable extends SongTable {
 		// Suggest support for artist and song column
 		this.getColumnModel().getColumn(0).setCellEditor(AutoSuggestEditor.createArtistEditor());
 		this.getColumnModel().getColumn(1).setCellEditor(AutoSuggestEditor.createSongEditor(0));
+		this.getColumnModel().getColumn(2).setCellEditor(AutoSuggestEditor.createCommentEditor());
 
 		// When a row is selected and a key is pressed, JTable starts editing.
 		// With this functions, the cell editor gets focus (so blinking cursor, etc..)

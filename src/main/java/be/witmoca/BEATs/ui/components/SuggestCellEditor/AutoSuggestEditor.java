@@ -64,6 +64,10 @@ public class AutoSuggestEditor extends DefaultCellEditor {
 		return new AutoSuggestEditor(new SongMatcher(column));
 	}
 
+	public static TableCellEditor createCommentEditor() {
+		return new AutoSuggestEditor(new CommentMatcher());
+	}
+
 	private AutoSuggestEditor(IMatcher matcher) {
 		super(new JTextField());
 
