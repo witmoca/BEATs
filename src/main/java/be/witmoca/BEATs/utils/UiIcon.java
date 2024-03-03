@@ -35,6 +35,7 @@ public enum UiIcon {
 	OPEN("BasicUi/folder"),
 	SAVE("BasicUi/save"),
 	IMPORT(UIManager.getIcon("Table.ascendingSortIcon")),
+	EXPORT(UIManager.getIcon("Table.descendingSortIcon")),
 	CLOSE_APP("BasicUi/home"),
 
 	// Tool icons

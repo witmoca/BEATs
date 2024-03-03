@@ -27,13 +27,13 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import be.witmoca.BEATs.clipboard.ClipboardActionFactory;
-import be.witmoca.BEATs.ui.components.SongTable;
+import be.witmoca.BEATs.ui.playlistpanel.PlaylistTable;
 import be.witmoca.BEATs.utils.UiUtils;
 
 public class PlaylistToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
-	public PlaylistToolbar(SongTable table) {
+	public PlaylistToolbar(PlaylistTable table) {
 		super(JToolBar.HORIZONTAL);
 
 		this.setFloatable(false);
@@ -46,6 +46,8 @@ public class PlaylistToolbar extends JToolBar {
 		// Beyond this point all goes on the right
 		add(Box.createHorizontalGlue());
 
+		this.add(new JButton(new ImportPlaylistAction(table)));
+		this.add(new JButton(new ExportPlaylistAction(table)));
 		this.add(new JButton(new PrintTableAction(table)));
 	}
 }
