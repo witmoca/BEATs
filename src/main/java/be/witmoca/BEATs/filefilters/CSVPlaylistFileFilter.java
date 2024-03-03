@@ -22,8 +22,10 @@
 */
 package be.witmoca.BEATs.filefilters;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -32,8 +34,8 @@ import javax.swing.JTable;
 import be.witmoca.BEATs.utils.Lang;
 
 public class CSVPlaylistFileFilter extends ImportableExportableFileFilter{
-	public static final String LINE_SEPARATOR = ",";
-	public static final String FIELD_SEPARATOR = "\"";
+	public static final char FIELD_SEPARATOR = ',';
+	public static final char VALUE_SEPARATOR = '\"';
 	
 	public final JTable playlistTable;
 	
@@ -70,6 +72,33 @@ public class CSVPlaylistFileFilter extends ImportableExportableFileFilter{
 		if(!source.exists() || !source.canRead()) {
 			throw new IOException("File does not exist or could not be read");
 		}
+
+		int columns = this.playlistTable.getModel().getColumnCount()-1; // skip the last "play button" column
+		int row = this.playlistTable.getModel().getRowCount()-1; // begin on the "empty" line
+
+		try(FileReader fr = new FileReader(source)){
+			try(BufferedReader br = new BufferedReader(fr)){
+				while(br.ready()) {
+					String line = br.readLine();
+					String[] parts = line.split(String.valueOf(FIELD_SEPARATOR));
+					for(int c = 0; c < columns; c++) {
+						// insert value (or "" if no value available)
+						String value = "";
+						if(c < parts.length) {
+							value = parts[c];
+							if(value.charAt(0) == (VALUE_SEPARATOR)) {
+								value = value.substring(1);
+							}
+							if(value.charAt(value.length()-1) == (VALUE_SEPARATOR)) {
+								value = value.substring(0,value.length()-1);
+							}
+						}
+						this.playlistTable.getModel().setValueAt(value , row, c);
+					}
+					row++;
+				}
+			}
+		}
 	}
 
 	@Override
@@ -84,31 +113,21 @@ public class CSVPlaylistFileFilter extends ImportableExportableFileFilter{
 		if(!destination.exists() || !destination.canWrite()) {
 			throw new IOException("File is not writable or could not be created.");
 		}
-		
+
 		int columns = this.playlistTable.getColumnCount()-1; // skip the last "play button" column
 		int rows = this.playlistTable.getRowCount();
-		
+
 		try(FileWriter fw = new FileWriter(destination, false)){
 			try(BufferedWriter bw = new BufferedWriter(fw)){
-				// HEADER
-				String header = "";
-				for(int i = 0; i < columns; i++) {
-					header += FIELD_SEPARATOR + this.playlistTable.getColumnName(i) + FIELD_SEPARATOR;
-					if (i+1 < columns)
-						header += LINE_SEPARATOR;
-				}
-				bw.write(header);
-				bw.newLine();
-				
 				// VALUES
 				String line = "";
 				String emptyCheck = ""; // check if the line is empty
 				for(int r = 0; r < rows; r++) {
 					for(int c = 0; c < columns; c++) {
-						line += FIELD_SEPARATOR + this.playlistTable.getValueAt(r, c) + FIELD_SEPARATOR;
+						line += String.valueOf(VALUE_SEPARATOR) + this.playlistTable.getValueAt(r, c) + String.valueOf(VALUE_SEPARATOR);
 						emptyCheck += this.playlistTable.getValueAt(r, c);
 						if (c+1 < columns)
-							line += LINE_SEPARATOR;
+							line += String.valueOf(FIELD_SEPARATOR);
 					}
 					if(emptyCheck.trim() != "") {
 						bw.write(line);
