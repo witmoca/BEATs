@@ -9,6 +9,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import be.witmoca.BEATs.connection.DataChangedListener;
@@ -220,14 +222,28 @@ public class LiveShareClient implements ActionListener {
 	}
 
 	public void fireConnectionsSetChanged() {
-			List<ConnectionsSetChangedListener> notifylist = new ArrayList<ConnectionsSetChangedListener>();
-			synchronized (cscListeners) {
-				/*cleanup list */
-				while(cscListeners.remove(null)); // remove all null elements
-				notifylist.addAll(cscListeners);
-			}
-			for (ConnectionsSetChangedListener cscl : notifylist) {
-				cscl.connectionsSetChanged(this);
+		// Prepare the list
+		List<ConnectionsSetChangedListener> notifylist = new ArrayList<ConnectionsSetChangedListener>();
+		synchronized (cscListeners) {
+			/*cleanup list */
+			while(cscListeners.remove(null)); // remove all null elements
+			notifylist.addAll(cscListeners);
+		}
+
+		//needs to happen on EDT (listeners are supposed to be GUI elements)
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					for (ConnectionsSetChangedListener cscl : notifylist) {
+						cscl.connectionsSetChanged(LiveShareClient.this);
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -238,14 +254,28 @@ public class LiveShareClient implements ActionListener {
 	}
 	
 	public void fireDataChanged() {
+		// Prepare the list
 		List<DataChangedListener> notifylist = new ArrayList<DataChangedListener>();
 		synchronized (dcListeners) {
 			// cleanup list
 			notifylist.remove(null);
 			notifylist.addAll(dcListeners);
 		}
-		for (DataChangedListener dcl : notifylist) {
-			dcl.tableChanged();
+
+		//needs to happen on EDT (listeners are supposed to be GUI elements)
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					for (DataChangedListener dcl : notifylist) {
+						dcl.tableChanged();
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 	
