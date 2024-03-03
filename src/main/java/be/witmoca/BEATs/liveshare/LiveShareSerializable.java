@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.swing.SwingUtilities;
+
 import be.witmoca.BEATs.connection.CommonSQL;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.ui.components.PlaylistEntry;
@@ -44,6 +47,7 @@ public class LiveShareSerializable implements Serializable, Cloneable {
 		}
 	}
 
+	// Should not be run on the EDT (will block the EDT)
 	public static LiveShareSerializable createSnapShot() {
 		try {
 			return new LiveShareSerializable(false);
@@ -52,6 +56,7 @@ public class LiveShareSerializable implements Serializable, Cloneable {
 		}
 	}
 	
+	// May run on the EDT
 	public static LiveShareSerializable createEmpty() {
 		try {
 			return new LiveShareSerializable(true);
