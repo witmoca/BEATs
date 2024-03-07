@@ -3,7 +3,7 @@
 ;   - Change the AppVersion as necessary 
 
 #define MyAppName "Burning Ember"
-#define MyAppVersion "2.1.0"
+#define MyAppVersion "2.1.1"
 #define MyAppPublisher "Witmoca"
 #define MyAppURL "https://github.com/witmoca/BEATs"
 #define MyAppExeName "start.bat"
