@@ -20,7 +20,7 @@ import be.witmoca.BEATs.ui.components.PlaylistEntry;
  * @author Witmoca
  *
  */
-public class LiveShareSerializable implements Serializable, Cloneable {
+public class LiveShareSerializable implements Serializable {
 	private static final long serialVersionUID = 1L;
 	// HashMap = serializable
 	private final HashMap<String, List<PlaylistEntry>> content = new HashMap<String, List<PlaylistEntry>>();
@@ -71,14 +71,5 @@ public class LiveShareSerializable implements Serializable, Cloneable {
 	
 	public List<PlaylistEntry> getPlaylistContents(String playlistName){
 		return content.getOrDefault(playlistName, Collections.emptyList());
-	}
-
-	@Override
-	public LiveShareSerializable clone() {
-		try {
-			return (LiveShareSerializable) super.clone();
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
 	}
 }
