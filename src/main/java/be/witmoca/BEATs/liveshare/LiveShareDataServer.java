@@ -98,7 +98,7 @@ public class LiveShareDataServer implements Runnable, DataChangedListener {
 					// ObjectOutputStream before Input! Flush oos first before constructing ois! (see JavaDoc)
 					oos.flush();
 					try(ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream())){
-						while (!clientSocket.isClosed()) {
+						while (!clientSocket.isClosed() && !this.serverSocket.isClosed()) {
 							// Catch incoming connection requests
 							LiveShareMessage request = (LiveShareMessage) ois.readObject();
 							// Stop execution on timeout
