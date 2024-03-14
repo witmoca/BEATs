@@ -19,15 +19,25 @@ import be.witmoca.BEATs.ui.components.PlaylistEntry;
 /**
  * @author Witmoca
  *
+ * This is class is supposed to be created once, and then updated
+ *
  */
 public class LiveShareSerializable implements Serializable {
 	private static final long serialVersionUID = 1L;
 	// HashMap = serializable
 	private final HashMap<String, List<PlaylistEntry>> content = new HashMap<String, List<PlaylistEntry>>();
 
-	private LiveShareSerializable(boolean empty) throws SQLException {
-		if (!empty) {
-			List<String> playlistNames = new ArrayList<String>();
+	private LiveShareSerializable() {
+	}
+
+	// Should never be run on the ADT
+	public void UpdateContents() {
+		// Delete content
+		this.content.clear();
+
+		// Build content list from database
+		List<String> playlistNames = new ArrayList<String>();
+		try {
 			playlistNames.addAll(CommonSQL.getPlaylists());
 			try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
 					"SELECT rowid, Artist, Song, Comment FROM SongsInPlaylist WHERE PlaylistName = ? ORDER BY rowid")) {
@@ -42,25 +52,14 @@ public class LiveShareSerializable implements Serializable {
 					this.content.put(playlistName, playlistcontent);
 				}
 			}
-		}
-	}
-
-	// Should not be run on the EDT (will block the EDT)
-	public static LiveShareSerializable createSnapShot() {
-		try {
-			return new LiveShareSerializable(false);
 		} catch (SQLException e) {
-			return null;
+
 		}
 	}
 	
 	// May run on the EDT
 	public static LiveShareSerializable createEmpty() {
-		try {
-			return new LiveShareSerializable(true);
-		} catch (SQLException e) {
-			return null;
-		}
+		return new LiveShareSerializable();
 	}
 
 	public List<String> getPlaylists() {

@@ -98,6 +98,9 @@ public class LiveShareDataServer implements Runnable, DataChangedListener {
 					// ObjectOutputStream before Input! Flush oos first before constructing ois! (see JavaDoc)
 					oos.flush();
 					try(ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream())){
+						// Only create one instance of LiveShareSerializable, then update it's contents
+						// This is a lot more memory friendly and makes the GC work a lot less
+						LiveShareSerializable currentState = LiveShareSerializable.createEmpty();
 						while (!clientSocket.isClosed() && !this.serverSocket.isClosed()) {
 							// Catch incoming connection requests
 							LiveShareMessage request = (LiveShareMessage) ois.readObject();
@@ -106,9 +109,14 @@ public class LiveShareDataServer implements Runnable, DataChangedListener {
 								break;
 							switch (request) {
 								case BEATS_DATA_REQUEST_FULL:
+									currentState.UpdateContents();
 									oos.writeObject(LiveShareMessage.BEATS_DATA_REQUEST_FULL);
-									oos.writeObject(LiveShareSerializable.createSnapShot());
+									oos.writeObject(currentState);
 									oos.flush();
+									// Reset prevents the OOS in this class,
+									// and the OIS in the LiveShareClient from caching the objects send
+									// DO NOT REMOVE: prevents major memory leak
+									oos.reset();
 									playlistChanged.set(false);
 									break;
 							default:
