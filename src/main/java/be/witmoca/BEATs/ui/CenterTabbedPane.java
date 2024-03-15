@@ -22,14 +22,17 @@
 */
 package be.witmoca.BEATs.ui;
 
+import java.awt.BorderLayout;
 import java.util.List;
 
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import be.witmoca.BEATs.liveshare.ConnectionsSetChangedListener;
 import be.witmoca.BEATs.liveshare.LiveShareClient;
 import be.witmoca.BEATs.ui.archivepanel.ArchivePanel;
 import be.witmoca.BEATs.ui.artistcatalog.ArtistCatalog;
+import be.witmoca.BEATs.ui.liveshare.LiveShareStatusPanel;
 import be.witmoca.BEATs.ui.liveshare.LiveShareTabbedPane;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistsTabbedPane;
 import be.witmoca.BEATs.ui.songcatalog.SongCatalog;
@@ -72,7 +75,11 @@ public class CenterTabbedPane extends JTabbedPane implements ConnectionsSetChang
 		// add  tabs as appropriate
 		for(String server : servers) {
 			if(this.indexOfTab(server) == -1){
-				this.addTab(server, new LiveShareTabbedPane(lsc, server));
+				// Wraps the LS tabbedPane and the StatusPanel in a JPanel, so they are shown above one another
+				JPanel wrapperLS = new JPanel(new BorderLayout());
+				wrapperLS.add(new LiveShareTabbedPane(lsc, server), BorderLayout.CENTER);
+				wrapperLS.add(new LiveShareStatusPanel(lsc, server), BorderLayout.NORTH);
+				this.addTab(server, wrapperLS);
 			}
 		}
 	}

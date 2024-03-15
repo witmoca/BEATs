@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,7 +36,7 @@ public class LiveShareClient {
 	private static final int CONN_TRY_TIMEOUT = 500; // try to connect for X milliseconds to every resolved server
 	private static final int CONN_TIMEOUT_MS = 1000; // timeout between messages
 	private static final int CONN_MAX_FAILS = BEATsSettings.LIVESHARE_CLIENT_ALLOWEDFAILS.getIntValue(); // Max amount of failed receives before connection is closed
-	private static final int TIMER_UPDATE_PERIOD_MS = 1 * 1000; // Update frequency in miliseconds
+	public static final int TIMER_UPDATE_PERIOD_MS = 1 * 1000; // Update frequency in miliseconds
 	private static final int TIMER_INITIAL_DELAY_MS = 10 * 1000; // initial startup time (a few seconds to give slow CPU's time to load more naturally)
 	private static final Set<ConnectionsSetChangedListener> cscListeners = Collections
 			.synchronizedSet(new HashSet<ConnectionsSetChangedListener>());
@@ -50,10 +51,13 @@ public class LiveShareClient {
 	private final Map<String, ObjectInputStream> inputStreams = new HashMap<String, ObjectInputStream>();	
 	private final Map<String, LiveShareSerializable> content = Collections.synchronizedMap(new HashMap<String, LiveShareSerializable>());
 	private final Map<String, Integer> receiveFails = new HashMap<String, Integer>();
+	private final Map<String, Instant> lastSuccessfullReceipt = new HashMap<String,Instant>();
 	
 	private final Set<DataChangedListener> dcListeners = Collections
 			.synchronizedSet(new HashSet<DataChangedListener>());
 	
+	private boolean isStopping = false;
+
 	private LiveShareClient(boolean start)
 	{
 		if(start) {
@@ -67,9 +71,14 @@ public class LiveShareClient {
 	}
 	
 	public static void stopClient() {
-		 getLvc().UPDATE_TIMER.cancel();
+		getLvc().isStopping = true;
+		getLvc().UPDATE_TIMER.cancel();
 	}
 	
+	public boolean isStopping() {
+		return isStopping;
+	}
+
 	public static LiveShareClient getLvc() {
 		return lvc;
 	}
@@ -157,6 +166,15 @@ public class LiveShareClient {
 		}
 	}
 	
+	/**
+	 *
+	 * @param serverName
+	 * @return Instant of last full receipt of content or null if no content received yet
+	 */
+	public Instant getLastSuccessfullReceipt(String serverName) {
+		return lastSuccessfullReceipt.getOrDefault(serverName, null);
+	}
+
 	private class ClientUpdateTask extends TimerTask {
 		private boolean hasFirstRun = false; // Set to true when run() is first executed
 		
@@ -261,6 +279,7 @@ public class LiveShareClient {
 						if(updatedLss != null) {
 							content.put(server, updatedLss);
 							receiveFails.put(server, 0);
+							lastSuccessfullReceipt.put(server, Instant.now());
 						} else if(receiveFails.get(server) < CONN_MAX_FAILS) {
 							receiveFails.put(server, receiveFails.get(server)+1);
 						} else {
