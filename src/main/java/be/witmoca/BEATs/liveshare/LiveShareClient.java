@@ -44,6 +44,7 @@ public class LiveShareClient {
 	
 	private final Timer UPDATE_TIMER = new Timer(this.getClass().getName() + "_timer",false);
 	private List<String> watchServers;
+
 	private final Map<String, Socket> connectedClients = new HashMap<String, Socket>();	
 	private final Map<String, ObjectOutputStream> outputStreams = new HashMap<String, ObjectOutputStream>();	
 	private final Map<String, ObjectInputStream> inputStreams = new HashMap<String, ObjectInputStream>();	
@@ -73,6 +74,15 @@ public class LiveShareClient {
 		return lvc;
 	}
 	
+	/**
+	 * Do not modify the list of WatchServers
+	 *
+	 * @return List of WatchServers
+	 */
+	public List<String> getWatchServers() {
+		return watchServers;
+	}
+
 	public List<String> getConnectedServerNames(){
 		return Arrays.asList(connectedClients.keySet().toArray(new String[0]));
 	}
@@ -148,6 +158,7 @@ public class LiveShareClient {
 	}
 	
 	private class ClientUpdateTask extends TimerTask {
+		private boolean hasFirstRun = false; // Set to true when run() is first executed
 		
 		private boolean cleanupConnections() {
 			boolean connectionsChanged = false;
@@ -179,9 +190,13 @@ public class LiveShareClient {
 		public void run() {
 			// Refresh server list
 			watchServers = BEATsSettings.LIVESHARE_CLIENT_HOSTLIST.getListValue();
+			if(!hasFirstRun) {
+				hasFirstRun = true;
+				// Init of the listeners. Specifically for the GUI elements, so they can draw themselves if required
+				fireConnectionsSetChanged();
+			}
 			
 			// Prune servers that where deleted from watchlist
-			
 			Boolean connectionsChanged = cleanupConnections();
 			// Connect to more servers if possible 
 			if(watchServers.size() != connectedClients.size()) {

@@ -58,6 +58,7 @@ public class ShowSettingsDialogAction implements ActionListener {
 	private JCheckBox liveShareServerEnabled;
 	private JFormattedTextField liveShareServerMaxConnections;
 	private JCheckBox liveShareClientEnabled;
+	private JCheckBox liveShareClientAlwaysVisible;
 	private JFormattedTextField liveShareClientMaxFails;
 	
 	public ShowSettingsDialogAction() {
@@ -98,6 +99,7 @@ public class ShowSettingsDialogAction implements ActionListener {
 		liveShareServerEnabled = new JCheckBox("", BEATsSettings.LIVESHARE_SERVER_ENABLED.getBoolValue());
 		liveShareServerMaxConnections = new JFormattedTextField(BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.getIntValue());
 		liveShareClientEnabled = new JCheckBox("", BEATsSettings.LIVESHARE_CLIENT_ENABLED.getBoolValue());
+		liveShareClientAlwaysVisible = new JCheckBox("", BEATsSettings.LIVESHARE_CLIENT_ALWAYSVISIBLE.getBoolValue());
 		liveShareClientMaxFails = new JFormattedTextField(BEATsSettings.LIVESHARE_CLIENT_ALLOWEDFAILS.getIntValue());
 		
 		JLabel languageTitle = new JLabel(Lang.getUI("settings.label.lang.title"));
@@ -187,7 +189,10 @@ public class ShowSettingsDialogAction implements ActionListener {
 		
 		content.add(new JLabel(Lang.getUI("settings.label.liveshare.client.enabled")));
 		content.add(liveShareClientEnabled);
-		
+
+		content.add(new JLabel(Lang.getUI("settings.label.liveshare.client.alwaysvisible")));
+		content.add(liveShareClientAlwaysVisible);
+
 		content.add(new JLabel(Lang.getUI("settings.label.liveshare.client.maxfails")));
 		content.add(liveShareClientMaxFails);
 		return content;
@@ -215,6 +220,7 @@ public class ShowSettingsDialogAction implements ActionListener {
 		BEATsSettings.LIVESHARE_SERVER_MAXCONNECTIONS.setIntValue(maxcon);
 		
 		BEATsSettings.LIVESHARE_CLIENT_ENABLED.setBoolValue(liveShareClientEnabled.isSelected());
+		BEATsSettings.LIVESHARE_CLIENT_ALWAYSVISIBLE.setBoolValue(liveShareClientAlwaysVisible.isSelected());
 		int maxclientfails = (int) liveShareClientMaxFails.getValue();
 		maxclientfails = (maxclientfails < 1 ? 1 : (maxclientfails > 99 ? 99 : maxclientfails));
 		BEATsSettings.LIVESHARE_CLIENT_ALLOWEDFAILS.setIntValue(maxclientfails);

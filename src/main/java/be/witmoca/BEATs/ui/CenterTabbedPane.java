@@ -33,6 +33,7 @@ import be.witmoca.BEATs.ui.artistcatalog.ArtistCatalog;
 import be.witmoca.BEATs.ui.liveshare.LiveShareTabbedPane;
 import be.witmoca.BEATs.ui.playlistpanel.PlaylistsTabbedPane;
 import be.witmoca.BEATs.ui.songcatalog.SongCatalog;
+import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
 
 public class CenterTabbedPane extends JTabbedPane implements ConnectionsSetChangedListener{
@@ -58,7 +59,9 @@ public class CenterTabbedPane extends JTabbedPane implements ConnectionsSetChang
 
 	@Override
 	public void connectionsSetChanged(LiveShareClient lsc) {
-		List<String> servers = lsc.getConnectedServerNames();
+		// Either show all the watched servers or only the connected servers
+		List<String> servers = BEATsSettings.LIVESHARE_CLIENT_ALWAYSVISIBLE.getBoolValue() ? lsc.getWatchServers() : lsc.getConnectedServerNames();
+
 		// Cleanup inactive tabs
 		for(int tab = this.getTabCount()-1 ; tab >= dynamicTabRange; tab--) {
 			if(!servers.contains(this.getTitleAt(tab))){
