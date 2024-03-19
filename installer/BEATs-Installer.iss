@@ -57,7 +57,7 @@ Name: "v1_setup"; Description: "{cm:DeleteV1Files}"; Flags: checkedonce
 ; Copy the batch file
 Source: ".\resources\{#MyAppExeName}"; DestDir: "{app}";
 ; Copy the .jar file
-Source: ".\resources\BEATs.jar"; DestDir: "{app}";
+Source: "..\target\BEATs-{#MyAppVersion}.jar"; DestDir: "{app}"; DestName:BEATs.jar;
 ; Copy the logo icon
 Source: "{#SourceIconFolder}\{#LogoFileName}"; DestDir: "{app}\{#DestinationIconFolder}"
 
