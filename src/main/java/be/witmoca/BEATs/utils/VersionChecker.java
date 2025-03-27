@@ -27,6 +27,7 @@ import java.awt.HeadlessException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -80,7 +81,7 @@ public class VersionChecker extends SwingWorker<Boolean,String> {
 	@Override
 	protected Boolean doInBackground() throws Exception {
 		try {
-			URLConnection con = (new URL("https://api.github.com/repos/witmoca/BEATs/releases/latest"))
+			URLConnection con = ((new URI("https://api.github.com/repos/witmoca/BEATs/releases/latest")).toURL())
 					.openConnection();
 			con.setDoInput(true);
 			con.connect();
@@ -175,7 +176,11 @@ public class VersionChecker extends SwingWorker<Boolean,String> {
 						versionTag = reader.nextString();
 					else if ("html_url".equals(name)) {
 						if (downloadURL == null)
-							downloadURL = new URL(reader.nextString());
+							try {
+								downloadURL = (new URI(reader.nextString())).toURL();
+							} catch (URISyntaxException | IOException e) {
+								downloadURL = null;
+							}
 					}
 					break;
 				case NULL:
