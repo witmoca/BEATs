@@ -23,7 +23,7 @@ public class OriginHelper {
 		originMap.put(Lang.getUI("action.unknown"), UNKNOWN_LOCALE_STRING);
 		
 		for(String countryCode : countries) {	
-			String displayName = new Locale("",countryCode).getDisplayCountry(Lang.getLocale());
+			String displayName = Locale.of("",countryCode).getDisplayCountry(Lang.getLocale());
 			origins.add(displayName);
 			originMap.put(displayName, countryCode);
 		}

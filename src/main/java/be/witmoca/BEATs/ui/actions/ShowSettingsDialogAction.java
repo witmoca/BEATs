@@ -124,7 +124,7 @@ public class ShowSettingsDialogAction implements ActionListener {
 		localePicker.setModel(new DefaultComboBoxModel<LocaleWrapper>(locales.toArray(new LocaleWrapper[0])));
 		
 		// Set current as selected
-		Locale currentL = new Locale(BEATsSettings.LANGUAGE.getStringValue(), BEATsSettings.COUNTRY.getStringValue());
+		Locale currentL = Locale.of(BEATsSettings.LANGUAGE.getStringValue(), BEATsSettings.COUNTRY.getStringValue());
 		for (LocaleWrapper lw : locales) {
 			if (lw.getLocale().equals(currentL))
 				localePicker.getModel().setSelectedItem(lw);

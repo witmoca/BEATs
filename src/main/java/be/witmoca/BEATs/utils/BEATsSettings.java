@@ -115,7 +115,7 @@ public enum BEATsSettings {
 		}
 
 		// Install settings
-		Locale l = new Locale(LANGUAGE.getStringValue(), COUNTRY.getStringValue());
+		Locale l = Locale.of(LANGUAGE.getStringValue(), COUNTRY.getStringValue());
 		Locale.setDefault(l);
 		Lang.setNewLocale(l);
 
