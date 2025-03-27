@@ -52,8 +52,23 @@ public class LiveShareSerializable implements Serializable {
 					this.content.put(playlistName, playlistcontent);
 				}
 			}
+			
+			
+			// Fake playlist to display the CurrentQueue
+			List<PlaylistEntry> currentQueueContent = new ArrayList<PlaylistEntry>();
+			try (PreparedStatement getValue = SQLConnection.getDbConn().prepareStatement(
+					"SELECT SongOrder, ArtistName, Title, Comment FROM CurrentQueue,Song WHERE CurrentQueue.SongId = Song.SongId ORDER BY SongOrder ASC")) {
+				ResultSet value = getValue.executeQuery();
+				while (value.next()) {
+					currentQueueContent.add(new PlaylistEntry(value.getInt(1), value.getString(2), value.getString(3),
+							value.getString(4)));
+				}
+			}
+			
+			this.content.put("(Played Queue)", currentQueueContent);
+			
 		} catch (SQLException e) {
-
+			e.printStackTrace();
 		}
 	}
 	
