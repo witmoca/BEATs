@@ -38,6 +38,7 @@ import be.witmoca.BEATs.utils.ResourceLoader;
 
 public class BEATsFileFilter extends ImportableFileFilter {
 	private static final String UPDATE_1_2 = "Text/updateBEATs_1_2.sql";
+	private static final String UPDATE_2_3 = "Text/updateBEATs_2_3.sql";
 	
 	public BEATsFileFilter() {
 	}
@@ -95,14 +96,26 @@ public class BEATsFileFilter extends ImportableFileFilter {
 				// Update current file connection settings (such as user_version)
 				db.updateSettings();
 				// Save this file, with random filename in the backup directory
-				String importedFile = ResourceLoader.BACKUP_DIR + File.separator + "Import_1_" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE) + "_" + source.getName();
-				db.saveDatabase(importedFile, false);
+				String importedFile1 = ResourceLoader.BACKUP_DIR + File.separator + "Import_1_" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE) + "_" + source.getName();
+				db.saveDatabase(importedFile1, false);
 				db.close();
 				// Recursively import again
-				importFile(new File(importedFile).getAbsoluteFile());
+				importFile(new File(importedFile1).getAbsoluteFile());
 				return;
-			// Current major version should be 2
 			case 2:
+				// update with sql file, save to backup dir & reload file correctly
+				db.executeSQLFile(UPDATE_2_3);
+				// Update current file connection settings (such as user_version)
+				db.updateSettings();
+				// Save this file, with random filename in the backup directory
+				String importedFile2 = ResourceLoader.BACKUP_DIR + File.separator + "Import_2_" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE) + "_" + source.getName();
+				db.saveDatabase(importedFile2, false);
+				db.close();
+				// Recursively import again
+				importFile(new File(importedFile2).getAbsoluteFile());
+				return;
+			// Current major version should be 3
+			case 3:
 				// just load like normal
 				db.close();
 				LoadFileAction.getLoadFileAction(source).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "load"));
