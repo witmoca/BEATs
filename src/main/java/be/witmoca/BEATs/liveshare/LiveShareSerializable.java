@@ -34,6 +34,17 @@ public class LiveShareSerializable implements Serializable {
 	public void UpdateContents() {
 		// Delete content
 		this.content.clear();
+		
+		// Check if SQL Connection is open
+		try {
+			if (SQLConnection.getDbConn().isClosed()) {
+				// If closed, skip and make empty liveShareSerializable
+				return;
+			}
+		} catch (SQLException e) {
+			// If connection issue: also skip 
+			return;
+		}
 
 		// Build content list from database
 		List<String> playlistNames = new ArrayList<String>();

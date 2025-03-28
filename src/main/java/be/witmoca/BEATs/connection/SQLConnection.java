@@ -362,6 +362,10 @@ public class SQLConnection implements AutoCloseable {
 			throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, e);
 		}
 	}
+	
+	public boolean isClosed() throws SQLException {
+		return Db.isClosed();
+	}
 
 	public boolean isChanged() {
 		return changedState;
