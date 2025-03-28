@@ -27,9 +27,11 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.concurrent.ThreadLocalRandom;
 
 import be.witmoca.BEATs.connection.ConnectionException;
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.utils.AppVersion;
@@ -68,8 +70,9 @@ public class BEATsFileFilter extends ImportableFileFilter {
 	 */
 	@Override
 	public void importFile(File source) throws Exception {
+		File tempSource = source;
 		// Load file without checking versions, etc
-		LoadFileAction.getLoadWithoutSanity(source).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "import"));
+		LoadFileAction.getLoadWithoutSanity(tempSource).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "import"));
 		SQLConnection db = SQLConnection.getDbConn();
 		
 		// Check application_id
@@ -91,39 +94,78 @@ public class BEATsFileFilter extends ImportableFileFilter {
 			case 0:
 				throw new ConnectionException(ConnectionException.ConnState.GENERAL_EXCEPTION, new IOException("Fileversion 0 loading not supported."));
 			case 1:
-				// update with sql file, save to backup dir & reload file correctly
-				db.executeSQLFile(UPDATE_1_2);
+			case 2:	
 				// Update current file connection settings (such as user_version)
 				db.updateSettings();
-				// Save this file, with random filename in the backup directory
-				String importedFile1 = ResourceLoader.BACKUP_DIR + File.separator + "Import_1_" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE) + "_" + source.getName();
-				db.saveDatabase(importedFile1, false);
+
+				// Generate random int used as part of all filenames during import
+				int randomId = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
+				File startFile = new File(ResourceLoader.BACKUP_DIR + File.separator + randomId + "_" + fileVersion.getVERSION_MAJOR() + "_" + fileVersion.getVERSION_MAJOR() + "_Start_" + tempSource.getName());
+				db.saveDatabase(startFile.getAbsolutePath(), false);
 				db.close();
-				// Recursively import again
-				importFile(new File(importedFile1).getAbsoluteFile());
-				return;
-			case 2:
-				// update with sql file, save to backup dir & reload file correctly
-				db.executeSQLFile(UPDATE_2_3);
-				// Update current file connection settings (such as user_version)
-				db.updateSettings();
-				// Save this file, with random filename in the backup directory
-				String importedFile2 = ResourceLoader.BACKUP_DIR + File.separator + "Import_2_" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE) + "_" + source.getName();
-				db.saveDatabase(importedFile2, false);
-				db.close();
-				// Recursively import again
-				importFile(new File(importedFile2).getAbsoluteFile());
-				return;
+				
+				// Update database contents in steps until current version
+				File updatedFile = updateFile(startFile.getAbsoluteFile(), fileVersion.getVERSION_MAJOR(), randomId, tempSource.getName());
+				// Set new source
+				if(updatedFile.exists())
+					tempSource = updatedFile.getAbsoluteFile();
+
+
+				
+				// Do not return, just let the file get imported like normal by going to the next case
 			// Current major version should be 3
 			case 3:
 				// just load like normal
 				db.close();
-				LoadFileAction.getLoadFileAction(source).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "load"));
+				LoadFileAction.getLoadFileAction(tempSource).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "load"));
 				return;
 			default:
 				// App should be updated? 
 				throw new ConnectionException(ConnectionException.ConnState.APP_OUTDATED, null);				
 			}
 		}
+	}
+	
+	/**
+	 *  Recursively updates the source file contents (correct config, such as user_version should already be set)
+	 * @param source
+	 * @param fromVersion
+	 * @param Id
+	 * @return
+	 * @throws SQLException 
+	 * @throws ConnectionException 
+	 */
+	private File updateFile(File source, int fromVersion, int Id, String origFileName) throws SQLException, ConnectionException {
+		System.out.println("From " + fromVersion);
+		// Is fromVersion one that we can update?
+		if(fromVersion >= AppVersion.getInternalAppVersion().getVERSION_MAJOR() || fromVersion <= 0)
+			return source;
+		
+		// Load source file
+		LoadFileAction.getLoadFileAction(source).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "load"));
+		SQLConnection db = SQLConnection.getDbConn();
+		
+		File dest = new File(ResourceLoader.BACKUP_DIR + File.separator + Id + "_" + fromVersion + "_" + (fromVersion+1) + "_" + "_Import_" + origFileName);
+		
+		switch(fromVersion) {
+		case 1:
+			db.executeSQLFile(UPDATE_1_2);
+			break;
+		case 2:
+			db.executeSQLFile(UPDATE_2_3);
+			break;
+		default:
+			return source;
+		}
+		
+		db.commit(DataChangedType.ALL_OPTS);
+		db.saveDatabase(dest.getAbsolutePath(), false);
+		db.close();
+		
+		// Recursively update if not yet to current
+		if(fromVersion + 1 < AppVersion.getInternalAppVersion().getVERSION_MAJOR()) {
+			return updateFile(dest.getAbsoluteFile(), fromVersion + 1, Id, origFileName);
+		}	
+		return dest;
 	}
 }
