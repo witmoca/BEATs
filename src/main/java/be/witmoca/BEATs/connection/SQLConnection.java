@@ -174,10 +174,16 @@ public class SQLConnection implements AutoCloseable {
 		File saveFile = new File(savePath).getAbsoluteFile();
 
 		// Call optimize first
+		
 		try (Statement optimize = Db.createStatement()) {
 			optimize.execute("PRAGMA optimize");
 		}
-
+		
+		/* Do not remove! This will run the pragma optimize as far as it needs to go, and commit the changes
+		 * Deleting this will result in backup shenanigans such as new files not being able to save. See e.g. issue #135 
+		 */
+		Db.commit(); 
+			
 		try (Statement save = Db.createStatement()) {
 			save.executeUpdate("backup to \"" + saveFile.getPath() + "\"");
 		}
@@ -311,6 +317,7 @@ public class SQLConnection implements AutoCloseable {
 				vacuum.execute("VACUUM");
 			}
 			Db.setAutoCommit(false);
+			Db.commit();
 		} catch (SQLException e) {
 			throw new ConnectionException(ConnectionException.ConnState.VACUUM_FAILED, e);
 		}

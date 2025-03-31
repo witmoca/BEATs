@@ -26,10 +26,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.SQLException;
+import java.util.EnumSet;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import be.witmoca.BEATs.connection.DataChangedType;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
@@ -90,13 +92,14 @@ public class SaveFileAction implements ActionListener {
 			}
 			pathToFile += ".beats";
 			try {
+				SQLConnection.getDbConn().commit(EnumSet.noneOf(DataChangedType.class)); // An extra commit to catch any (by accident) uncommitted changes
 				SQLConnection.getDbConn().saveDatabase(pathToFile, false);
 				BEATsSettings.LAST_FILE_PATH.setStringValue(pathToFile);
 				BEATsSettings.savePreferences();
 				hasSucceeded = true;
 			} catch (SQLException e1) {
 				JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(),
-						"Error during saving:\n" + e1.getLocalizedMessage(), "Oops!",
+						"Error during saving:\nError code: " + e1.getErrorCode() + "\n" + e1.getLocalizedMessage(), "Oops!",
 						javax.swing.JOptionPane.ERROR_MESSAGE);
 			}
 		}
