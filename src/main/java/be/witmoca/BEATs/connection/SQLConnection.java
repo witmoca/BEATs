@@ -79,6 +79,13 @@ public class SQLConnection implements AutoCloseable {
 			// Create new connection
 			DbConn = new SQLConnection(loadFile);
 			
+			// Attach the old listeners if there where any
+			if (listenerMap != null) {
+				for (DataChangedListener lst : listenerMap.keySet()) {
+					DbConn.addDataChangedListener(lst, listenerMap.get(lst));
+				}
+			}
+			
 			try {
 				// Do a sanity check
 				if(!skipSanity) {
@@ -94,12 +101,6 @@ public class SQLConnection implements AutoCloseable {
 				throw e1;
 			}
 
-			// Attach the old listeners if there where any
-			if (listenerMap != null) {
-				for (DataChangedListener lst : listenerMap.keySet()) {
-					DbConn.addDataChangedListener(lst, listenerMap.get(lst));
-				}
-			}
 
 			// Notify listeners, unless 'insane' data as invalid data will cause issues
 			if(!skipSanity) {
