@@ -63,7 +63,8 @@ class BackupHandler {
 	}
 
 	static void StopBackups() {
-		CURRENT_BACKUP_TIMER.cancel();
+		if(CURRENT_BACKUP_TIMER != null)
+			CURRENT_BACKUP_TIMER.cancel();
 	}
 
 	private static long countSize(List<File> files) {
