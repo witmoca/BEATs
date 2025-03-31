@@ -136,13 +136,12 @@ public class BEATsFileFilter extends ImportableFileFilter {
 	 * @throws ConnectionException 
 	 */
 	private File updateFile(File source, int fromVersion, int Id, String origFileName) throws SQLException, ConnectionException {
-		System.out.println("From " + fromVersion);
 		// Is fromVersion one that we can update?
 		if(fromVersion >= AppVersion.getInternalAppVersion().getVERSION_MAJOR() || fromVersion <= 0)
 			return source;
 		
 		// Load source file
-		LoadFileAction.getLoadFileAction(source).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "load"));
+		LoadFileAction.getLoadWithoutSanity(source).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "load"));
 		SQLConnection db = SQLConnection.getDbConn();
 		
 		File dest = new File(ResourceLoader.BACKUP_DIR + File.separator + Id + "_" + fromVersion + "_" + (fromVersion+1) + "_" + "_Import_" + origFileName);

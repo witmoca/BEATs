@@ -14,7 +14,6 @@ import be.witmoca.BEATs.connection.ConnectionException;
 import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
 import be.witmoca.BEATs.ui.ApplicationWindow;
-import be.witmoca.BEATs.ui.actions.ExitApplicationAction;
 import be.witmoca.BEATs.utils.BEATsSettings;
 import be.witmoca.BEATs.utils.Lang;
 
@@ -140,7 +139,9 @@ public class LoadFileAction implements ActionListener {
 			case DB_MAJOR_OUTDATED:
 				JOptionPane.showMessageDialog(ApplicationWindow.getAPP_WINDOW(), Lang.getUI("loadFileAction.importOlderVersion"), "Update",
 						JOptionPane.INFORMATION_MESSAGE);
+				
 				try {
+					LoadFileAction.getNewFileAction().actionPerformed(e);
 					(new BEATsFileFilter()).importFile(loadFile);
 				} catch (Exception e2) {
 					e2.printStackTrace();
