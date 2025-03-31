@@ -34,6 +34,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import javax.swing.SwingUtilities;
 
+import be.witmoca.BEATs.connection.SQLConnection;
 import be.witmoca.BEATs.connection.actions.LoadFileAction;
 import be.witmoca.BEATs.discovery.DiscoveryServer;
 import be.witmoca.BEATs.filefilters.BEATsFileFilter;
@@ -136,6 +137,12 @@ public class ApplicationManager {
 		boolean restart = true;
 		while (restart) {
 			restart = (new ApplicationManager(loadFile)).launch();
+			
+			// Add currentfile as new loadfile, incase of restart
+			if(SQLConnection.getDbConn() != null)
+				loadFile = SQLConnection.getDbConn().getCurrentFile(); 
+			else
+				loadFile = null;
 		}
 	}
 
